@@ -11,7 +11,6 @@
         * { box-sizing: border-box; }
         body {
             font-family: 'Kanit', sans-serif;
-            /* พื้นหลังไล่เฉดสีม่วงเข้มสลับดำ พร้อมดีไซน์ลวดลายตารางแบบไซเบอร์ */
             background: linear-gradient(135deg, #090514 0%, #1e0b36 50%, #000000 100%);
             background-image: linear-gradient(rgba(168, 85, 247, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(168, 85, 247, 0.05) 1px, transparent 1px);
             background-size: 20px 20px;
@@ -38,30 +37,35 @@
         .version { font-size: 12px; background: rgba(168, 85, 247, 0.2); color: #e9d5ff; padding: 3px 12px; border-radius: 20px; display: inline-block; margin-bottom: 25px; border: 1px solid rgba(168, 85, 247, 0.3); }
         #instruction { font-size: 14px; color: #c0afed; line-height: 1.6; margin-bottom: 30px; font-weight: 300; }
         
-        /* ปุ่มสีฟ้าตามบรีฟแรก แต่ปรับให้เข้ากับธีมม่วงดำ */
         #action-btn {
             background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
             color: white; border: none; padding: 16px 30px; font-size: 16px; font-weight: 600;
             border-radius: 12px; cursor: pointer; width: 100%; transition: all 0.3s ease;
             box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4); font-family: 'Kanit', sans-serif;
-            letter-spacing: 0.5px;
         }
         #action-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(59, 130, 246, 0.7); }
         
+        /* สไตล์ของโซนโหลดดิ้งและหลอดคะแนน */
         #status-area { display: none; margin-top: 10px; }
-        .spinner {
-            width: 40px; height: 40px; border: 3px solid rgba(168,85,247,0.1); border-top: 3px solid #c084fc;
-            border-radius: 50%; margin: 0 auto 20px auto; animation: spin 0.8s linear infinite;
-            box-shadow: 0 0 10px rgba(168,85,247,0.3);
+        #status-text { font-size: 16px; color: #d8b4fe; margin-bottom: 15px; }
+        
+        .progress-container {
+            width: 100%; height: 10px; background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px; overflow: hidden; border: 1px solid rgba(168, 85, 247, 0.2);
+            margin-bottom: 10px;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        #status-text { font-size: 16px; color: #d8b4fe; font-weight: 400; }
+        .progress-bar {
+            width: 0%; height: 100%;
+            background: linear-gradient(90deg, #a855f7 0%, #ec4899 100%);
+            box-shadow: 0 0 10px #a855f7;
+            transition: width 0.1s linear; /* ทำให้หลอดเลื่อนแบบสมูท */
+        }
         
         #key-box {
             display: none; margin-top: 15px; padding: 20px; background: rgba(147, 51, 234, 0.1);
             border: 1px solid #a855f7; border-radius: 12px; box-shadow: 0 0 20px rgba(168, 85, 247, 0.15);
         }
-        #key-text { font-family: 'Courier New', monospace; font-size: 16px; font-weight: bold; color: #f472b6; word-break: break-all; margin-bottom: 20px; display: block; background: #090514; padding: 12px; border-radius: 8px; border: 1px solid rgba(168,85,247,0.2); }
+        #key-text { font-family: 'Courier New', monospace; font-size: 15px; font-weight: bold; color: #f472b6; word-break: break-all; margin-bottom: 20px; display: block; background: #090514; padding: 12px; border-radius: 8px; border: 1px solid rgba(168,85,247,0.2); letter-spacing: 0.5px; }
         #copy-btn {
             background: #a855f7; color: white; border: none; padding: 10px 24px; font-size: 14px;
             border-radius: 8px; cursor: pointer; transition: all 0.2s; font-family: 'Kanit', sans-serif; font-weight: 500;
@@ -74,13 +78,15 @@
     <div class="container">
         <h2>UG Hub Key System</h2>
         <div class="version">v8.2 Secure Layer</div>
-        <p id="instruction">คลิกปุ่มสีฟ้าเพื่อเปิดลิงก์เป้าหมาย และเปิดหน้านี้ค้างไว้ระบบจะทำการตรวจสอบเพื่อเจนเนอเรตคีย์ให้ท่านอัตโนมัติ</p>
+        <p id="instruction">คลิกปุ่มสีฟ้าเพื่อเข้าร่วม Discord และกรุณารอระบบตรวจสอบสิทธิ์เป็นเวลา 15 วินาทีเพื่อรับคีย์</p>
         
-        <button id="action-btn">รับคีย์ใช้งานสคริปต์</button>
+        <button id="action-btn">ไปยังหน้า Discord เพื่อรับคีย์</button>
         
         <div id="status-area">
-            <div class="spinner"></div>
-            <div id="status-text">กำลังตรวจสอบระบบความปลอดภัย... (5 วินาที)</div>
+            <div id="status-text">กำลังตรวจสอบระบบ... เหลือเวลา 15 วินาที</div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
         </div>
         
         <div id="key-box">
@@ -91,17 +97,17 @@
     </div>
 
     <script>
-        // 🔗 ใส่ลิงก์จำลองของน้องตรงนี้
+        // 🔗 ลิงก์ Discord ของน้องตามบรีฟเดิม
         const targetURL = "https://discord.gg/v6Qh69hqd"; 
 
         const actionBtn = document.getElementById("action-btn");
         const statusArea = document.getElementById("status-area");
         const statusText = document.getElementById("status-text");
+        const progressBar = document.getElementById("progress-bar");
         const keyBox = document.getElementById("key-box");
         const keyText = document.getElementById("key-text");
         const instruction = document.getElementById("instruction");
 
-        // อัลกอริทึมสร้างคีย์ยาวมั่วซั่วล็อกตามวันเวลาไทย (GMT+7) 100% ไม่ต้องใช้ Database
         function generateDailyKey() {
             const now = new Date();
             const thTime = new Date(now.getTime() + (7 * 60 + now.getTimezoneOffset()) * 60000);
@@ -115,7 +121,6 @@
             
             const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
             let result = '';
-            // เจนคีย์ยาวๆ 32 ตัวอักษรมั่วๆ ตามบรีฟ
             for (let i = 0; i < 32; i++) {
                 seed = (seed * 1664525 + 1013904223) % 4294967296;
                 let idx = seed % chars.length;
@@ -125,23 +130,35 @@
         }
 
         actionBtn.addEventListener("click", function() {
-            window.open(targetURL, "_blank");
+            window.open(targetURL, "_blank"); // เด้งไปหน้าดิสคอร์ด
             actionBtn.style.display = "none";
             instruction.style.display = "none";
             statusArea.style.display = "block";
 
-            let timeLeft = 5;
+            let totalTime = 15; // 15 วินาทีตามขอ
+            localTimeLeft = totalTime * 10; // แปลงเป็นมิลลิวินาทีสำหรับหลอดวิ่งสมูท
+            let currentTick = 0;
+
             const countdown = setInterval(function() {
-                timeLeft -= 1;
-                if (timeLeft > 0) {
-                    statusText.innerText = `กำลังตรวจสอบระบบความปลอดภัย... (${timeLeft} วินาที)`;
-                } else {
+                currentTick += 1;
+                let percentage = (currentTick / localTimeLeft) * 100;
+                progressBar.style.width = percentage + "%";
+
+                if (currentTick % 10 === 0) {
+                    let secondsPassed = currentTick / 10;
+                    let secondsLeft = totalTime - secondsPassed;
+                    if (secondsLeft > 0) {
+                        statusText.innerText = `กำลังตรวจสอบระบบ... เหลือเวลา ${secondsLeft} วินาที`;
+                    }
+                }
+
+                if (currentTick >= localTimeLeft) {
                     clearInterval(countdown);
                     statusArea.style.display = "none";
                     keyText.innerText = generateDailyKey();
                     keyBox.style.display = "block";
                 }
-            }, 1000);
+            }, 100); // อัปเดตความสมูทของหลอดทุกๆ 0.1 วินาที
         });
 
         function copyKey() {
