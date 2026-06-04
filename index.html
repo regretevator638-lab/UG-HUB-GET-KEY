@@ -1,179 +1,588 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UG Hub - Secure Key Generation</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <style>
-        * { box-sizing: border-box; }
-        body {
-            font-family: 'Kanit', sans-serif;
-            background: linear-gradient(135deg, #090514 0%, #1e0b36 50%, #000000 100%);
-            background-image: linear-gradient(rgba(168, 85, 247, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(168, 85, 247, 0.05) 1px, transparent 1px);
-            background-size: 20px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            color: #f3e8ff;
-        }
-        .container {
-            background: rgba(15, 10, 28, 0.75);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(168, 85, 247, 0.25);
-            padding: 40px 30px;
-            border-radius: 20px;
-            box-shadow: 0 0 40px rgba(168, 85, 247, 0.2);
-            max-width: 460px;
-            width: 90%;
-            text-align: center;
-        }
-        h2 { font-size: 26px; font-weight: 600; margin: 0 0 10px 0; color: #c084fc; text-shadow: 0 0 15px rgba(168,85,247,0.5); }
-        .version { font-size: 12px; background: rgba(168, 85, 247, 0.2); color: #e9d5ff; padding: 3px 12px; border-radius: 20px; display: inline-block; margin-bottom: 25px; border: 1px solid rgba(168, 85, 247, 0.3); }
-        #instruction { font-size: 14px; color: #c0afed; line-height: 1.6; margin-bottom: 30px; font-weight: 300; }
-        
-        #action-btn {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            color: white; border: none; padding: 16px 30px; font-size: 16px; font-weight: 600;
-            border-radius: 12px; cursor: pointer; width: 100%; transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4); font-family: 'Kanit', sans-serif;
-        }
-        #action-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(59, 130, 246, 0.7); }
-        
-        #status-area { display: none; margin-top: 10px; }
-        #status-text { font-size: 16px; color: #d8b4fe; margin-bottom: 15px; }
-        
-        .progress-container {
-            width: 100%; height: 10px; background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px; overflow: hidden; border: 1px solid rgba(168, 85, 247, 0.2);
-            margin-bottom: 10px;
-        }
-        .progress-bar {
-            width: 0%; height: 100%;
-            background: linear-gradient(90deg, #a855f7 0%, #ec4899 100%);
-            box-shadow: 0 0 10px #a855f7;
-            transition: width 0.1s linear;
-        }
-        
-        #key-box {
-            display: none; margin-top: 15px; padding: 20px; background: rgba(147, 51, 234, 0.1);
-            border: 1px solid #a855f7; border-radius: 12px; box-shadow: 0 0 20px rgba(168, 85, 247, 0.15);
-        }
-        #key-text { font-family: 'Courier New', monospace; font-size: 15px; font-weight: bold; color: #f472b6; word-break: break-all; margin-bottom: 20px; display: block; background: #090514; padding: 12px; border-radius: 8px; border: 1px solid rgba(168,85,247,0.2); letter-spacing: 0.5px; }
-        #copy-btn {
-            background: #a855f7; color: white; border: none; padding: 10px 24px; font-size: 14px;
-            border-radius: 8px; cursor: pointer; transition: all 0.2s; font-family: 'Kanit', sans-serif; font-weight: 500;
-        }
-        #copy-btn:hover { background: #c084fc; transform: scale(1.03); }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UG Hub — Key System</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --purple-deep: #0d0010;
+    --purple-dark: #120018;
+    --purple-mid:  #2a0040;
+    --purple-glow: #8b00ff;
+    --purple-light:#c060ff;
+    --purple-neon: #df80ff;
+    --text:        #e8c8ff;
+    --text-dim:    #9060aa;
+    --mono:        'Share Tech Mono', monospace;
+    --sans:        'Rajdhani', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--purple-deep);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* === ANIMATED BG === */
+  .bg-grid {
+    position: fixed; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(rgba(139,0,255,0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(139,0,255,0.07) 1px, transparent 1px);
+    background-size: 40px 40px;
+    animation: gridShift 20s linear infinite;
+  }
+  @keyframes gridShift {
+    from { background-position: 0 0; }
+    to   { background-position: 40px 40px; }
+  }
+
+  .bg-orb {
+    position: fixed; border-radius: 50%; filter: blur(80px); z-index: 0;
+    animation: orbFloat 8s ease-in-out infinite alternate;
+  }
+  .bg-orb.a { width:400px; height:400px; top:-100px; left:-100px; background:rgba(80,0,160,0.35); animation-delay:0s; }
+  .bg-orb.b { width:300px; height:300px; bottom:-80px; right:-80px; background:rgba(120,0,200,0.3); animation-delay:-3s; }
+  .bg-orb.c { width:200px; height:200px; top:50%; left:60%; background:rgba(60,0,120,0.25); animation-delay:-5s; }
+  @keyframes orbFloat {
+    from { transform: translate(0,0) scale(1); }
+    to   { transform: translate(30px,20px) scale(1.1); }
+  }
+
+  /* SCANLINES */
+  body::after {
+    content:''; position:fixed; inset:0; z-index:1; pointer-events:none;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
+  }
+
+  /* === LAYOUT === */
+  .container {
+    position: relative; z-index: 2;
+    max-width: 520px; margin: 0 auto;
+    padding: 40px 20px 60px;
+    display: flex; flex-direction: column; align-items: center; gap: 28px;
+  }
+
+  /* === HEADER === */
+  .header { text-align: center; }
+  .logo {
+    font-family: var(--mono);
+    font-size: 2.8rem; font-weight: 700;
+    color: #fff;
+    text-shadow: 0 0 20px var(--purple-glow), 0 0 60px rgba(139,0,255,0.5);
+    letter-spacing: 0.12em;
+    animation: logoPulse 3s ease-in-out infinite;
+  }
+  @keyframes logoPulse {
+    0%,100% { text-shadow: 0 0 20px var(--purple-glow), 0 0 60px rgba(139,0,255,0.5); }
+    50%      { text-shadow: 0 0 30px var(--purple-neon), 0 0 80px rgba(180,0,255,0.7), 0 0 120px rgba(139,0,255,0.3); }
+  }
+  .logo span { color: var(--purple-neon); }
+  .tagline {
+    margin-top: 6px; font-size: 0.95rem; color: var(--text-dim);
+    font-family: var(--mono); letter-spacing: 0.08em;
+  }
+
+  /* === CARD === */
+  .card {
+    width: 100%;
+    background: linear-gradient(135deg, rgba(30,0,50,0.85), rgba(15,0,25,0.9));
+    border: 1px solid rgba(139,0,255,0.35);
+    border-radius: 16px;
+    padding: 28px 24px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 0 30px rgba(139,0,255,0.15), inset 0 1px 0 rgba(200,100,255,0.1);
+    position: relative; overflow: hidden;
+  }
+  .card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:1px;
+    background: linear-gradient(90deg, transparent, var(--purple-light), transparent);
+  }
+
+  .card-title {
+    font-family: var(--mono); font-size: 0.75rem;
+    color: var(--purple-light); letter-spacing: 0.15em; text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .card-title::before { content: '> '; color: var(--purple-glow); }
+
+  /* === STEP FLOW === */
+  .step {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(139,0,255,0.12);
+  }
+  .step:last-child { border-bottom: none; }
+  .step-num {
+    width: 26px; height: 26px; flex-shrink: 0;
+    background: rgba(139,0,255,0.25); border: 1px solid rgba(139,0,255,0.5);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-size: 0.75rem; color: var(--purple-neon);
+  }
+  .step-text { font-size: 0.95rem; color: var(--text); line-height: 1.5; }
+  .step-text small { display: block; color: var(--text-dim); font-size: 0.78rem; margin-top: 2px; font-family: var(--mono); }
+
+  /* === KEY DISPLAY === */
+  .key-box {
+    background: rgba(0,0,0,0.5);
+    border: 1px solid rgba(139,0,255,0.4);
+    border-radius: 10px; padding: 16px 18px;
+    display: flex; align-items: center; gap: 12px;
+    margin-top: 8px;
+  }
+  .key-text {
+    flex: 1; font-family: var(--mono); font-size: 0.85rem;
+    color: var(--purple-neon); word-break: break-all; line-height: 1.5;
+    min-height: 20px;
+  }
+  .key-text.placeholder { color: var(--text-dim); font-style: italic; }
+
+  /* === BUTTONS === */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 13px 24px; border-radius: 10px; border: none; cursor: pointer;
+    font-family: var(--sans); font-size: 1rem; font-weight: 700;
+    letter-spacing: 0.05em; transition: all 0.2s ease;
+    text-decoration: none; width: 100%;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, #5500cc, #8800ff, #aa00ff);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(139,0,255,0.4);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(139,0,255,0.6), 0 0 20px rgba(180,0,255,0.3);
+  }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-secondary {
+    background: rgba(139,0,255,0.15);
+    border: 1px solid rgba(139,0,255,0.4);
+    color: var(--purple-neon);
+  }
+  .btn-secondary:hover {
+    background: rgba(139,0,255,0.25);
+    box-shadow: 0 0 15px rgba(139,0,255,0.3);
+  }
+  .btn:disabled {
+    opacity: 0.5; cursor: not-allowed; transform: none !important;
+    box-shadow: none !important;
+  }
+
+  /* === COUNTDOWN === */
+  .expire-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(139,0,255,0.15); border: 1px solid rgba(139,0,255,0.3);
+    border-radius: 6px; padding: 5px 10px;
+    font-family: var(--mono); font-size: 0.72rem; color: var(--text-dim);
+    margin-top: 10px;
+  }
+  .expire-badge .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--purple-glow);
+    animation: blink 1.2s ease-in-out infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+  .expire-time { color: var(--purple-light); font-weight: bold; }
+
+  /* === STATUS MSG === */
+  .status-msg {
+    font-family: var(--mono); font-size: 0.8rem; text-align: center;
+    padding: 8px 12px; border-radius: 8px; margin-top: 8px;
+    display: none;
+  }
+  .status-msg.success {
+    display: block; background: rgba(0,255,100,0.08);
+    border: 1px solid rgba(0,255,100,0.25); color: #60ff90;
+  }
+  .status-msg.error {
+    display: block; background: rgba(255,50,50,0.08);
+    border: 1px solid rgba(255,50,50,0.25); color: #ff6060;
+  }
+
+  /* === FOOTER === */
+  .footer {
+    font-family: var(--mono); font-size: 0.7rem; color: var(--text-dim);
+    text-align: center; letter-spacing: 0.08em;
+  }
+
+  /* === ADMIN PANEL === */
+  .admin-toggle {
+    font-family: var(--mono); font-size: 0.65rem; color: rgba(139,0,255,0.3);
+    cursor: pointer; text-align: center; user-select: none;
+    margin-top: -10px; letter-spacing: 0.1em;
+    transition: color 0.2s;
+  }
+  .admin-toggle:hover { color: var(--purple-glow); }
+
+  .admin-panel {
+    display: none; width: 100%;
+  }
+  .admin-panel.open { display: block; }
+
+  .input-row {
+    display: flex; gap: 8px; margin-bottom: 10px;
+  }
+  .inp {
+    flex: 1; background: rgba(0,0,0,0.5);
+    border: 1px solid rgba(139,0,255,0.35); border-radius: 8px;
+    padding: 10px 14px; color: var(--text);
+    font-family: var(--mono); font-size: 0.85rem;
+    outline: none; transition: border-color 0.2s;
+  }
+  .inp:focus { border-color: var(--purple-glow); box-shadow: 0 0 10px rgba(139,0,255,0.25); }
+  .inp::placeholder { color: var(--text-dim); }
+
+  .admin-keys-list {
+    max-height: 200px; overflow-y: auto;
+    background: rgba(0,0,0,0.4); border-radius: 8px;
+    border: 1px solid rgba(139,0,255,0.2);
+    padding: 10px;
+  }
+  .admin-keys-list::-webkit-scrollbar { width: 4px; }
+  .admin-keys-list::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
+  .admin-keys-list::-webkit-scrollbar-thumb { background: var(--purple-mid); border-radius: 2px; }
+
+  .key-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 0; border-bottom: 1px solid rgba(139,0,255,0.1);
+    font-family: var(--mono); font-size: 0.72rem;
+  }
+  .key-item:last-child { border-bottom: none; }
+  .key-item .k { color: var(--purple-neon); word-break: break-all; flex:1; }
+  .key-item .exp { color: var(--text-dim); font-size: 0.65rem; margin: 0 8px; white-space: nowrap; }
+  .key-item .del { color: #ff4060; cursor: pointer; padding: 2px 6px; border-radius: 4px; }
+  .key-item .del:hover { background: rgba(255,0,0,0.15); }
+
+  .badge-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+  .badge {
+    font-family: var(--mono); font-size: 0.65rem;
+    padding: 3px 10px; border-radius: 20px;
+    border: 1px solid rgba(139,0,255,0.4);
+    color: var(--text-dim);
+  }
+  .badge.active { border-color: #60ff90; color: #60ff90; background: rgba(0,255,100,0.08); }
+</style>
 </head>
 <body>
+<div class="bg-grid"></div>
+<div class="bg-orb a"></div>
+<div class="bg-orb b"></div>
+<div class="bg-orb c"></div>
 
-    <div class="container">
-        <h2>UG Hub Key System</h2>
-        <div class="version">v8.2 Secure Layer</div>
-        <p id="instruction">คลิกปุ่มสีฟ้าเพื่อเข้าร่วม Discord และกรุณารอระบบตรวจสอบสิทธิ์เป็นเวลา 15 วินาทีเพื่อรับคีย์</p>
-        
-        <button id="action-btn">ไปยังหน้า Discord เพื่อรับคีย์</button>
-        
-        <div id="status-area">
-            <div id="status-text">กำลังตรวจสอบระบบ... เหลือเวลา 15 วินาที</div>
-            <div class="progress-container">
-                <div class="progress-bar" id="progress-bar"></div>
-            </div>
-        </div>
-        
-        <div id="key-box">
-            <span style="color: #a78bfa; font-size: 13px; display:block; margin-bottom:8px; font-weight:300;">คีย์ของคุณถูกสร้างสำเร็จแล้ว (กรุณาก๊อปปี้ไปเปิดใช้งาน):</span>
-            <span id="key-text">---------</span>
-            <button id="copy-btn" onclick="copyKey()">คัดลอกคีย์ไปวางในเกม</button>
-        </div>
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo">UG<span>Hub</span></div>
+    <div class="tagline">// key system v1.0 — ระบบคีย์อัตโนมัติ</div>
+  </div>
+
+  <!-- GET KEY CARD -->
+  <div class="card">
+    <div class="card-title">รับคีย์ฟรี</div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-text">
+        กดปุ่มด้านล่างเพื่อไปยังลิงก์ภายนอก
+        <small>// ต้องรออยู่ในหน้านั้นอย่างน้อย 3 วินาที</small>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-text">
+        กลับมาหน้านี้แล้วกด "ตรวจสอบ & รับคีย์"
+        <small>// ระบบจะสร้างคีย์ให้อัตโนมัติ</small>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-text">
+        คัดลอกคีย์แล้วนำไปใส่ในสคริปต์
+        <small>// คีย์หมดอายุทุกวัน 00:00 น.</small>
+      </div>
     </div>
 
-    <script>
-        // ================================================================
-        //  ⚙️ WEB CONFIG — แก้ไขตั้งค่าตรงนี้ได้เลย!
-        // ================================================================
-        const KEY_ROTATION_HOURS = 1; // 🕒 อยากให้คีย์มีอายุกี่ชั่วโมงปรับตรงนี้ได้เลย (เช่น 24 = 1 วัน, 12 = ครึ่งวัน, 2 = สองชั่วโมง)
-        const targetURL = "https://discord.gg/v6Qh69hqd"; // 🔗 ลิงก์ดิสคอร์ดของน้อง
-        // ================================================================
+    <div style="margin-top:18px; display:flex; flex-direction:column; gap:10px;">
+      <button class="btn btn-primary" id="linkBtn" onclick="openLink()">
+        🔗 ไปยังลิงก์ภายนอก
+      </button>
+      <button class="btn btn-secondary" id="verifyBtn" onclick="verifyAndGetKey()" disabled>
+        ⚡ ตรวจสอบ &amp; รับคีย์
+      </button>
+    </div>
 
-        const actionBtn = document.getElementById("action-btn");
-        const statusArea = document.getElementById("status-area");
-        const statusText = document.getElementById("status-text");
-        const progressBar = document.getElementById("progress-bar");
-        const keyBox = document.getElementById("key-box");
-        const keyText = document.getElementById("key-text");
-        const instruction = document.getElementById("instruction");
+    <div id="statusMsg" class="status-msg"></div>
 
-        function generateDailyKey() {
-            const totalSeconds = Math.floor(Date.now() / 1000) + 25200; // เวลาไทย GMT+7
-            const intervalIndex = Math.floor(totalSeconds / (KEY_ROTATION_HOURS * 3600));
-            const seedStr = intervalIndex.toString();
-            
-            let seed = 0;
-            for(let i=0; i<seedStr.length; i++) {
-                seed = seedStr.charCodeAt(i) + ((seed << 5) - seed);
-            }
-            seed = Math.abs(seed);
-            
-            const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-            let result = '';
-            for (let i = 0; i < 32; i++) {
-                seed = (seed * 1664525 + 1013904223) % 4294967296;
-                let idx = seed % chars.length;
-                result += chars.charAt(idx);
-            }
-            return result;
-        }
+    <div id="keySection" style="display:none; margin-top:16px;">
+      <div class="card-title" style="margin-bottom:10px;">คีย์ของคุณ</div>
+      <div class="key-box">
+        <div class="key-text" id="keyDisplay">—</div>
+        <button class="btn btn-secondary" style="width:auto;padding:8px 14px;font-size:0.8rem;" onclick="copyKey()">📋</button>
+      </div>
+      <div class="expire-badge">
+        <div class="dot"></div>
+        หมดอายุใน: <span class="expire-time" id="expireCountdown">--:--:--</span>
+      </div>
+    </div>
+  </div>
 
-        actionBtn.addEventListener("click", function() {
-            window.open(targetURL, "_blank");
-            actionBtn.style.display = "none";
-            instruction.style.display = "none";
-            statusArea.style.display = "block";
+  <!-- VERIFY KEY CARD -->
+  <div class="card">
+    <div class="card-title">ตรวจสอบคีย์</div>
+    <div class="input-row">
+      <input class="inp" id="checkInp" placeholder="วางคีย์ที่นี่..." />
+      <button class="btn btn-secondary" style="width:auto;padding:10px 18px;" onclick="checkKey()">ตรวจ</button>
+    </div>
+    <div id="checkResult" class="status-msg"></div>
+  </div>
 
-            let totalTime = 15; 
-            let localTimeLeft = totalTime * 10; 
-            let currentTick = 0;
+  <!-- ADMIN TOGGLE -->
+  <div class="admin-toggle" onclick="toggleAdmin()">[ ADMIN ]</div>
 
-            const countdown = setInterval(function() {
-                currentTick += 1;
-                let percentage = (currentTick / localTimeLeft) * 100;
-                progressBar.style.width = percentage + "%";
+  <!-- ADMIN PANEL -->
+  <div class="admin-panel" id="adminPanel">
+    <div class="card">
+      <div class="card-title">Admin Panel</div>
 
-                if (currentTick % 10 === 0) {
-                    let secondsPassed = currentTick / 10;
-                    let secondsLeft = totalTime - secondsPassed;
-                    if (secondsLeft > 0) {
-                        statusText.innerText = `กำลังตรวจสอบระบบ... เหลือเวลา ${secondsLeft} วินาที`;
-                    }
-                }
+      <div id="adminLogin" style="">
+        <div class="input-row">
+          <input class="inp" id="adminUser" placeholder="Username" />
+        </div>
+        <div class="input-row">
+          <input class="inp" id="adminPass" placeholder="Password" type="password" />
+        </div>
+        <button class="btn btn-primary" onclick="adminLogin()">เข้าสู่ระบบ</button>
+        <div id="loginMsg" class="status-msg"></div>
+      </div>
 
-                if (currentTick >= localTimeLeft) {
-                    clearInterval(countdown);
-                    statusArea.style.display = "none";
-                    keyText.innerText = generateDailyKey();
-                    keyBox.style.display = "block";
-                }
-            }, 1000 / 10);
-        });
+      <div id="adminDash" style="display:none;">
+        <div class="badge-row" id="adminBadges"></div>
 
-        function copyKey() {
-            navigator.clipboard.writeText(keyText.innerText);
-            const btn = document.getElementById("copy-btn");
-            btn.innerText = "✓ คัดลอกเรียบร้อย!";
-            btn.style.background = "#2563eb";
-            setTimeout(() => {
-                btn.innerText = "คัดลอกคีย์ไปวางในเกม";
-                btn.style.background = "#a855f7";
-            }, 2000);
-        }
-    </script>
+        <div class="card-title" style="margin-bottom:10px;">สร้างคีย์ใหม่</div>
+        <div class="input-row">
+          <button class="btn btn-primary" style="flex:1" onclick="adminGenKey()">⚡ สร้างคีย์</button>
+          <button class="btn btn-secondary" style="width:auto;padding:10px 14px;" onclick="adminClearExpired()">🗑 ลบหมดอายุ</button>
+        </div>
+        <div id="adminNewKey" class="key-box" style="margin-bottom:14px;display:none;">
+          <div class="key-text" id="adminKeyText">—</div>
+          <button class="btn btn-secondary" style="width:auto;padding:8px 14px;font-size:0.8rem;" onclick="copyAdminKey()">📋</button>
+        </div>
+
+        <div class="card-title" style="margin-bottom:8px;">คีย์ทั้งหมด</div>
+        <div class="admin-keys-list" id="keyList"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">© 2025 UG Hub — All rights reserved</div>
+</div>
+
+<script>
+// ======= CONFIG =======
+const ADMIN_USER = "RWGXLC";
+const ADMIN_PASS = "12380645";
+const BYPASS_URL = "https://www.youtube.com"; // เปลี่ยนลิงก์ที่นี่
+
+// ======= STORAGE =======
+function getKeys() {
+  try { return JSON.parse(localStorage.getItem("ug_keys") || "{}"); } catch { return {}; }
+}
+function saveKeys(k) { localStorage.setItem("ug_keys", JSON.stringify(k)); }
+
+function getTodayMidnight() {
+  const d = new Date();
+  d.setHours(24, 0, 0, 0);
+  return d.getTime();
+}
+
+function genKeyString() {
+  const chars = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  let k = "";
+  for (let i = 0; i < 32; i++) k += chars[Math.floor(Math.random() * chars.length)];
+  return k.slice(0,8) + "-" + k.slice(8,16) + "-" + k.slice(16,24) + "-" + k.slice(24,32);
+}
+
+function cleanExpired() {
+  const keys = getKeys();
+  const now = Date.now();
+  let changed = false;
+  for (const k in keys) {
+    if (keys[k].exp < now) { delete keys[k]; changed = true; }
+  }
+  if (changed) saveKeys(keys);
+}
+
+// ======= BYPASS FLOW =======
+let linkOpened = false;
+let linkOpenTime = 0;
+
+function openLink() {
+  linkOpened = true;
+  linkOpenTime = Date.now();
+  window.open(BYPASS_URL, "_blank");
+  document.getElementById("linkBtn").textContent = "✅ ไปแล้ว — รอ 3 วินาที...";
+  document.getElementById("linkBtn").disabled = true;
+
+  setTimeout(() => {
+    document.getElementById("verifyBtn").disabled = false;
+    document.getElementById("verifyBtn").textContent = "⚡ ตรวจสอบ & รับคีย์";
+  }, 3000);
+}
+
+function verifyAndGetKey() {
+  if (!linkOpened) { showStatus("statusMsg", "กรุณากดไปยังลิงก์ภายนอกก่อน", "error"); return; }
+  const elapsed = Date.now() - linkOpenTime;
+  if (elapsed < 3000) {
+    showStatus("statusMsg", "กรุณารออยู่ในลิงก์อย่างน้อย 3 วินาที", "error"); return;
+  }
+
+  cleanExpired();
+  const newKey = genKeyString();
+  const exp = getTodayMidnight();
+  const keys = getKeys();
+  keys[newKey] = { exp, created: Date.now() };
+  saveKeys(keys);
+
+  document.getElementById("keyDisplay").textContent = newKey;
+  document.getElementById("keySection").style.display = "block";
+  showStatus("statusMsg", "✅ สำเร็จ! คัดลอกคีย์ด้านล่างได้เลย", "success");
+  startCountdown(exp);
+}
+
+function copyKey() {
+  const k = document.getElementById("keyDisplay").textContent;
+  navigator.clipboard.writeText(k).then(() => showStatus("statusMsg", "📋 คัดลอกแล้ว!", "success"));
+}
+
+// ======= COUNTDOWN =======
+let countdownInterval = null;
+function startCountdown(exp) {
+  if (countdownInterval) clearInterval(countdownInterval);
+  countdownInterval = setInterval(() => {
+    const left = exp - Date.now();
+    if (left <= 0) {
+      document.getElementById("expireCountdown").textContent = "หมดอายุแล้ว";
+      clearInterval(countdownInterval); return;
+    }
+    const h = Math.floor(left / 3600000);
+    const m = Math.floor((left % 3600000) / 60000);
+    const s = Math.floor((left % 60000) / 1000);
+    document.getElementById("expireCountdown").textContent =
+      String(h).padStart(2,"0") + ":" + String(m).padStart(2,"0") + ":" + String(s).padStart(2,"0");
+  }, 1000);
+}
+
+// ======= CHECK KEY =======
+function checkKey() {
+  cleanExpired();
+  const inp = document.getElementById("checkInp").value.trim();
+  const keys = getKeys();
+  if (keys[inp]) {
+    const left = keys[inp].exp - Date.now();
+    const h = Math.floor(left / 3600000);
+    const m = Math.floor((left % 3600000) / 60000);
+    showStatus("checkResult", `✅ คีย์ถูกต้อง — หมดอายุใน ${h}ชม. ${m}นาที`, "success");
+  } else {
+    showStatus("checkResult", "❌ คีย์ไม่ถูกต้องหรือหมดอายุแล้ว", "error");
+  }
+}
+
+// ======= ADMIN =======
+let adminLoggedIn = false;
+
+function toggleAdmin() {
+  const p = document.getElementById("adminPanel");
+  p.classList.toggle("open");
+}
+
+function adminLogin() {
+  const u = document.getElementById("adminUser").value;
+  const p = document.getElementById("adminPass").value;
+  if (u === ADMIN_USER && p === ADMIN_PASS) {
+    adminLoggedIn = true;
+    document.getElementById("adminLogin").style.display = "none";
+    document.getElementById("adminDash").style.display = "block";
+    renderAdminKeys();
+  } else {
+    showStatus("loginMsg", "❌ ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง", "error");
+  }
+}
+
+function adminGenKey() {
+  cleanExpired();
+  const newKey = genKeyString();
+  const exp = getTodayMidnight();
+  const keys = getKeys();
+  keys[newKey] = { exp, created: Date.now() };
+  saveKeys(keys);
+  document.getElementById("adminNewKey").style.display = "flex";
+  document.getElementById("adminKeyText").textContent = newKey;
+  renderAdminKeys();
+}
+
+function copyAdminKey() {
+  const k = document.getElementById("adminKeyText").textContent;
+  navigator.clipboard.writeText(k);
+}
+
+function adminClearExpired() {
+  cleanExpired();
+  renderAdminKeys();
+}
+
+function deleteKey(k) {
+  const keys = getKeys();
+  delete keys[k];
+  saveKeys(keys);
+  renderAdminKeys();
+}
+
+function renderAdminKeys() {
+  cleanExpired();
+  const keys = getKeys();
+  const list = document.getElementById("keyList");
+  const total = Object.keys(keys).length;
+
+  document.getElementById("adminBadges").innerHTML =
+    `<div class="badge active">คีย์ที่ใช้ได้: ${total}</div>`;
+
+  if (total === 0) {
+    list.innerHTML = '<div style="color:var(--text-dim);font-family:var(--mono);font-size:0.75rem;text-align:center;padding:12px;">ไม่มีคีย์</div>';
+    return;
+  }
+
+  list.innerHTML = Object.entries(keys).map(([k, v]) => {
+    const left = v.exp - Date.now();
+    const h = Math.floor(left / 3600000);
+    const m = Math.floor((left % 3600000) / 60000);
+    return `<div class="key-item">
+      <span class="k">${k}</span>
+      <span class="exp">${h}ชม.${m}น.</span>
+      <span class="del" onclick="deleteKey('${k}')">✕</span>
+    </div>`;
+  }).join("");
+}
+
+// ======= UTIL =======
+function showStatus(id, msg, type) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.className = "status-msg " + type;
+  setTimeout(() => { if (el.textContent === msg) el.className = "status-msg"; }, 4000);
+}
+
+// init
+cleanExpired();
+</script>
 </body>
 </html>
