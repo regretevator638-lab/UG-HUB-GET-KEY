@@ -45,7 +45,6 @@
         }
         #action-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(59, 130, 246, 0.7); }
         
-        /* สไตล์ของโซนโหลดดิ้งและหลอดคะแนน */
         #status-area { display: none; margin-top: 10px; }
         #status-text { font-size: 16px; color: #d8b4fe; margin-bottom: 15px; }
         
@@ -58,7 +57,7 @@
             width: 0%; height: 100%;
             background: linear-gradient(90deg, #a855f7 0%, #ec4899 100%);
             box-shadow: 0 0 10px #a855f7;
-            transition: width 0.1s linear; /* ทำให้หลอดเลื่อนแบบสมูท */
+            transition: width 0.1s linear;
         }
         
         #key-box {
@@ -90,15 +89,19 @@
         </div>
         
         <div id="key-box">
-            <span style="color: #a78bfa; font-size: 13px; display:block; margin-bottom:8px; font-weight:300;">คีย์ของคุณถูกสร้างสำเร็จแล้ว (หมดอายุเที่ยงคืนวันนี้):</span>
+            <span style="color: #a78bfa; font-size: 13px; display:block; margin-bottom:8px; font-weight:300;">คีย์ของคุณถูกสร้างสำเร็จแล้ว (กรุณาก๊อปปี้ไปเปิดใช้งาน):</span>
             <span id="key-text">---------</span>
             <button id="copy-btn" onclick="copyKey()">คัดลอกคีย์ไปวางในเกม</button>
         </div>
     </div>
 
     <script>
-        // 🔗 ลิงก์ Discord ของน้องตามบรีฟเดิม
-        const targetURL = "https://discord.gg/v6Qh69hqd"; 
+        // ================================================================
+        //  ⚙️ WEB CONFIG — แก้ไขตั้งค่าตรงนี้ได้เลย!
+        // ================================================================
+        const KEY_ROTATION_HOURS = 1; // 🕒 อยากให้คีย์มีอายุกี่ชั่วโมงปรับตรงนี้ได้เลย (เช่น 24 = 1 วัน, 12 = ครึ่งวัน, 2 = สองชั่วโมง)
+        const targetURL = "https://discord.gg/v6Qh69hqd"; // 🔗 ลิงก์ดิสคอร์ดของน้อง
+        // ================================================================
 
         const actionBtn = document.getElementById("action-btn");
         const statusArea = document.getElementById("status-area");
@@ -109,9 +112,9 @@
         const instruction = document.getElementById("instruction");
 
         function generateDailyKey() {
-            const now = new Date();
-            const thTime = new Date(now.getTime() + (7 * 60 + now.getTimezoneOffset()) * 60000);
-            const seedStr = "" + thTime.getFullYear() + (thTime.getMonth() + 1) + thTime.getDate();
+            const totalSeconds = Math.floor(Date.now() / 1000) + 25200; // เวลาไทย GMT+7
+            const intervalIndex = Math.floor(totalSeconds / (KEY_ROTATION_HOURS * 3600));
+            const seedStr = intervalIndex.toString();
             
             let seed = 0;
             for(let i=0; i<seedStr.length; i++) {
@@ -130,13 +133,13 @@
         }
 
         actionBtn.addEventListener("click", function() {
-            window.open(targetURL, "_blank"); // เด้งไปหน้าดิสคอร์ด
+            window.open(targetURL, "_blank");
             actionBtn.style.display = "none";
             instruction.style.display = "none";
             statusArea.style.display = "block";
 
-            let totalTime = 15; // 15 วินาทีตามขอ
-            localTimeLeft = totalTime * 10; // แปลงเป็นมิลลิวินาทีสำหรับหลอดวิ่งสมูท
+            let totalTime = 15; 
+            let localTimeLeft = totalTime * 10; 
             let currentTick = 0;
 
             const countdown = setInterval(function() {
@@ -158,7 +161,7 @@
                     keyText.innerText = generateDailyKey();
                     keyBox.style.display = "block";
                 }
-            }, 100); // อัปเดตความสมูทของหลอดทุกๆ 0.1 วินาที
+            }, 1000 / 10);
         });
 
         function copyKey() {
