@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UG Hub - Key System</title>
+    <title>UG Hub - Secure Key Generation</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -11,78 +11,87 @@
         * { box-sizing: border-box; }
         body {
             font-family: 'Kanit', sans-serif;
-            background: linear-gradient(135deg, #070a13 0%, #0f172a 100%);
+            /* พื้นหลังไล่เฉดสีม่วงเข้มสลับดำ พร้อมดีไซน์ลวดลายตารางแบบไซเบอร์ */
+            background: linear-gradient(135deg, #090514 0%, #1e0b36 50%, #000000 100%);
+            background-image: linear-gradient(rgba(168, 85, 247, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(168, 85, 247, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
             display: flex;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
             margin: 0;
-            color: #f8fafc;
+            color: #f3e8ff;
         }
         .container {
-            background: rgba(30, 41, 59, 0.4);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(15, 10, 28, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(168, 85, 247, 0.25);
             padding: 40px 30px;
             border-radius: 20px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
-            max-width: 450px;
+            box-shadow: 0 0 40px rgba(168, 85, 247, 0.2);
+            max-width: 460px;
             width: 90%;
             text-align: center;
         }
-        h2 { font-size: 26px; font-weight: 600; margin: 0 0 10px 0; color: #3b82f6; text-shadow: 0 0 10px rgba(59,130,246,0.3); }
-        .version { font-size: 12px; background: rgba(59,130,246,0.2); color: #60a5fa; padding: 2px 8px; border-radius: 20px; display: inline-block; margin-bottom: 20px; }
-        #instruction { font-size: 14px; color: #94a3b8; line-height: 1.6; margin-bottom: 25px; font-weight: 300; }
+        h2 { font-size: 26px; font-weight: 600; margin: 0 0 10px 0; color: #c084fc; text-shadow: 0 0 15px rgba(168,85,247,0.5); }
+        .version { font-size: 12px; background: rgba(168, 85, 247, 0.2); color: #e9d5ff; padding: 3px 12px; border-radius: 20px; display: inline-block; margin-bottom: 25px; border: 1px solid rgba(168, 85, 247, 0.3); }
+        #instruction { font-size: 14px; color: #c0afed; line-height: 1.6; margin-bottom: 30px; font-weight: 300; }
+        
+        /* ปุ่มสีฟ้าตามบรีฟแรก แต่ปรับให้เข้ากับธีมม่วงดำ */
         #action-btn {
-            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-            color: white; border: none; padding: 15px 30px; font-size: 16px; font-weight: 500;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white; border: none; padding: 16px 30px; font-size: 16px; font-weight: 600;
             border-radius: 12px; cursor: pointer; width: 100%; transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4); font-family: 'Kanit', sans-serif;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4); font-family: 'Kanit', sans-serif;
+            letter-spacing: 0.5px;
         }
-        #action-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37, 99, 235, 0.6); }
+        #action-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(59, 130, 246, 0.7); }
+        
         #status-area { display: none; margin-top: 10px; }
         .spinner {
-            width: 35px; height: 35px; border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid #3b82f6;
-            border-radius: 50%; margin: 0 auto 15px auto; animation: spin 1s linear infinite;
+            width: 40px; height: 40px; border: 3px solid rgba(168,85,247,0.1); border-top: 3px solid #c084fc;
+            border-radius: 50%; margin: 0 auto 20px auto; animation: spin 0.8s linear infinite;
+            box-shadow: 0 0 10px rgba(168,85,247,0.3);
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        #status-text { font-size: 16px; color: #38bdf8; }
+        #status-text { font-size: 16px; color: #d8b4fe; font-weight: 400; }
+        
         #key-box {
-            display: none; margin-top: 15px; padding: 15px; background: rgba(16, 185, 129, 0.08);
-            border: 1px solid #10b981; border-radius: 12px; box-shadow: 0 0 15px rgba(16, 185, 129, 0.1);
+            display: none; margin-top: 15px; padding: 20px; background: rgba(147, 51, 234, 0.1);
+            border: 1px solid #a855f7; border-radius: 12px; box-shadow: 0 0 20px rgba(168, 85, 247, 0.15);
         }
-        #key-text { font-family: monospace; font-size: 18px; font-weight: bold; color: #34d399; word-break: break-all; margin-bottom: 15px; display: block; }
+        #key-text { font-family: 'Courier New', monospace; font-size: 16px; font-weight: bold; color: #f472b6; word-break: break-all; margin-bottom: 20px; display: block; background: #090514; padding: 12px; border-radius: 8px; border: 1px solid rgba(168,85,247,0.2); }
         #copy-btn {
-            background: #10b981; color: white; border: none; padding: 8px 20px; font-size: 14px;
-            border-radius: 6px; cursor: pointer; transition: background 0.2s; font-family: 'Kanit', sans-serif;
+            background: #a855f7; color: white; border: none; padding: 10px 24px; font-size: 14px;
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; font-family: 'Kanit', sans-serif; font-weight: 500;
         }
-        #copy-btn:hover { background: #059669; }
+        #copy-btn:hover { background: #c084fc; transform: scale(1.03); }
     </style>
 </head>
 <body>
 
     <div class="container">
         <h2>UG Hub Key System</h2>
-        <div class="version">v8.2 Official Authentication</div>
-        <p id="instruction">กรุณาคลิกปุ่มสีฟ้าด้านล่างเพื่อเข้าสู่หน้าลิงก์โฆษณาจำลอง และหน้าเดิมนี้จะเริ่มทำการตรวจสอบระบบเพื่อออกคีย์ให้คุณ</p>
+        <div class="version">v8.2 Secure Layer</div>
+        <p id="instruction">คลิกปุ่มสีฟ้าเพื่อเปิดลิงก์เป้าหมาย และเปิดหน้านี้ค้างไว้ระบบจะทำการตรวจสอบเพื่อเจนเนอเรตคีย์ให้ท่านอัตโนมัติ</p>
         
-        <button id="action-btn">รับคีย์เข้าใช้งานสคริปต์</button>
+        <button id="action-btn">รับคีย์ใช้งานสคริปต์</button>
         
         <div id="status-area">
             <div class="spinner"></div>
-            <div id="status-text">กำลังตรวจสอบระบบ... (5 วินาที)</div>
+            <div id="status-text">กำลังตรวจสอบระบบความปลอดภัย... (5 วินาที)</div>
         </div>
         
         <div id="key-box">
-            <span style="color: #94a3b8; font-size: 13px; display:block; margin-bottom:5px;">คีย์ของคุณคือ (มีอายุใช้งานเฉพาะวันนี้เท่านั้น):</span>
+            <span style="color: #a78bfa; font-size: 13px; display:block; margin-bottom:8px; font-weight:300;">คีย์ของคุณถูกสร้างสำเร็จแล้ว (หมดอายุเที่ยงคืนวันนี้):</span>
             <span id="key-text">---------</span>
-            <button id="copy-btn" onclick="copyKey()">คัดลอกคีย์</button>
+            <button id="copy-btn" onclick="copyKey()">คัดลอกคีย์ไปวางในเกม</button>
         </div>
     </div>
 
     <script>
-        // 🔗 ใส่ลิงก์เว็บจำลองของน้องตรงนี้ (เช่น ลิงก์ช่องดิสคอร์ด หรือเว็บโฆษณา)
+        // 🔗 ใส่ลิงก์จำลองของน้องตรงนี้
         const targetURL = "https://discord.gg/v6Qh69hqd"; 
 
         const actionBtn = document.getElementById("action-btn");
@@ -92,22 +101,31 @@
         const keyText = document.getElementById("key-text");
         const instruction = document.getElementById("instruction");
 
-        // ฟังก์ชันคำนวณคีย์ประจำเป็นวัน (เพื่อให้สอดคล้องกับตัวเกม)
-        function getDailyKey() {
-            const date = new Date();
-            // สร้างเลขคีย์จาก วัน-เดือน-ปี เพื่อให้คีย์จะเปลี่ยนไปในทุกๆ วัน
-            const seed = date.getDate().toString() + (date.getMonth() + 1).toString() + date.getFullYear().toString();
-            let hash = 0;
-            for (let i = 0; i < seed.length; i++) {
-                hash = seed.charCodeAt(i) + ((hash << 5) - hash);
+        // อัลกอริทึมสร้างคีย์ยาวมั่วซั่วล็อกตามวันเวลาไทย (GMT+7) 100% ไม่ต้องใช้ Database
+        function generateDailyKey() {
+            const now = new Date();
+            const thTime = new Date(now.getTime() + (7 * 60 + now.getTimezoneOffset()) * 60000);
+            const seedStr = "" + thTime.getFullYear() + (thTime.getMonth() + 1) + thTime.getDate();
+            
+            let seed = 0;
+            for(let i=0; i<seedStr.length; i++) {
+                seed = seedStr.charCodeAt(i) + ((seed << 5) - seed);
             }
-            const keyResult = "UG-" + Math.abs(hash).toString(16).toUpperCase() + "X" + (date.getDate() * 7);
-            return keyResult;
+            seed = Math.abs(seed);
+            
+            const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            // เจนคีย์ยาวๆ 32 ตัวอักษรมั่วๆ ตามบรีฟ
+            for (let i = 0; i < 32; i++) {
+                seed = (seed * 1664525 + 1013904223) % 4294967296;
+                let idx = seed % chars.length;
+                result += chars.charAt(idx);
+            }
+            return result;
         }
 
         actionBtn.addEventListener("click", function() {
-            window.open(targetURL, "_blank"); // เปิดแท็บใหม่ไปยังเว็บเป้าหมาย
-
+            window.open(targetURL, "_blank");
             actionBtn.style.display = "none";
             instruction.style.display = "none";
             statusArea.style.display = "block";
@@ -116,11 +134,11 @@
             const countdown = setInterval(function() {
                 timeLeft -= 1;
                 if (timeLeft > 0) {
-                    statusText.innerText = `กำลังตรวจสอบระบบ... (${timeLeft} วินาที)`;
+                    statusText.innerText = `กำลังตรวจสอบระบบความปลอดภัย... (${timeLeft} วินาที)`;
                 } else {
                     clearInterval(countdown);
                     statusArea.style.display = "none";
-                    keyText.innerText = getDailyKey(); // แสดงคีย์จริง
+                    keyText.innerText = generateDailyKey();
                     keyBox.style.display = "block";
                 }
             }, 1000);
@@ -129,11 +147,11 @@
         function copyKey() {
             navigator.clipboard.writeText(keyText.innerText);
             const btn = document.getElementById("copy-btn");
-            btn.innerText = "✓ คัดลอกสำเร็จ!";
+            btn.innerText = "✓ คัดลอกเรียบร้อย!";
             btn.style.background = "#2563eb";
             setTimeout(() => {
-                btn.innerText = "คัดลอกคีย์";
-                btn.style.background = "#10b981";
+                btn.innerText = "คัดลอกคีย์ไปวางในเกม";
+                btn.style.background = "#a855f7";
             }, 2000);
         }
     </script>
