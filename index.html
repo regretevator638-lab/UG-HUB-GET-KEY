@@ -3,133 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบตรวจสอบเพื่อรับโค้ด</title>
+    <title>ระบบตรวจสอบความปลอดภัย</title>
+    <!-- นำเข้าฟอนต์ Kanit เพื่อความสวยงามและเป็นทางการ -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
     <style>
+        * {
+            box-sizing: border-box;
+        }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7f6;
+            font-family: 'Kanit', sans-serif;
+            /* พื้นหลังไล่เฉดสีสไตล์ Tech/Premium ดูน่าเชื่อถือ ไม่เหมือนเว็บโฆษณา */
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
+            color: #f8fafc;
+        }
+        /* กล่องข้อความสไตล์กระจกโปร่งแสง (Glassmorphism) */
+        .container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px 30px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            max-width: 440px;
+            width: 90%;
             text-align: center;
         }
-        .container {
-            background-color: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            max-width: 400px;
-            width: 90%;
+        h2 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+            color: #ffffff;
         }
-        /* ตกแต่งปุ่มสีฟ้า */
+        #instruction {
+            font-size: 15px;
+            color: #94a3b8;
+            font-weight: 300;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        /* ปุ่มกดดีไซน์พรีเมียม */
         #action-btn {
-            background-color: #007bff;
-            color: white;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: #ffffff;
             border: none;
-            padding: 15px 30px;
-            font-size: 18px;
-            border-radius: 8px;
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: 500;
+            font-family: 'Kanit', sans-serif;
+            border-radius: 12px;
             cursor: pointer;
-            transition: background-color 0.3s;
             width: 100%;
-            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+            letter-spacing: 0.5px;
         }
         #action-btn:hover {
-            background-color: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+            background: linear-gradient(135deg, #60a5fa 0%, #2563eb 100%);
         }
-        /* ข้อความสถานะ */
+        #action-btn:active {
+            transform: translateY(1px);
+        }
+        /* โซนสถานะกำลังตรวจสอบ */
+        #status-area {
+            display: none;
+            margin-top: 10px;
+        }
+        /* วงล้อโหลดหมุนๆ เพิ่มความสมจริง */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            margin: 0 auto 20px auto;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
         #status-text {
             font-size: 18px;
-            margin-top: 20px;
-            display: none;
-            color: #ff9800;
-            font-weight: bold;
+            color: #38bdf8;
+            font-weight: 500;
         }
-        /* กล่องแสดงโค้ดที่เจนขึ้นมาใหม่ */
+        /* กล่องโชว์โค้ดที่สุ่มขึ้นมา */
         #code-display {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #e8f5e9;
-            border: 2px dashed #4caf50;
-            border-radius: 8px;
+            margin-top: 10px;
+            padding: 20px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 2px dashed #10b981;
+            border-radius: 14px;
             font-family: monospace;
-            font-size: 20px;
-            color: #2e7d32;
+            font-size: 22px;
+            font-weight: bold;
+            color: #34d399;
             display: none;
             word-break: break-all;
+            letter-spacing: 1px;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h2>รับโค้ดของคุณ</h2>
-        <p id="instruction">คลิกปุ่มด้านล่างเพื่อเข้าสู่เว็บไซต์และรอ 5 วินาทีเพื่อรับโค้ด</p>
+        <h2>ระบบยืนยันตัวตนเพื่อรับโค้ด</h2>
+        <p id="instruction">กรุณาคลิกปุ่มด้านล่างเพื่อไปยังเว็บไซต์เป้าหมาย และเปิดหน้าเว็บเดิมนี้ค้างไว้ 5 วินาทีเพื่อรอระบบตรวจสอบ</p>
         
-        <!-- ปุ่มสีฟ้า -->
+        <!-- ปุ่มกดสีฟ้าพรีเมียม -->
         <button id="action-btn">ไปยังเว็บไซต์เป้าหมาย</button>
         
-        <!-- สถานะกำลังตรวจสอบ -->
-        <div id="status-text">กำลังตรวจสอบ รอสักครู่...</div>
+        <!-- แถบสถานะแอนิเมชัน -->
+        <div id="status-area">
+            <div class="spinner" id="spinner"></div>
+            <div id="status-text">กำลังตรวจสอบกรุณารอสักครู่...</div>
+        </div>
         
-        <!-- จุดที่แสดงโค้ดยาวๆ -->
+        <!-- กล่องแสดงโค้ด -->
         <div id="code-display"></div>
     </div>
 
     <script>
-        // 1. เปลี่ยน URL ตรงนี้เป็นเว็บจำลอง หรือเว็บที่คุณต้องการได้เลย
+        // 🔗 ใส่ลิงก์เว็บจำลองของคุณตรงนี้ได้เลย
         const targetURL = "https://example.com"; 
         
         const actionBtn = document.getElementById("action-btn");
+        const statusArea = document.getElementById("status-area");
         const statusText = document.getElementById("status-text");
+        const spinner = document.getElementById("spinner");
         const codeDisplay = document.getElementById("code-display");
         const instruction = document.getElementById("instruction");
 
-        // ฟังก์ชันสำหรับสุ่มโค้ดยาวๆ
+        // ฟังก์ชันสุ่มโค้ดแบบพรีเมียม
         function generateRandomCode() {
             const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            let result = 'GEN-';
-            for (let i = 0; i < 20; i++) { // สุ่ม 20 ตัวอักษร
-                if (i > 0 && i % 5 === 0) result += '-'; // ขีดคั่นทุกๆ 5 ตัว
+            let result = 'SECURE-';
+            for (let i = 0; i < 15; i++) {
+                if (i > 0 && i % 5 === 0) result += '-';
                 result += chars.charAt(Math.floor(Math.random() * chars.length));
             }
             return result;
         }
 
         actionBtn.addEventListener("click", function() {
-            // เปิดเว็บเป้าหมายในแท็บใหม่
+            // เปิดหน้าเว็บเป้าหมายในแท็บใหม่
             window.open(targetURL, "_blank");
 
-            // ซ่อนปุ่มและข้อความคำแนะนำ
+            // ซ่อนปุ่มและคำแนะนำเดิม
             actionBtn.style.display = "none";
             instruction.style.display = "none";
 
-            // แสดงสถานะว่ากำลังตรวจสอบ
-            statusText.style.display = "block";
-            statusText.innerText = "กำลังตรวจสอบ รอสักครู่... (5)";
-            statusText.style.color = "#ff9800";
+            // เปิดโซนกำลังตรวจสอบ
+            statusArea.style.display = "block";
+            
+            let timeLeft = 5;
+            statusText.innerText = `กำลังตรวจสอบความปลอดภัย... (${timeLeft} วิ)`;
 
             // นับถอยหลัง 5 วินาที
-            let timeLeft = 5;
             const countdown = setInterval(function() {
                 timeLeft -= 1;
                 if (timeLeft > 0) {
-                    statusText.innerText = `กำลังตรวจสอบ รอสักครู่... (${timeLeft})`;
+                    statusText.innerText = `กำลังตรวจสอบความปลอดภัย... (${timeLeft} วิ)`;
                 } else {
-                    clearInterval(countdown); // หยุดนับเวลา
+                    clearInterval(countdown);
                     
-                    // เมื่อครบเวลา ให้เปลี่ยนข้อความสถานะ
-                    statusText.innerText = "ตรวจสอบสำเร็จ!";
-                    statusText.style.color = "#4caf50";
+                    // เมื่อตรวจสอบเสร็จ ซ่อนตัวโหลดหมุนๆ
+                    spinner.style.display = "none";
+                    
+                    // เปลี่ยนข้อความสถานะสำเร็จ
+                    statusText.innerText = "✓ ตรวจสอบสำเร็จเรียบร้อย!";
+                    statusText.style.color = "#10b981";
+                    statusText.style.marginBottom = "20px";
 
-                    // เจนโค้ดยาวๆ แล้วนำมาแสดง
+                    // เจนโค้ดและนำมาแสดง
                     codeDisplay.innerText = generateRandomCode();
                     codeDisplay.style.display = "block";
                 }
-            }, 1000); // 1000 มิลลิวินาที = 1 วินาที
+            }, 1000);
         });
     </script>
 
