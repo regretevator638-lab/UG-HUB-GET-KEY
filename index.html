@@ -658,11 +658,11 @@ const SITE_OPEN_TIME    = "";
 
 // ── หน้าเว็บ ──────────────────────────────────────────────────
 const SITE_TITLE    = "UG Hub";          // ชื่อที่แสดงบนหัวเว็บ (แท็บ browser)
-const SITE_TAGLINE  = "key system v2.6 — ระบบคีย์อัตโนมัติ"; // คำใต้โลโก้
+const SITE_TAGLINE  = "key system v2.5 — ระบบคีย์อัตโนมัติ"; // คำใต้โลโก้
 const FOOTER_TEXT   = "© 2025 UG Hub — All rights reserved";  // ข้อความ footer
 
 // ── ระบบ Bypass ───────────────────────────────────────────────
-const BYPASS_URL    = "https://www.youtube.com"; // 🌐 ลิงก์ที่จะให้ผู้ใช้ไปก่อนรับคีย์
+const BYPASS_URL    = "กรุณาใส่เว็บตรงนี้ด้วยนะถ้าไม่ใส่จะไปกระทืบถึงหน้าบ้าน"; // 🌐 ลิงก์ที่จะให้ผู้ใช้ไปก่อนรับคีย์
 const WAIT_SECONDS  = 5;   // ⏱ ต้องอยู่ในลิงก์กี่วินาที
 const MIN_SECONDS   = 5;   // ⚠️ ถ้ากลับมาก่อนกี่วิถือว่าเร็วเกิน
 
@@ -680,11 +680,11 @@ const SCRIPT_NOTE_2   = "-- สามารถนำไปใส่ตัวร�
 const METHOD2_TITLE = "ปลดล็อคสคริปต์";
 const METHOD2_DESC  = "กรุณากดไลค์คลิป เพื่อรับสคริปต์ฟรี";
 const METHOD2_CLIPS = [
-  { label: "กดไลค์คลิป 1", url: "https://www.youtube.com" }, // เปลี่ยน URL ได้
-  { label: "กดไลค์คลิป 2", url: "https://www.youtube.com" },
-  { label: "กดไลค์คลิป 3", url: "https://www.youtube.com" },
-  { label: "กดไลค์คลิป 4", url: "https://www.youtube.com" },
-  { label: "กดไลค์คลิป 5", url: "https://www.youtube.com" },
+  { label: "กดไลค์คลิป 1", url: "กรุณาใส่เว็บตรงนี้ด้วยนะถ้าไม่ใส่จะไปกระทืบถึงหน้าบ้าน" },
+  { label: "กดไลค์คลิป 2", url: "กรุณาใส่เว็บตรงนี้ด้วยนะถ้าไม่ใส่จะไปกระทืบถึงหน้าบ้าน" },
+  { label: "กดไลค์คลิป 3", url: "กรุณาใส่เว็บตรงนี้ด้วยนะถ้าไม่ใส่จะไปกระทืบถึงหน้าบ้าน" },
+  { label: "กดไลค์คลิป 4", url: "กรุณาใส่เว็บตรงนี้ด้วยนะถ้าไม่ใส่จะไปกระทืบถึงหน้าบ้าน" },
+  { label: "กดไลค์คลิป 5", url: "กรุณาใส่เว็บตรงนี้ด้วยนะถ้าไม่ใส่จะไปกระทืบถึงหน้าบ้าน" },
 ];
 
 // ── ข้อความในหน้าปลดล็อค ─────────────────────────────────────
@@ -844,7 +844,10 @@ function enterMainSite() {
   const screen = document.getElementById("unlockScreen");
   screen.style.transition = "opacity 0.5s";
   screen.style.opacity = "0";
-  setTimeout(() => screen.style.display = "none", 500);
+  setTimeout(() => {
+    screen.style.display = "none";
+    document.body.style.overflow = ""; // คืน scroll
+  }, 500);
 }
 
 // --- ระบบ Bypass (progress bar ในหน้าหลัก) ---
@@ -1137,8 +1140,8 @@ let m2Done = [];
 function openMethod2() {
   const screen = document.getElementById("method2Screen");
   screen.style.display = "flex";
+  document.body.style.overflow = "hidden"; // ล็อค scroll
 
-  // สร้างรายการคลิป
   document.getElementById("m2Title").textContent = METHOD2_TITLE;
   document.getElementById("m2Desc").textContent  = METHOD2_DESC;
 
@@ -1154,11 +1157,11 @@ function openMethod2() {
       border-radius:10px;padding:12px 14px;
     `;
     row.innerHTML = `
-      <span style="font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:600;color:#e0c0ff;" id="m2label${i}">${clip.label}</span>
+      <span style="font-family:'Itim','Rajdhani',sans-serif;font-size:1rem;color:#e0c0ff;" id="m2label${i}">${clip.label}</span>
       <button id="m2btn${i}" onclick="openClip(${i})" style="
         padding:7px 16px;background:linear-gradient(135deg,#5500cc,#8800ff);
         border:none;border-radius:8px;cursor:pointer;
-        font-family:'Rajdhani',sans-serif;font-size:0.9rem;font-weight:700;
+        font-family:'Itim','Rajdhani',sans-serif;font-size:0.9rem;font-weight:700;
         color:#fff;white-space:nowrap;
       ">ดูคลิป</button>
     `;
@@ -1169,7 +1172,6 @@ function openMethod2() {
 function openClip(i) {
   window.open(METHOD2_CLIPS[i].url, "_blank");
 
-  // รอ MIN_SECONDS วิ แล้วถือว่าดูแล้ว
   const btn = document.getElementById("m2btn" + i);
   btn.disabled = true;
   btn.textContent = "⏳";
@@ -1180,7 +1182,6 @@ function openClip(i) {
     btn.textContent = "✅";
     btn.style.background = "linear-gradient(135deg,#006600,#009900)";
 
-    // ถ้าครบทุกคลิป → เข้าเว็บหลัก
     if (m2Done.every(v => v)) {
       setTimeout(() => {
         document.getElementById("method2Screen").style.display = "none";
@@ -1192,6 +1193,7 @@ function openClip(i) {
 
 function closeMethod2() {
   document.getElementById("method2Screen").style.display = "none";
+  // ยังล็อค scroll ไว้เพราะยังอยู่หน้าปลดล็อค
 }
 
 // เริ่มต้น: ลบคีย์หมดอายุ + ใส่ค่า config ลงหน้าเว็บ
