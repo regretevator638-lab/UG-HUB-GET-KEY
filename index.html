@@ -2,9 +2,9 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>UG Hub — Key System</title>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Itim&family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
 
 <!-- =====================================================================
   ⛔  โซนแก้ไม่ได้ — CSS สไตล์หน้าเว็บ
@@ -22,7 +22,7 @@
     --text:        #e8c8ff;   /* สีตัวอักษรหลัก */
     --text-dim:    #9060aa;   /* สีตัวอักษรจาง */
     --mono:        'Share Tech Mono', monospace;
-    --sans:        'Rajdhani', sans-serif;
+    --sans:        'Itim', 'Rajdhani', sans-serif;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -217,8 +217,42 @@
     border: 1px solid rgba(255,50,50,0.25); color: #ff6060;
   }
 
-  /* footer */
-  .footer {
+  /* ═══ Responsive — ปรับตามขนาดจอ ═══ */
+
+  /* มือถือเล็ก */
+  @media (max-width: 390px) {
+    .logo { font-size: 2rem; }
+    .container { padding: 24px 14px 40px; gap: 18px; }
+    .card { padding: 20px 16px; }
+    .btn { font-size: 0.92rem; padding: 11px 18px; }
+  }
+
+  /* มือถือทั่วไป */
+  @media (min-width: 391px) and (max-width: 600px) {
+    .logo { font-size: 2.4rem; }
+    .container { padding: 30px 16px 50px; }
+  }
+
+  /* แท็บเล็ต (iPad ฯลฯ) */
+  @media (min-width: 601px) and (max-width: 1024px) {
+    .container { max-width: 600px; padding: 48px 32px 60px; gap: 32px; }
+    .logo { font-size: 3.4rem; }
+    .tagline { font-size: 1.05rem; }
+    .card { padding: 32px 30px; }
+    .card-title { font-size: 0.85rem; }
+    .btn { font-size: 1.1rem; padding: 15px 28px; }
+    .step-text { font-size: 1.05rem; }
+    .key-text { font-size: 0.95rem; }
+    .inp { font-size: 0.95rem; padding: 12px 16px; }
+  }
+
+  /* desktop */
+  @media (min-width: 1025px) {
+    .container { max-width: 580px; padding: 56px 0 80px; gap: 36px; }
+    .logo { font-size: 3.6rem; }
+    .card { padding: 36px 32px; }
+    .btn { font-size: 1.1rem; }
+  }
     font-family: var(--mono); font-size: 0.7rem; color: var(--text-dim);
     text-align: center; letter-spacing: 0.08em;
   }
@@ -281,6 +315,79 @@
 </head>
 <body>
 
+<!-- หน้าปิดเว็บ (แสดงเมื่อ SITE_ENABLED = false) -->
+<div id="closedScreen" style="
+  display:none; position:fixed; inset:0; z-index:99999;
+  background:#08000f;
+  align-items:center; justify-content:center;
+">
+  <div style="position:absolute;width:400px;height:400px;border-radius:50%;background:rgba(80,0,160,0.2);filter:blur(90px);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;"></div>
+  <div style="
+    background:linear-gradient(135deg,rgba(25,0,45,0.97),rgba(10,0,20,0.98));
+    border:1px solid rgba(100,0,200,0.3); border-radius:20px;
+    padding:40px 28px 32px; width:85%; max-width:340px;
+    text-align:center;
+    box-shadow:0 0 50px rgba(100,0,200,0.15);
+  ">
+    <div style="font-size:3rem;margin-bottom:16px;">🔒</div>
+    <div style="font-family:'Rajdhani',sans-serif;font-size:1.5rem;font-weight:700;color:#fff;margin-bottom:10px;" id="closedTitle">เว็บปิดให้บริการชั่วคราว</div>
+    <div style="font-family:'Rajdhani',sans-serif;font-size:0.95rem;color:#7850aa;line-height:1.5;margin-bottom:20px;" id="closedDesc">กรุณากลับมาใหม่ในภายหลัง</div>
+
+    <!-- นับถอยหลังเปิดเว็บ (โผล่เมื่อตั้ง SITE_OPEN_TIME) -->
+    <div id="closedCountdownWrap" style="display:none;margin-bottom:18px;">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:0.72rem;color:#5030aa;margin-bottom:6px;">เปิดอีกครั้งใน</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:1.4rem;color:#c060ff;font-weight:bold;" id="closedCountdown">--:--:--</div>
+    </div>
+
+    <!-- ปุ่ม Discord -->
+    <a id="discordBtn" href="#" target="_blank" style="
+      display:flex;align-items:center;justify-content:center;gap:8px;
+      width:100%;padding:13px;
+      background:linear-gradient(135deg,#3a0080,#5500cc);
+      border:1px solid rgba(139,0,255,0.4);
+      border-radius:12px;cursor:pointer;
+      font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:700;
+      color:#fff;letter-spacing:0.04em;text-decoration:none;
+      box-shadow:0 4px 16px rgba(100,0,200,0.3);
+      transition:all 0.2s;
+    ">
+      💬 ติดต่อทาง Discord
+    </a>
+  </div>
+</div>
+
+<!-- หน้าวิธีปลดล็อคแบบที่ 2 -->
+<div id="method2Screen" style="
+  display:none; position:fixed; inset:0; z-index:9998;
+  background:#08000f;
+  align-items:center; justify-content:center;
+  overflow-y:auto;
+">
+  <div style="position:absolute;width:400px;height:400px;border-radius:50%;background:rgba(80,0,160,0.2);filter:blur(90px);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;"></div>
+  <div style="
+    background:linear-gradient(135deg,rgba(25,0,45,0.97),rgba(10,0,20,0.98));
+    border:1px solid rgba(100,0,200,0.3); border-radius:20px;
+    padding:32px 24px 28px; width:88%; max-width:380px;
+    position:relative; margin:20px 0;
+    box-shadow:0 0 50px rgba(100,0,200,0.15);
+  ">
+    <div style="font-size:2.5rem;margin-bottom:12px;text-align:center;">🎬</div>
+    <div style="font-family:'Rajdhani',sans-serif;font-size:1.4rem;font-weight:700;color:#fff;margin-bottom:8px;text-align:center;" id="m2Title">วิธีปลดล็อคแบบที่ 2</div>
+    <div style="font-family:'Rajdhani',sans-serif;font-size:0.85rem;color:#7850aa;margin-bottom:22px;text-align:center;line-height:1.5;" id="m2Desc">กดเข้าไปดูให้ครบทั้ง 5 คลิป</div>
+
+    <!-- รายการคลิป -->
+    <div id="m2ClipList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;"></div>
+
+    <!-- กลับไปวิธีแรก -->
+    <div style="text-align:center;">
+      <span onclick="closeMethod2()" style="
+        font-family:'Rajdhani',sans-serif;font-size:0.85rem;
+        color:#5030aa;text-decoration:underline;cursor:pointer;
+      ">กลับไปใช้วิธีแรก</span>
+    </div>
+  </div>
+</div>
+
 <!-- ═══════════════════════════════════════════════════
      หน้าปลดล็อค (แสดงก่อนเข้าเว็บหลัก)
      ════════════════════════════════════════════════ -->
@@ -316,7 +423,7 @@
         transition:transform 0.15s;
       ">กดไลค์เพื่อปลดล็อค</button>
       <div style="margin-top:14px;">
-        <span onclick="startUnlock()" style="font-family:'Rajdhani',sans-serif;font-size:0.85rem;color:#5030aa;text-decoration:underline;cursor:pointer;" id="unlockAlt">คลิกไม่ได้หรือบัค? ลองวิธีอื่น</span>
+        <span onclick="openMethod2()" style="font-family:'Rajdhani',sans-serif;font-size:0.85rem;color:#5030aa;text-decoration:underline;cursor:pointer;" id="unlockAlt">คลิกไม่ได้หรือบัค? ลองวิธีอื่น</span>
       </div>
     </div>
 
@@ -361,7 +468,7 @@
   <!-- หัวข้อเว็บ -->
   <div class="header">
     <div class="logo">UG<span>Hub</span></div>
-    <div class="tagline">// key system v1.0 — ระบบคีย์อัตโนมัติ</div>
+    <div class="tagline">// key system v2.5 — ระบบคีย์อัตโนมัติ</div>
   </div>
 
   <!-- การ์ดกล่องสคริปต์ (เหมือนในรูป) -->
@@ -540,15 +647,24 @@
 // ║  ✏️  แก้ได้ทั้งหมด — อยู่ตรงนี้ที่เดียวเลย               ║
 // ╚═══════════════════════════════════════════════════════════════╝
 
+// ── เปิด/ปิดเว็บ ──────────────────────────────────────────────
+const SITE_ENABLED      = true;    // true = เปิดเว็บ | false = ปิดเว็บ
+const SITE_CLOSED_MSG   = "เว็บปิดให้บริการชั่วคราว";   // หัวข้อหน้าปิด
+const SITE_CLOSED_DESC  = "กรุณากลับมาใหม่ในภายหลัง";  // คำอธิบายหน้าปิด
+const SITE_DISCORD_URL  = "https://discord.gg/cysSFP5MK";  // 💬 ลิงก์ Discord ติดต่อ
+const SITE_OPEN_TIME    = "";
+// ☝️ ใส่เวลาที่จะเปิดเว็บอัตโนมัติ เช่น "2025-06-10T18:00:00"
+//    ถ้าไม่ต้องการตั้งเวลาให้เว้นว่างไว้ ""
+
 // ── หน้าเว็บ ──────────────────────────────────────────────────
 const SITE_TITLE    = "UG Hub";          // ชื่อที่แสดงบนหัวเว็บ (แท็บ browser)
-const SITE_TAGLINE  = "key system v1.0 — ระบบคีย์อัตโนมัติ"; // คำใต้โลโก้
+const SITE_TAGLINE  = "key system v2.6 — ระบบคีย์อัตโนมัติ"; // คำใต้โลโก้
 const FOOTER_TEXT   = "© 2025 UG Hub — All rights reserved";  // ข้อความ footer
 
 // ── ระบบ Bypass ───────────────────────────────────────────────
 const BYPASS_URL    = "https://www.youtube.com"; // 🌐 ลิงก์ที่จะให้ผู้ใช้ไปก่อนรับคีย์
 const WAIT_SECONDS  = 5;   // ⏱ ต้องอยู่ในลิงก์กี่วินาที
-const MIN_SECONDS   = 3;   // ⚠️ ถ้ากลับมาก่อนกี่วิถือว่าเร็วเกิน
+const MIN_SECONDS   = 5;   // ⚠️ ถ้ากลับมาก่อนกี่วิถือว่าเร็วเกิน
 
 // ── ระบบคีย์ ──────────────────────────────────────────────────
 const KEY_EXPIRE_HOURS = 24; // ⏱ คีย์หมดอายุกี่ชั่วโมง (เช่น 4, 12, 24, 48)
@@ -559,6 +675,17 @@ const SCRIPT_CODE     = `loadstring(game:HttpGet("https://loader.example.com/scr
 // ☝️ เปลี่ยนเป็นโค้ดที่อยากให้คัดลอกได้เลย
 const SCRIPT_NOTE_1   = "-- คัดลอกห้ามกดแปลภาษานะครับ";  // หมายเหตุบรรทัด 1
 const SCRIPT_NOTE_2   = "-- สามารถนำไปใส่ตัวรันเล่นได้เลย"; // หมายเหตุบรรทัด 2
+
+// ── วิธีปลดล็อคแบบที่ 2 (กด "ลองวิธีอื่น") ───────────────────
+const METHOD2_TITLE = "ปลดล็อคสคริปต์";
+const METHOD2_DESC  = "กรุณากดไลค์คลิป เพื่อรับสคริปต์ฟรี";
+const METHOD2_CLIPS = [
+  { label: "กดไลค์คลิป 1", url: "https://www.youtube.com" }, // เปลี่ยน URL ได้
+  { label: "กดไลค์คลิป 2", url: "https://www.youtube.com" },
+  { label: "กดไลค์คลิป 3", url: "https://www.youtube.com" },
+  { label: "กดไลค์คลิป 4", url: "https://www.youtube.com" },
+  { label: "กดไลค์คลิป 5", url: "https://www.youtube.com" },
+];
 
 // ── ข้อความในหน้าปลดล็อค ─────────────────────────────────────
 const UNLOCK_TITLE  = "ปลดล็อคสคริปต์";           // หัวข้อหน้าปลดล็อค
@@ -620,46 +747,66 @@ function cleanExpired() {
 
 // --- ระบบหน้าปลดล็อค ---
 
-let unlockOpened   = false;
-let unlockOpenTime = 0;
-let unlockDone     = false;
-let unlockTimer    = null;
+let unlockOpened    = false;
+let unlockOpenTime  = 0;
+let unlockDone      = false;
+let unlockTimer     = null;
+let timeOnBypassTab = 0; // เวลาสะสมที่อยู่ใน tab ลิงก์จริงๆ
+let bypassTabRef    = null;
 
-// สลับ state ในการ์ด
 function showState(name) {
   document.getElementById("stateUnlock").style.display   = name === "unlock"   ? "block" : "none";
   document.getElementById("stateChecking").style.display = name === "checking" ? "block" : "none";
   document.getElementById("stateError").style.display    = name === "error"    ? "block" : "none";
 }
 
-// กดปุ่มปลดล็อค
 function startUnlock() {
-  unlockOpened   = true;
-  unlockOpenTime = Date.now();
-  unlockDone     = false;
+  unlockOpened    = true;
+  unlockOpenTime  = Date.now();
+  unlockDone      = false;
+  timeOnBypassTab = 0;
 
-  window.open(BYPASS_URL, "_blank");
-  // ยังไม่เปลี่ยน state — รอให้กลับมาก่อน
-}
+  bypassTabRef = window.open(BYPASS_URL, "_blank");
 
-// เมื่อกลับมาที่หน้านี้
-document.addEventListener("visibilitychange", function() {
-  if (!unlockOpened || unlockDone) return;
-  if (document.visibilityState === "visible") {
-    const elapsed = Date.now() - unlockOpenTime;
+  // นับเวลาเฉพาะตอนที่ผู้ใช้ยังอยู่ใน tab นั้น
+  // โดยใช้ blur/focus ของ window นี้เป็นตัวตรวจ
+  // (ถ้า window นี้ blur = ผู้ใช้ไปอยู่ tab อื่น = นับ)
+  // (ถ้า window นี้ focus กลับมา = ออกจาก tab นั้น = หยุดนับ)
 
-    if (elapsed < MIN_SECONDS * 1000) {
-      // กลับมาเร็วเกิน → state Error
+  let countingStart = null;
+
+  function onBlur() {
+    // ผู้ใช้ออกจากหน้านี้ → เริ่มนับ (น่าจะไปอยู่ tab ลิงก์)
+    if (!unlockDone) countingStart = Date.now();
+  }
+
+  function onFocus() {
+    // ผู้ใช้กลับมาหน้านี้ → หยุดนับ สะสมเวลา
+    if (countingStart !== null) {
+      timeOnBypassTab += Date.now() - countingStart;
+      countingStart = null;
+    }
+
+    if (!unlockOpened || unlockDone) return;
+
+    if (timeOnBypassTab < MIN_SECONDS * 1000) {
+      // อยู่ไม่ครบ → Error
       showState("error");
     } else {
-      // อยู่ครบ → state Checking + progress bar
+      // อยู่ครบ → Checking
       showState("checking");
       startCheckingProgress();
     }
-  }
-});
 
-// progress bar "กำลังเช็คความถูกต้อง"
+    // ถอด listener แล้ว
+    window.removeEventListener("blur", onBlur);
+    window.removeEventListener("focus", onFocus);
+  }
+
+  window.addEventListener("blur", onBlur);
+  window.addEventListener("focus", onFocus);
+}
+
 function startCheckingProgress() {
   let elapsed = 0;
   const TOTAL = WAIT_SECONDS * 1000;
@@ -670,7 +817,7 @@ function startCheckingProgress() {
   clearInterval(unlockTimer);
   unlockTimer = setInterval(() => {
     elapsed += TICK;
-    const pct = Math.min((elapsed / TOTAL) * 100, 100);
+    const pct     = Math.min((elapsed / TOTAL) * 100, 100);
     const secLeft = Math.max(0, Math.ceil((TOTAL - elapsed) / 1000));
 
     document.getElementById("unlockBar").style.width = pct + "%";
@@ -679,22 +826,20 @@ function startCheckingProgress() {
     if (elapsed >= TOTAL) {
       clearInterval(unlockTimer);
       unlockDone = true;
-      // เข้าเว็บหลัก
       setTimeout(() => enterMainSite(), 600);
     }
   }, TICK);
 }
 
-// รีเซ็ตกลับไปหน้าปลดล็อค
 function resetUnlock() {
-  unlockOpened = false;
-  unlockDone   = false;
+  unlockOpened    = false;
+  unlockDone      = false;
+  timeOnBypassTab = 0;
   clearInterval(unlockTimer);
   document.getElementById("unlockBar").style.width = "0%";
   showState("unlock");
 }
 
-// เข้าเว็บหลัก (fade out หน้าปลดล็อค)
 function enterMainSite() {
   const screen = document.getElementById("unlockScreen");
   screen.style.transition = "opacity 0.5s";
@@ -952,6 +1097,101 @@ function getYoutubeEmbedUrl(url) {
   if (shorts) videoId = shorts[1];
 
   return videoId ? "https://www.youtube.com/embed/" + videoId : null;
+}
+
+// ตรวจสอบว่าเว็บเปิดหรือปิด (SITE_ENABLED)
+if (!SITE_ENABLED) {
+  const cs = document.getElementById("closedScreen");
+  cs.style.display = "flex";
+  document.getElementById("closedTitle").textContent = SITE_CLOSED_MSG;
+  document.getElementById("closedDesc").textContent  = SITE_CLOSED_DESC;
+  document.getElementById("discordBtn").href = SITE_DISCORD_URL;
+  document.getElementById("unlockScreen").style.display = "none";
+
+  // นับถอยหลังเปิดเว็บอัตโนมัติ
+  if (SITE_OPEN_TIME) {
+    const openAt = new Date(SITE_OPEN_TIME).getTime();
+    document.getElementById("closedCountdownWrap").style.display = "block";
+    const cdTimer = setInterval(() => {
+      const left = openAt - Date.now();
+      if (left <= 0) {
+        clearInterval(cdTimer);
+        // เปิดเว็บอัตโนมัติ
+        cs.style.transition = "opacity 0.5s";
+        cs.style.opacity = "0";
+        setTimeout(() => cs.style.display = "none", 500);
+        return;
+      }
+      const h = Math.floor(left / 3600000);
+      const m = Math.floor((left % 3600000) / 60000);
+      const s = Math.floor((left % 60000) / 1000);
+      document.getElementById("closedCountdown").textContent =
+        String(h).padStart(2,"0") + ":" + String(m).padStart(2,"0") + ":" + String(s).padStart(2,"0");
+    }, 1000);
+  }
+}
+
+// --- วิธีปลดล็อคแบบที่ 2 ---
+let m2Done = [];
+
+function openMethod2() {
+  const screen = document.getElementById("method2Screen");
+  screen.style.display = "flex";
+
+  // สร้างรายการคลิป
+  document.getElementById("m2Title").textContent = METHOD2_TITLE;
+  document.getElementById("m2Desc").textContent  = METHOD2_DESC;
+
+  const list = document.getElementById("m2ClipList");
+  list.innerHTML = "";
+  m2Done = new Array(METHOD2_CLIPS.length).fill(false);
+
+  METHOD2_CLIPS.forEach((clip, i) => {
+    const row = document.createElement("div");
+    row.style.cssText = `
+      display:flex;align-items:center;justify-content:space-between;
+      background:rgba(30,0,50,0.7);border:1px solid rgba(100,0,200,0.25);
+      border-radius:10px;padding:12px 14px;
+    `;
+    row.innerHTML = `
+      <span style="font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:600;color:#e0c0ff;" id="m2label${i}">${clip.label}</span>
+      <button id="m2btn${i}" onclick="openClip(${i})" style="
+        padding:7px 16px;background:linear-gradient(135deg,#5500cc,#8800ff);
+        border:none;border-radius:8px;cursor:pointer;
+        font-family:'Rajdhani',sans-serif;font-size:0.9rem;font-weight:700;
+        color:#fff;white-space:nowrap;
+      ">ดูคลิป</button>
+    `;
+    list.appendChild(row);
+  });
+}
+
+function openClip(i) {
+  window.open(METHOD2_CLIPS[i].url, "_blank");
+
+  // รอ MIN_SECONDS วิ แล้วถือว่าดูแล้ว
+  const btn = document.getElementById("m2btn" + i);
+  btn.disabled = true;
+  btn.textContent = "⏳";
+  btn.style.background = "rgba(100,0,200,0.3)";
+
+  setTimeout(() => {
+    m2Done[i] = true;
+    btn.textContent = "✅";
+    btn.style.background = "linear-gradient(135deg,#006600,#009900)";
+
+    // ถ้าครบทุกคลิป → เข้าเว็บหลัก
+    if (m2Done.every(v => v)) {
+      setTimeout(() => {
+        document.getElementById("method2Screen").style.display = "none";
+        enterMainSite();
+      }, 800);
+    }
+  }, MIN_SECONDS * 1000);
+}
+
+function closeMethod2() {
+  document.getElementById("method2Screen").style.display = "none";
 }
 
 // เริ่มต้น: ลบคีย์หมดอายุ + ใส่ค่า config ลงหน้าเว็บ
