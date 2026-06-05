@@ -316,9 +316,17 @@
       <button class="btn btn-primary" id="linkBtn" onclick="openLink()">
         🔗 ไปยังลิงก์ภายนอก
       </button>
-      <button class="btn btn-secondary" id="verifyBtn" onclick="verifyAndGetKey()" disabled>
-        ⚡ ตรวจสอบ &amp; รับคีย์
-      </button>
+
+      <!-- Progress Bar -->
+      <div id="progressWrap" style="display:none; flex-direction:column; gap:6px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-family:var(--mono);font-size:0.72rem;color:var(--text-dim);" id="progressLabel">รอสักครู่...</span>
+          <span style="font-family:var(--mono);font-size:0.72rem;color:var(--purple-light);" id="progressSec">5s</span>
+        </div>
+        <div style="width:100%;height:8px;background:rgba(139,0,255,0.15);border-radius:99px;overflow:hidden;border:1px solid rgba(139,0,255,0.25);">
+          <div id="progressBar" style="height:100%;width:0%;border-radius:99px;background:linear-gradient(90deg,#5500cc,#aa00ff);transition:width 0.25s linear;box-shadow:0 0 8px rgba(139,0,255,0.6);"></div>
+        </div>
+      </div>
     </div>
 
     <div id="statusMsg" class="status-msg"></div>
