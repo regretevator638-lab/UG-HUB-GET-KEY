@@ -410,23 +410,27 @@
 </div>
 
 <script>
-// =====================================================================
-//  ✏️  โซนแก้ได้ — ตั้งค่าตรงนี้เท่านั้น
-// =====================================================================
+// ╔═══════════════════════════════════════════════════════════════╗
+// ║  ✏️  แก้ได้ทั้งหมด — อยู่ตรงนี้ที่เดียวเลย               ║
+// ╚═══════════════════════════════════════════════════════════════╝
 
-// 🔑 ชื่อและรหัสผ่าน Admin Panel
-const ADMIN_USER = "RWGXLC";
-const ADMIN_PASS = "12380645";
+// ── หน้าเว็บ ──────────────────────────────────────────────────
+const SITE_TITLE    = "UG Hub";          // ชื่อที่แสดงบนหัวเว็บ (แท็บ browser)
+const SITE_TAGLINE  = "key system v1.0 — ระบบคีย์อัตโนมัติ"; // คำใต้โลโก้
+const FOOTER_TEXT   = "© 2025 UG Hub — All rights reserved";  // ข้อความ footer
 
-// 🌐 ลิงก์ภายนอกที่จะให้ผู้ใช้ไปก่อนรับคีย์
-//    เปลี่ยนเป็นลิงก์ที่ต้องการได้เลย
-const BYPASS_URL = "https://www.youtube.com";
+// ── ระบบ Bypass ───────────────────────────────────────────────
+const BYPASS_URL    = "https://youtube.com/shorts/EcVexpXOenM?si=-Mt8R2_2yQBVrh6V"; // 🌐 ลิงก์ที่จะให้ผู้ใช้ไปก่อนรับคีย์
+const WAIT_SECONDS  = 5;   // ⏱ ต้องอยู่ในลิงก์กี่วินาที
+const MIN_SECONDS   = 3;   // ⚠️ ถ้ากลับมาก่อนกี่วิถือว่าเร็วเกิน
 
-// ⏱ จำนวนวินาทีที่ต้องรออยู่ในลิงก์ (ปัจจุบัน = 5 วิ)
-const WAIT_SECONDS = 5;
+// ── Admin Panel ───────────────────────────────────────────────
+const ADMIN_USER    = "RWGXLC";    // 👤 ชื่อ admin
+const ADMIN_PASS    = "12380645";  // 🔒 รหัสผ่าน admin
 
-// ⚠️ ถ้ากลับมาก่อนกี่วินาทีถือว่าเร็วเกิน (ปัจจุบัน = 3 วิ)
-const MIN_SECONDS = 3;
+// ╔═══════════════════════════════════════════════════════════════╗
+// ║  ⛔  แก้ไม่ได้ — ระบบทำงานอยู่ตรงนี้                      ║
+// ╚═══════════════════════════════════════════════════════════════╝
 
 // =====================================================================
 //  ⛔  โซนแก้ไม่ได้ — ระบบทำงานอยู่ตรงนี้
@@ -694,8 +698,12 @@ function showStatus(id, msg, type) {
   setTimeout(() => { if (el.textContent === msg) el.className = "status-msg"; }, 4000);
 }
 
-// เริ่มต้น: ลบคีย์หมดอายุ
+// เริ่มต้น: ลบคีย์หมดอายุ + ใส่ค่า config ลงหน้าเว็บ
 cleanExpired();
+document.title = SITE_TITLE + " — Key System";
+document.querySelector(".logo").innerHTML = SITE_TITLE.slice(0,-3) + "<span>" + SITE_TITLE.slice(-3) + "</span>";
+document.querySelector(".tagline").textContent = "// " + SITE_TAGLINE;
+document.querySelector(".footer").textContent = FOOTER_TEXT;
 </script>
 </body>
 </html>
