@@ -399,7 +399,6 @@
 // ======= CONFIG =======
 const ADMIN_USER = "RWGXLC";
 const ADMIN_PASS = "12380645";
-const BYPASS_URL = "https://www.youtube.com"; // เปลี่ยนลิงก์ที่นี่
 
 // ======= STORAGE =======
 function getKeys() {
@@ -431,29 +430,89 @@ function cleanExpired() {
 }
 
 // ======= BYPASS FLOW =======
-let linkOpened = false;
-let linkOpenTime = 0;
+// ✏️ แก้ลิงก์ตรงนี้ได้เลย ↓
+const BYPASS_URL = "https://www.youtube.com";
+// ✏️ ————————————————————————
+
+let linkOpened    = false;
+let linkOpenTime  = 0;
+let progressDone  = false;
+let progressTimer = null;
 
 function openLink() {
-  linkOpened = true;
+  linkOpened   = true;
   linkOpenTime = Date.now();
-  window.open(BYPASS_URL, "_blank");
-  document.getElementById("linkBtn").textContent = "✅ ไปแล้ว — รอ 3 วินาที...";
-  document.getElementById("linkBtn").disabled = true;
+  progressDone = false;
 
-  setTimeout(() => {
-    document.getElementById("verifyBtn").disabled = false;
-    document.getElementById("verifyBtn").textContent = "⚡ ตรวจสอบ & รับคีย์";
-  }, 3000);
+  window.open(BYPASS_URL, "_blank");
+
+  // ซ่อนปุ่ม แสดง progress
+  document.getElementById("linkBtn").style.display = "none";
+  document.getElementById("progressWrap").style.display = "flex";
+  document.getElementById("progressBar").style.width = "0%";
+  document.getElementById("progressLabel").textContent = "กรุณารออยู่ในหน้าเว็บนั้น 5 วินาที...";
+  document.getElementById("progressSec").textContent = "5s";
+
+  let elapsed = 0;
+  const TOTAL = 5000;
+  const TICK  = 100;
+
+  clearInterval(progressTimer);
+  progressTimer = setInterval(() => {
+    // ตรวจว่า tab ยังโฟกัสอยู่ไหม (ถ้าไม่ = ออกไปแล้ว ดี)
+    elapsed += TICK;
+    const pct = Math.min((elapsed / TOTAL) * 100, 100);
+    const secLeft = Math.max(0, Math.ceil((TOTAL - elapsed) / 1000));
+
+    document.getElementById("progressBar").style.width = pct + "%";
+    document.getElementById("progressSec").textContent = secLeft + "s";
+
+    if (elapsed >= TOTAL) {
+      clearInterval(progressTimer);
+      progressDone = true;
+      document.getElementById("progressLabel").textContent = "✅ ครบแล้ว! กลับมาหน้านี้แล้วรับคีย์ได้เลย";
+      document.getElementById("progressSec").textContent = "0s";
+      // แสดงปุ่มรับคีย์
+      const vb = document.createElement("button");
+      vb.className = "btn btn-secondary";
+      vb.style.marginTop = "8px";
+      vb.textContent = "⚡ รับคีย์";
+      vb.onclick = verifyAndGetKey;
+      document.getElementById("progressWrap").appendChild(vb);
+    }
+  }, TICK);
 }
 
-function verifyAndGetKey() {
-  if (!linkOpened) { showStatus("statusMsg", "กรุณากดไปยังลิงก์ภายนอกก่อน", "error"); return; }
-  const elapsed = Date.now() - linkOpenTime;
-  if (elapsed < 3000) {
-    showStatus("statusMsg", "กรุณารออยู่ในลิงก์อย่างน้อย 3 วินาที", "error"); return;
-  }
+// ถ้าคนกลับมาเร็วเกิน 3 วิ → error
+document.addEventListener("visibilitychange", function() {
+  if (!linkOpened || progressDone) return;
+  if (document.visibilityState === "visible") {
+    const elapsed = Date.now() - linkOpenTime;
+    if (elapsed < 3000) {
+      clearInterval(progressTimer);
+      document.getElementById("progressBar").style.width = "0%";
+      document.getElementById("progressBar").style.background = "linear-gradient(90deg,#cc0000,#ff4040)";
+      document.getElementById("progressLabel").textContent = "❌ ข้อผิดพลาด: กลับมาเร็วเกินไป!";
+      document.getElementById("progressSec").textContent = "";
+      showStatus("statusMsg", "⚠ กรุณาไปอยู่ในเว็บที่เตรียมไว้อย่างน้อย 3 วินาที แล้วลองใหม่", "error");
 
+      // รีเซ็ตให้ลองใหม่ได้
+      setTimeout(() => {
+        linkOpened = false;
+        document.getElementById("progressBar").style.background = "linear-gradient(90deg,#5500cc,#aa00ff)";
+        document.getElementById("progressBar").style.width = "0%";
+        document.getElementById("progressWrap").style.display = "none";
+        document.getElementById("linkBtn").style.display = "flex";
+        document.getElementById("linkBtn").textContent = "🔗 ลองอีกครั้ง";
+      }, 3000);
+    }
+  }
+});
+
+function verifyAndGetKey() {
+  if (!progressDone) {
+    showStatus("statusMsg", "กรุณารอให้ progress bar เต็มก่อน", "error"); return;
+  }
   cleanExpired();
   const newKey = genKeyString();
   const exp = getTodayMidnight();
