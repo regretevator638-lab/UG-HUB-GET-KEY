@@ -5,16 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>UG Hub — Key System</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+
+<!-- =====================================================================
+  ⛔  โซนแก้ไม่ได้ — CSS สไตล์หน้าเว็บ
+     ถ้าแก้อาจทำให้หน้าตาพัง
+===================================================================== -->
 <style>
+  /* สีหลักทั้งหมดของเว็บ */
   :root {
-    --purple-deep: #0d0010;
+    --purple-deep: #0d0010;   /* พื้นหลังดำม่วงเข้มมาก */
     --purple-dark: #120018;
     --purple-mid:  #2a0040;
-    --purple-glow: #8b00ff;
+    --purple-glow: #8b00ff;   /* สีม่วงเรืองแสง */
     --purple-light:#c060ff;
-    --purple-neon: #df80ff;
-    --text:        #e8c8ff;
-    --text-dim:    #9060aa;
+    --purple-neon: #df80ff;   /* สีม่วงสว่าง */
+    --text:        #e8c8ff;   /* สีตัวอักษรหลัก */
+    --text-dim:    #9060aa;   /* สีตัวอักษรจาง */
     --mono:        'Share Tech Mono', monospace;
     --sans:        'Rajdhani', sans-serif;
   }
@@ -30,7 +36,7 @@
     position: relative;
   }
 
-  /* === ANIMATED BG === */
+  /* กริดพื้นหลังเคลื่อนไหว */
   .bg-grid {
     position: fixed; inset: 0; z-index: 0;
     background-image:
@@ -44,6 +50,7 @@
     to   { background-position: 40px 40px; }
   }
 
+  /* วงแสงม่วงลอยพื้นหลัง */
   .bg-orb {
     position: fixed; border-radius: 50%; filter: blur(80px); z-index: 0;
     animation: orbFloat 8s ease-in-out infinite alternate;
@@ -56,13 +63,12 @@
     to   { transform: translate(30px,20px) scale(1.1); }
   }
 
-  /* SCANLINES */
+  /* เส้น scanline ทับหน้าจอ */
   body::after {
     content:''; position:fixed; inset:0; z-index:1; pointer-events:none;
     background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
   }
 
-  /* === LAYOUT === */
   .container {
     position: relative; z-index: 2;
     max-width: 520px; margin: 0 auto;
@@ -70,7 +76,7 @@
     display: flex; flex-direction: column; align-items: center; gap: 28px;
   }
 
-  /* === HEADER === */
+  /* หัวข้อบนสุด */
   .header { text-align: center; }
   .logo {
     font-family: var(--mono);
@@ -90,7 +96,7 @@
     font-family: var(--mono); letter-spacing: 0.08em;
   }
 
-  /* === CARD === */
+  /* กล่องการ์ด */
   .card {
     width: 100%;
     background: linear-gradient(135deg, rgba(30,0,50,0.85), rgba(15,0,25,0.9));
@@ -106,6 +112,7 @@
     background: linear-gradient(90deg, transparent, var(--purple-light), transparent);
   }
 
+  /* หัวข้อในการ์ด */
   .card-title {
     font-family: var(--mono); font-size: 0.75rem;
     color: var(--purple-light); letter-spacing: 0.15em; text-transform: uppercase;
@@ -113,7 +120,7 @@
   }
   .card-title::before { content: '> '; color: var(--purple-glow); }
 
-  /* === STEP FLOW === */
+  /* ขั้นตอน 1-2-3 */
   .step {
     display: flex; align-items: flex-start; gap: 14px;
     padding: 12px 0;
@@ -130,7 +137,7 @@
   .step-text { font-size: 0.95rem; color: var(--text); line-height: 1.5; }
   .step-text small { display: block; color: var(--text-dim); font-size: 0.78rem; margin-top: 2px; font-family: var(--mono); }
 
-  /* === KEY DISPLAY === */
+  /* กล่องแสดงคีย์ */
   .key-box {
     background: rgba(0,0,0,0.5);
     border: 1px solid rgba(139,0,255,0.4);
@@ -145,7 +152,7 @@
   }
   .key-text.placeholder { color: var(--text-dim); font-style: italic; }
 
-  /* === BUTTONS === */
+  /* ปุ่มทั่วไป */
   .btn {
     display: inline-flex; align-items: center; justify-content: center; gap: 8px;
     padding: 13px 24px; border-radius: 10px; border: none; cursor: pointer;
@@ -153,6 +160,7 @@
     letter-spacing: 0.05em; transition: all 0.2s ease;
     text-decoration: none; width: 100%;
   }
+  /* ปุ่มหลัก (ม่วงเข้ม) */
   .btn-primary {
     background: linear-gradient(135deg, #5500cc, #8800ff, #aa00ff);
     color: #fff;
@@ -163,6 +171,7 @@
     box-shadow: 0 8px 30px rgba(139,0,255,0.6), 0 0 20px rgba(180,0,255,0.3);
   }
   .btn-primary:active { transform: translateY(0); }
+  /* ปุ่มรอง (ขอบม่วง) */
   .btn-secondary {
     background: rgba(139,0,255,0.15);
     border: 1px solid rgba(139,0,255,0.4);
@@ -177,7 +186,7 @@
     box-shadow: none !important;
   }
 
-  /* === COUNTDOWN === */
+  /* นับถอยหลังหมดอายุ */
   .expire-badge {
     display: inline-flex; align-items: center; gap: 6px;
     background: rgba(139,0,255,0.15); border: 1px solid rgba(139,0,255,0.3);
@@ -193,7 +202,7 @@
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
   .expire-time { color: var(--purple-light); font-weight: bold; }
 
-  /* === STATUS MSG === */
+  /* ข้อความแจ้งสถานะ (สำเร็จ/ผิดพลาด) */
   .status-msg {
     font-family: var(--mono); font-size: 0.8rem; text-align: center;
     padding: 8px 12px; border-radius: 8px; margin-top: 8px;
@@ -208,13 +217,13 @@
     border: 1px solid rgba(255,50,50,0.25); color: #ff6060;
   }
 
-  /* === FOOTER === */
+  /* footer */
   .footer {
     font-family: var(--mono); font-size: 0.7rem; color: var(--text-dim);
     text-align: center; letter-spacing: 0.08em;
   }
 
-  /* === ADMIN PANEL === */
+  /* ปุ่มเปิด Admin Panel */
   .admin-toggle {
     font-family: var(--mono); font-size: 0.65rem; color: rgba(139,0,255,0.3);
     cursor: pointer; text-align: center; user-select: none;
@@ -223,14 +232,11 @@
   }
   .admin-toggle:hover { color: var(--purple-glow); }
 
-  .admin-panel {
-    display: none; width: 100%;
-  }
+  /* Admin Panel (ซ่อนอยู่ กดถึงจะเปิด) */
+  .admin-panel { display: none; width: 100%; }
   .admin-panel.open { display: block; }
 
-  .input-row {
-    display: flex; gap: 8px; margin-bottom: 10px;
-  }
+  .input-row { display: flex; gap: 8px; margin-bottom: 10px; }
   .inp {
     flex: 1; background: rgba(0,0,0,0.5);
     border: 1px solid rgba(139,0,255,0.35); border-radius: 8px;
@@ -241,6 +247,7 @@
   .inp:focus { border-color: var(--purple-glow); box-shadow: 0 0 10px rgba(139,0,255,0.25); }
   .inp::placeholder { color: var(--text-dim); }
 
+  /* รายการคีย์ใน Admin */
   .admin-keys-list {
     max-height: 200px; overflow-y: auto;
     background: rgba(0,0,0,0.4); border-radius: 8px;
@@ -273,6 +280,8 @@
 </style>
 </head>
 <body>
+
+<!-- พื้นหลังเคลื่อนไหว -->
 <div class="bg-grid"></div>
 <div class="bg-orb a"></div>
 <div class="bg-orb b"></div>
@@ -280,13 +289,13 @@
 
 <div class="container">
 
-  <!-- HEADER -->
+  <!-- หัวข้อเว็บ -->
   <div class="header">
     <div class="logo">UG<span>Hub</span></div>
     <div class="tagline">// key system v1.0 — ระบบคีย์อัตโนมัติ</div>
   </div>
 
-  <!-- GET KEY CARD -->
+  <!-- การ์ดรับคีย์ฟรี -->
   <div class="card">
     <div class="card-title">รับคีย์ฟรี</div>
 
@@ -300,8 +309,8 @@
     <div class="step">
       <div class="step-num">2</div>
       <div class="step-text">
-        กลับมาหน้านี้แล้วกด "ตรวจสอบ & รับคีย์"
-        <small>// ระบบจะสร้างคีย์ให้อัตโนมัติ</small>
+        รอให้ progress bar เต็ม (5 วินาที)
+        <small>// ถ้ากลับมาเร็วเกินไปจะขึ้น error</small>
       </div>
     </div>
     <div class="step">
@@ -313,11 +322,12 @@
     </div>
 
     <div style="margin-top:18px; display:flex; flex-direction:column; gap:10px;">
+      <!-- ปุ่มไปลิงก์ภายนอก -->
       <button class="btn btn-primary" id="linkBtn" onclick="openLink()">
         🔗 ไปยังลิงก์ภายนอก
       </button>
 
-      <!-- Progress Bar -->
+      <!-- progress bar (ซ่อนอยู่ โผล่หลังกดปุ่ม) -->
       <div id="progressWrap" style="display:none; flex-direction:column; gap:6px;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <span style="font-family:var(--mono);font-size:0.72rem;color:var(--text-dim);" id="progressLabel">รอสักครู่...</span>
@@ -329,8 +339,10 @@
       </div>
     </div>
 
+    <!-- ข้อความสถานะ -->
     <div id="statusMsg" class="status-msg"></div>
 
+    <!-- กล่องแสดงคีย์ (ซ่อนอยู่ โผล่หลังรับคีย์) -->
     <div id="keySection" style="display:none; margin-top:16px;">
       <div class="card-title" style="margin-bottom:10px;">คีย์ของคุณ</div>
       <div class="key-box">
@@ -344,7 +356,7 @@
     </div>
   </div>
 
-  <!-- VERIFY KEY CARD -->
+  <!-- การ์ดตรวจสอบคีย์ -->
   <div class="card">
     <div class="card-title">ตรวจสอบคีย์</div>
     <div class="input-row">
@@ -354,15 +366,16 @@
     <div id="checkResult" class="status-msg"></div>
   </div>
 
-  <!-- ADMIN TOGGLE -->
+  <!-- ปุ่มเปิด Admin (กดเพื่อเปิด/ปิด) -->
   <div class="admin-toggle" onclick="toggleAdmin()">[ ADMIN ]</div>
 
-  <!-- ADMIN PANEL -->
+  <!-- Admin Panel -->
   <div class="admin-panel" id="adminPanel">
     <div class="card">
       <div class="card-title">Admin Panel</div>
 
-      <div id="adminLogin" style="">
+      <!-- หน้า login admin -->
+      <div id="adminLogin">
         <div class="input-row">
           <input class="inp" id="adminUser" placeholder="Username" />
         </div>
@@ -373,6 +386,7 @@
         <div id="loginMsg" class="status-msg"></div>
       </div>
 
+      <!-- dashboard admin (โผล่หลัง login สำเร็จ) -->
       <div id="adminDash" style="display:none;">
         <div class="badge-row" id="adminBadges"></div>
 
@@ -396,22 +410,45 @@
 </div>
 
 <script>
-// ======= CONFIG =======
+// =====================================================================
+//  ✏️  โซนแก้ได้ — ตั้งค่าตรงนี้เท่านั้น
+// =====================================================================
+
+// 🔑 ชื่อและรหัสผ่าน Admin Panel
 const ADMIN_USER = "RWGXLC";
 const ADMIN_PASS = "12380645";
 
-// ======= STORAGE =======
+// 🌐 ลิงก์ภายนอกที่จะให้ผู้ใช้ไปก่อนรับคีย์
+//    เปลี่ยนเป็นลิงก์ที่ต้องการได้เลย
+const BYPASS_URL = "https://www.youtube.com";
+
+// ⏱ จำนวนวินาทีที่ต้องรออยู่ในลิงก์ (ปัจจุบัน = 5 วิ)
+const WAIT_SECONDS = 5;
+
+// ⚠️ ถ้ากลับมาก่อนกี่วินาทีถือว่าเร็วเกิน (ปัจจุบัน = 3 วิ)
+const MIN_SECONDS = 3;
+
+// =====================================================================
+//  ⛔  โซนแก้ไม่ได้ — ระบบทำงานอยู่ตรงนี้
+// =====================================================================
+
+// --- จัดการ Storage (เก็บคีย์ใน localStorage) ---
+
+// ดึงคีย์ทั้งหมดจาก localStorage
 function getKeys() {
   try { return JSON.parse(localStorage.getItem("ug_keys") || "{}"); } catch { return {}; }
 }
+// บันทึกคีย์ลง localStorage
 function saveKeys(k) { localStorage.setItem("ug_keys", JSON.stringify(k)); }
 
+// คำนวณเวลาเที่ยงคืนของวันนี้ (คีย์หมดอายุตอนนี้)
 function getTodayMidnight() {
   const d = new Date();
   d.setHours(24, 0, 0, 0);
   return d.getTime();
 }
 
+// สร้างคีย์ random รูปแบบ xxxx-xxxx-xxxx-xxxx
 function genKeyString() {
   const chars = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   let k = "";
@@ -419,6 +456,7 @@ function genKeyString() {
   return k.slice(0,8) + "-" + k.slice(8,16) + "-" + k.slice(16,24) + "-" + k.slice(24,32);
 }
 
+// ลบคีย์ที่หมดอายุออก
 function cleanExpired() {
   const keys = getKeys();
   const now = Date.now();
@@ -429,50 +467,49 @@ function cleanExpired() {
   if (changed) saveKeys(keys);
 }
 
-// ======= BYPASS FLOW =======
-// ✏️ แก้ลิงก์ตรงนี้ได้เลย ↓
-const BYPASS_URL = "https://www.youtube.com";
-// ✏️ ————————————————————————
+// --- ระบบ Bypass (progress bar) ---
 
 let linkOpened    = false;
 let linkOpenTime  = 0;
 let progressDone  = false;
 let progressTimer = null;
 
+// เมื่อกดปุ่มไปลิงก์ภายนอก
 function openLink() {
   linkOpened   = true;
   linkOpenTime = Date.now();
   progressDone = false;
 
+  // เปิดลิงก์ใน tab ใหม่
   window.open(BYPASS_URL, "_blank");
 
-  // ซ่อนปุ่ม แสดง progress
+  // ซ่อนปุ่ม แสดง progress bar
   document.getElementById("linkBtn").style.display = "none";
   document.getElementById("progressWrap").style.display = "flex";
   document.getElementById("progressBar").style.width = "0%";
-  document.getElementById("progressLabel").textContent = "กรุณารออยู่ในหน้าเว็บนั้น 5 วินาที...";
-  document.getElementById("progressSec").textContent = "5s";
+  document.getElementById("progressLabel").textContent = "กรุณารออยู่ในหน้าเว็บนั้น " + WAIT_SECONDS + " วินาที...";
+  document.getElementById("progressSec").textContent = WAIT_SECONDS + "s";
 
   let elapsed = 0;
-  const TOTAL = 5000;
+  const TOTAL = WAIT_SECONDS * 1000;
   const TICK  = 100;
 
   clearInterval(progressTimer);
   progressTimer = setInterval(() => {
-    // ตรวจว่า tab ยังโฟกัสอยู่ไหม (ถ้าไม่ = ออกไปแล้ว ดี)
     elapsed += TICK;
     const pct = Math.min((elapsed / TOTAL) * 100, 100);
     const secLeft = Math.max(0, Math.ceil((TOTAL - elapsed) / 1000));
 
+    // อัปเดต progress bar
     document.getElementById("progressBar").style.width = pct + "%";
     document.getElementById("progressSec").textContent = secLeft + "s";
 
     if (elapsed >= TOTAL) {
+      // ครบเวลา → แสดงปุ่มรับคีย์
       clearInterval(progressTimer);
       progressDone = true;
       document.getElementById("progressLabel").textContent = "✅ ครบแล้ว! กลับมาหน้านี้แล้วรับคีย์ได้เลย";
       document.getElementById("progressSec").textContent = "0s";
-      // แสดงปุ่มรับคีย์
       const vb = document.createElement("button");
       vb.className = "btn btn-secondary";
       vb.style.marginTop = "8px";
@@ -483,20 +520,21 @@ function openLink() {
   }, TICK);
 }
 
-// ถ้าคนกลับมาเร็วเกิน 3 วิ → error
+// ตรวจจับว่ากลับมาเร็วเกินไปหรือเปล่า
 document.addEventListener("visibilitychange", function() {
   if (!linkOpened || progressDone) return;
   if (document.visibilityState === "visible") {
     const elapsed = Date.now() - linkOpenTime;
-    if (elapsed < 3000) {
+    if (elapsed < MIN_SECONDS * 1000) {
+      // กลับมาเร็วเกิน → error
       clearInterval(progressTimer);
       document.getElementById("progressBar").style.width = "0%";
       document.getElementById("progressBar").style.background = "linear-gradient(90deg,#cc0000,#ff4040)";
       document.getElementById("progressLabel").textContent = "❌ ข้อผิดพลาด: กลับมาเร็วเกินไป!";
       document.getElementById("progressSec").textContent = "";
-      showStatus("statusMsg", "⚠ กรุณาไปอยู่ในเว็บที่เตรียมไว้อย่างน้อย 3 วินาที แล้วลองใหม่", "error");
+      showStatus("statusMsg", "⚠ กรุณาไปอยู่ในเว็บที่เตรียมไว้อย่างน้อย " + MIN_SECONDS + " วินาที แล้วลองใหม่", "error");
 
-      // รีเซ็ตให้ลองใหม่ได้
+      // รีเซ็ตให้ลองใหม่ได้หลัง 3 วิ
       setTimeout(() => {
         linkOpened = false;
         document.getElementById("progressBar").style.background = "linear-gradient(90deg,#5500cc,#aa00ff)";
@@ -509,6 +547,7 @@ document.addEventListener("visibilitychange", function() {
   }
 });
 
+// สร้างคีย์และแสดงผลหลัง progress bar เต็ม
 function verifyAndGetKey() {
   if (!progressDone) {
     showStatus("statusMsg", "กรุณารอให้ progress bar เต็มก่อน", "error"); return;
@@ -526,12 +565,13 @@ function verifyAndGetKey() {
   startCountdown(exp);
 }
 
+// คัดลอกคีย์ที่ได้รับ
 function copyKey() {
   const k = document.getElementById("keyDisplay").textContent;
   navigator.clipboard.writeText(k).then(() => showStatus("statusMsg", "📋 คัดลอกแล้ว!", "success"));
 }
 
-// ======= COUNTDOWN =======
+// --- นับถอยหลังหมดอายุ ---
 let countdownInterval = null;
 function startCountdown(exp) {
   if (countdownInterval) clearInterval(countdownInterval);
@@ -549,7 +589,7 @@ function startCountdown(exp) {
   }, 1000);
 }
 
-// ======= CHECK KEY =======
+// --- ตรวจสอบคีย์ ---
 function checkKey() {
   cleanExpired();
   const inp = document.getElementById("checkInp").value.trim();
@@ -564,14 +604,15 @@ function checkKey() {
   }
 }
 
-// ======= ADMIN =======
+// --- Admin Panel ---
 let adminLoggedIn = false;
 
+// เปิด/ปิด Admin Panel
 function toggleAdmin() {
-  const p = document.getElementById("adminPanel");
-  p.classList.toggle("open");
+  document.getElementById("adminPanel").classList.toggle("open");
 }
 
+// login admin
 function adminLogin() {
   const u = document.getElementById("adminUser").value;
   const p = document.getElementById("adminPass").value;
@@ -585,6 +626,7 @@ function adminLogin() {
   }
 }
 
+// สร้างคีย์ใหม่ (admin)
 function adminGenKey() {
   cleanExpired();
   const newKey = genKeyString();
@@ -597,16 +639,19 @@ function adminGenKey() {
   renderAdminKeys();
 }
 
+// คัดลอกคีย์ที่สร้างโดย admin
 function copyAdminKey() {
   const k = document.getElementById("adminKeyText").textContent;
   navigator.clipboard.writeText(k);
 }
 
+// ลบคีย์หมดอายุทั้งหมด
 function adminClearExpired() {
   cleanExpired();
   renderAdminKeys();
 }
 
+// ลบคีย์รายตัว
 function deleteKey(k) {
   const keys = getKeys();
   delete keys[k];
@@ -614,6 +659,7 @@ function deleteKey(k) {
   renderAdminKeys();
 }
 
+// แสดงรายการคีย์ทั้งหมดใน admin
 function renderAdminKeys() {
   cleanExpired();
   const keys = getKeys();
@@ -640,7 +686,7 @@ function renderAdminKeys() {
   }).join("");
 }
 
-// ======= UTIL =======
+// แสดงข้อความสถานะแล้วหายไปเอง 4 วิ
 function showStatus(id, msg, type) {
   const el = document.getElementById(id);
   el.textContent = msg;
@@ -648,7 +694,7 @@ function showStatus(id, msg, type) {
   setTimeout(() => { if (el.textContent === msg) el.className = "status-msg"; }, 4000);
 }
 
-// init
+// เริ่มต้น: ลบคีย์หมดอายุ
 cleanExpired();
 </script>
 </body>
