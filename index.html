@@ -317,9 +317,15 @@
 
 <!-- หน้าปิดเว็บ (แสดงเมื่อ SITE_ENABLED = false) -->
 <div id="closedScreen" style="
-  display:none; position:fixed; inset:0; z-index:99999;
+  display:none;
+  position:fixed;
+  top:0; left:0;
+  width:100vw; height:100vh;
+  z-index:99999;
   background:#08000f;
-  align-items:center; justify-content:center;
+  align-items:center;
+  justify-content:center;
+  touch-action:none;
 ">
   <div style="position:absolute;width:400px;height:400px;border-radius:50%;background:rgba(80,0,160,0.2);filter:blur(90px);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;"></div>
   <div style="
@@ -358,10 +364,16 @@
 
 <!-- หน้าวิธีปลดล็อคแบบที่ 2 -->
 <div id="method2Screen" style="
-  display:none; position:fixed; inset:0; z-index:9998;
+  display:none;
+  position:fixed;
+  top:0; left:0;
+  width:100vw; height:100vh;
+  z-index:9998;
   background:#08000f;
-  align-items:center; justify-content:center;
+  align-items:center;
+  justify-content:center;
   overflow-y:auto;
+  touch-action:pan-y;
 ">
   <div style="position:absolute;width:400px;height:400px;border-radius:50%;background:rgba(80,0,160,0.2);filter:blur(90px);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;"></div>
   <div style="
@@ -392,9 +404,16 @@
      หน้าปลดล็อค (แสดงก่อนเข้าเว็บหลัก)
      ════════════════════════════════════════════════ -->
 <div id="unlockScreen" style="
-  position:fixed; inset:0; z-index:9999;
+  position:fixed;
+  top:0; left:0;
+  width:100vw; height:100vh;
+  z-index:9999;
   background:#08000f;
-  display:flex; align-items:center; justify-content:center;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  touch-action:none;
 ">
   <div style="position:absolute;width:400px;height:400px;border-radius:50%;background:rgba(80,0,160,0.2);filter:blur(90px);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;"></div>
 
@@ -658,7 +677,7 @@ const SITE_OPEN_TIME    = "";
 
 // ── หน้าเว็บ ──────────────────────────────────────────────────
 const SITE_TITLE    = "UG Hub";          // ชื่อที่แสดงบนหัวเว็บ (แท็บ browser)
-const SITE_TAGLINE  = "key system v2.5 — ระบบคีย์อัตโนมัติ"; // คำใต้โลโก้
+const SITE_TAGLINE  = "key system v2.8 — ระบบคีย์อัตโนมัติ"; // คำใต้โลโก้
 const FOOTER_TEXT   = "© 2025 UG Hub — All rights reserved";  // ข้อความ footer
 
 // ── ระบบ Bypass ───────────────────────────────────────────────
@@ -667,11 +686,11 @@ const WAIT_SECONDS  = 5;   // ⏱ ต้องอยู่ในลิงก์�
 const MIN_SECONDS   = 5;   // ⚠️ ถ้ากลับมาก่อนกี่วิถือว่าเร็วเกิน
 
 // ── ระบบคีย์ ──────────────────────────────────────────────────
-const KEY_EXPIRE_HOURS = 4; // ⏱ คีย์หมดอายุกี่ชั่วโมง (เช่น 4, 12, 24, 48)
+const KEY_EXPIRE_HOURS = 24; // ⏱ คีย์หมดอายุกี่ชั่วโมง (เช่น 4, 12, 24, 48)
 
 // ── กล่องสคริปต์/โค้ด (เหมือนในรูป) ─────────────────────────
 const SCRIPT_FILENAME = "main_script.lua";  // ชื่อไฟล์ที่แสดงบนกล่อง
-const SCRIPT_CODE     = `loadstring(game:HttpGet("https://raw.githubusercontent.com/regretevator638-lab/fps.lua/refs/heads/main/fps.lua"))()"))()`;
+const SCRIPT_CODE     = `loadstring(game:HttpGet("https://loader.example.com/script.lua"))()`;
 // ☝️ เปลี่ยนเป็นโค้ดที่อยากให้คัดลอกได้เลย
 const SCRIPT_NOTE_1   = "-- คัดลอกห้ามกดแปลภาษานะครับ";  // หมายเหตุบรรทัด 1
 const SCRIPT_NOTE_2   = "-- สามารถนำไปใส่ตัวรันเล่นได้เลย"; // หมายเหตุบรรทัด 2
@@ -1195,6 +1214,27 @@ function closeMethod2() {
   document.getElementById("method2Screen").style.display = "none";
   // ยังล็อค scroll ไว้เพราะยังอยู่หน้าปลดล็อค
 }
+
+// ป้องกัน scroll/touch ทะลุผ่าน overlay
+const _unlockEl = document.getElementById("unlockScreen");
+_unlockEl.addEventListener("touchmove", function(e) {
+  // อนุญาตให้ scroll ภายในการ์ดได้ แต่ไม่ให้ทะลุออกไป
+  e.stopPropagation();
+}, { passive: false });
+
+// ป้องกัน scroll บน body ตลอดเวลาที่ overlay อยู่
+document.addEventListener("touchmove", function(e) {
+  if (
+    document.getElementById("unlockScreen").style.display !== "none" ||
+    document.getElementById("method2Screen").style.display === "flex" ||
+    document.getElementById("closedScreen").style.display === "flex"
+  ) {
+    e.preventDefault();
+  }
+}, { passive: false });
+
+// ล็อค scroll ตั้งแต่เริ่ม (เพราะมีหน้าปลดล็อคอยู่)
+if (SITE_ENABLED) document.body.style.overflow = "hidden";
 
 // เริ่มต้น: ลบคีย์หมดอายุ + ใส่ค่า config ลงหน้าเว็บ
 cleanExpired();
