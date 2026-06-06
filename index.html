@@ -752,51 +752,49 @@ function showState(name) {
   document.getElementById("stateError").style.display    = name === "error"    ? "block" : "none";
 }
 
+// blur/focus handlers เป็น global เพื่อให้ removeEventListener ทำงานได้
+let _countingStart = null;
+
+function _onBlur() {
+  if (!unlockDone && unlockOpened) _countingStart = Date.now();
+}
+
+function _onFocus() {
+  if (!unlockOpened || unlockDone) return;
+
+  if (_countingStart !== null) {
+    timeOnBypassTab += Date.now() - _countingStart;
+    _countingStart = null;
+  }
+
+  // ถอด listener ทันที ป้องกันทำงานซ้ำเวลาไปเว็บอื่น
+  window.removeEventListener("blur", _onBlur);
+  window.removeEventListener("focus", _onFocus);
+  unlockOpened = false; // ปิด flag
+
+  if (timeOnBypassTab < MIN_SECONDS * 1000) {
+    showState("error");
+  } else {
+    showState("checking");
+    startCheckingProgress();
+  }
+}
+
 function startUnlock() {
   unlockOpened    = true;
   unlockOpenTime  = Date.now();
   unlockDone      = false;
   timeOnBypassTab = 0;
+  _countingStart  = null;
 
-  bypassTabRef = window.open(BYPASS_URL, "_blank");
+  // ถอดก่อนเผื่อมีค้างอยู่
+  window.removeEventListener("blur", _onBlur);
+  window.removeEventListener("focus", _onFocus);
 
-  // นับเวลาเฉพาะตอนที่ผู้ใช้ยังอยู่ใน tab นั้น
-  // โดยใช้ blur/focus ของ window นี้เป็นตัวตรวจ
-  // (ถ้า window นี้ blur = ผู้ใช้ไปอยู่ tab อื่น = นับ)
-  // (ถ้า window นี้ focus กลับมา = ออกจาก tab นั้น = หยุดนับ)
+  window.open(BYPASS_URL, "_blank");
 
-  let countingStart = null;
-
-  function onBlur() {
-    // ผู้ใช้ออกจากหน้านี้ → เริ่มนับ (น่าจะไปอยู่ tab ลิงก์)
-    if (!unlockDone) countingStart = Date.now();
-  }
-
-  function onFocus() {
-    // ผู้ใช้กลับมาหน้านี้ → หยุดนับ สะสมเวลา
-    if (countingStart !== null) {
-      timeOnBypassTab += Date.now() - countingStart;
-      countingStart = null;
-    }
-
-    if (!unlockOpened || unlockDone) return;
-
-    if (timeOnBypassTab < MIN_SECONDS * 1000) {
-      // อยู่ไม่ครบ → Error
-      showState("error");
-    } else {
-      // อยู่ครบ → Checking
-      showState("checking");
-      startCheckingProgress();
-    }
-
-    // ถอด listener แล้ว
-    window.removeEventListener("blur", onBlur);
-    window.removeEventListener("focus", onFocus);
-  }
-
-  window.addEventListener("blur", onBlur);
-  window.addEventListener("focus", onFocus);
+  window.addEventListener("blur", _onBlur);
+  window.addEventListener("focus", _onFocus);
 }
 
 function startCheckingProgress() {
@@ -1095,7 +1093,7 @@ function getYoutubeEmbedUrl(url) {
   return videoId ? "https://www.youtube.com/embed/" + videoId : null;
 }
 
-// ตรวจสอบว่าเว็บเปิดหรือปิด (SITE_ENABLED)
+// ตรวจสอบว่าเคยปลดล็อคแล้วหรือยัง
 if (!SITE_ENABLED) {
   const cs = document.getElementById("closedScreen");
   cs.style.display = "flex";
@@ -1189,7 +1187,9 @@ function closeMethod2() {
   // ยังล็อค scroll ไว้เพราะยังอยู่หน้าปลดล็อค
 }
 
-if (SITE_ENABLED) document.body.style.overflow = "hidden";
+if (SITE_ENABLED) {
+  document.body.style.overflow = "hidden";
+}
 
 // เริ่มต้น: ลบคีย์หมดอายุ + ใส่ค่า config ลงหน้าเว็บ
 cleanExpired();
