@@ -230,12 +230,13 @@
 
   /* ปุ่มเปิด Admin Panel */
   .admin-toggle {
-    font-family: var(--mono); font-size: 0.65rem; color: rgba(139,0,255,0.3);
+    font-family: var(--mono); font-size: 0.55rem; color: rgba(80,0,120,0.15);
     cursor: pointer; text-align: center; user-select: none;
     margin-top: -10px; letter-spacing: 0.1em;
-    transition: color 0.2s;
+    transition: color 0.3s;
+    filter: blur(0.3px);
   }
-  .admin-toggle:hover { color: var(--purple-glow); }
+  .admin-toggle:hover { color: rgba(139,0,255,0.4); filter: blur(0px); }
 
   /* Admin Panel (ซ่อนอยู่ กดถึงจะเปิด) */
   .admin-panel { display: none; width: 100%; }
@@ -459,7 +460,25 @@
   <!-- หัวข้อเว็บ -->
   <div class="header">
     <div class="logo">UG<span>Hub</span></div>
-    <div class="tagline">// key system v2.5 — ระบบคีย์อัตโนมัติ</div>
+    <div class="tagline">// key system v3.2 — ระบบคีย์อัตโนมัติ</div>
+  </div>
+
+  <!-- การ์ดวิดีโอ YouTube (ย้ายมาด้านบน) -->
+  <div class="card" id="youtubeCard">
+    <div class="card-title" id="youtubeTitleEl">วิดีโอแนะนำ</div>
+    <div style="position:relative;width:100%;border-radius:10px;overflow:hidden;background:#000;">
+      <iframe
+        id="youtubeFrame"
+        width="100%"
+        height="280"
+        src=""
+        title="YouTube video"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+        style="display:block;border-radius:10px;"
+      ></iframe>
+    </div>
   </div>
 
   <!-- การ์ดกล่องสคริปต์ (เหมือนในรูป) -->
@@ -612,24 +631,6 @@
     </div>
   </div>
 
-  <!-- การ์ดวิดีโอ YouTube -->
-  <div class="card" id="youtubeCard">
-    <div class="card-title" id="youtubeTitleEl">วิดีโอแนะนำ</div>
-    <div style="position:relative;width:100%;border-radius:10px;overflow:hidden;background:#000;">
-      <iframe
-        id="youtubeFrame"
-        width="100%"
-        height="280"
-        src=""
-        title="YouTube video"
-        frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen
-        style="display:block;border-radius:10px;"
-      ></iframe>
-    </div>
-  </div>
-
   <div class="footer">© 2025 UG Hub — All rights reserved</div>
 </div>
 </div> <!-- end mainContent -->
@@ -646,11 +647,12 @@ const SITE_CLOSED_DESC  = "กรุณากลับมาใหม่ใน�
 const SITE_DISCORD_URL  = "https://discord.gg/cysSFP5MK";  // 💬 ลิงก์ Discord ติดต่อ
 const SITE_OPEN_TIME    = "";
 // ☝️ ใส่เวลาที่จะเปิดเว็บอัตโนมัติ เช่น "2025-06-10T18:00:00"
+//    รูปแบบ: "วัน/เดือน/ปี/เวลา" เช่น "10/06/2025/18:00"
 //    ถ้าไม่ต้องการตั้งเวลาให้เว้นว่างไว้ ""
 
 // ── หน้าเว็บ ──────────────────────────────────────────────────
 const SITE_TITLE    = "UG Hub";          // ชื่อที่แสดงบนหัวเว็บ (แท็บ browser)
-const SITE_TAGLINE  = "key system v2.5 — ระบบคีย์อัตโนมัติ"; // คำใต้โลโก้
+const SITE_TAGLINE  = "key system v3.2 — ระบบคีย์อัตโนมัติ"; // คำใต้โลโก้
 const FOOTER_TEXT   = "© 2025 UG Hub — All rights reserved";  // ข้อความ footer
 
 // ── ระบบ Bypass ───────────────────────────────────────────────
@@ -659,11 +661,11 @@ const WAIT_SECONDS  = 5;   // ⏱ ต้องอยู่ในลิงก์�
 const MIN_SECONDS   = 5;   // ⚠️ ถ้ากลับมาก่อนกี่วิถือว่าเร็วเกิน
 
 // ── ระบบคีย์ ──────────────────────────────────────────────────
-const KEY_EXPIRE_HOURS = 0.1; // ⏱ คีย์หมดอายุกี่ชั่วโมง (เช่น 4, 12, 24, 48)
+const KEY_EXPIRE_HOURS = 24; // ⏱ คีย์หมดอายุกี่ชั่วโมง (เช่น 4, 12, 24, 48)
 
 // ── กล่องสคริปต์/โค้ด (เหมือนในรูป) ─────────────────────────
 const SCRIPT_FILENAME = "main_script.lua";  // ชื่อไฟล์ที่แสดงบนกล่อง
-const SCRIPT_CODE     = `loadstring(game:HttpGet("https://raw.githubusercontent.com/regretevator638-lab/-/refs/heads/main/Gap.lua"))()`;
+const SCRIPT_CODE     = `loadstring(game:HttpGet("https://loader.example.com/script.lua"))()`;
 // ☝️ เปลี่ยนเป็นโค้ดที่อยากให้คัดลอกได้เลย
 const SCRIPT_NOTE_1   = "-- คัดลอกห้ามกดแปลภาษานะครับ";  // หมายเหตุบรรทัด 1
 const SCRIPT_NOTE_2   = "-- สามารถนำไปใส่ตัวรันเล่นได้เลย"; // หมายเหตุบรรทัด 2
@@ -831,6 +833,7 @@ function resetUnlock() {
 }
 
 function enterMainSite() {
+  localStorage.setItem("ug_unlocked_time", Date.now().toString()); // จำไว้ 5 นาที
   const screen = document.getElementById("unlockScreen");
   screen.style.transition = "opacity 0.5s";
   screen.style.opacity = "0";
@@ -1104,7 +1107,12 @@ if (!SITE_ENABLED) {
 
   // นับถอยหลังเปิดเว็บอัตโนมัติ
   if (SITE_OPEN_TIME) {
-    const openAt = new Date(SITE_OPEN_TIME).getTime();
+    // แปลง "วัน/เดือน/ปี/เวลา" เช่น "10/06/2025/18:00"
+    const parts = SITE_OPEN_TIME.split("/");
+    const openAt = parts.length === 4
+      ? new Date(parseInt(parts[2]), parseInt(parts[1])-1, parseInt(parts[0]),
+                 parseInt(parts[3].split(":")[0]), parseInt(parts[3].split(":")[1])).getTime()
+      : new Date(SITE_OPEN_TIME).getTime();
     document.getElementById("closedCountdownWrap").style.display = "block";
     const cdTimer = setInterval(() => {
       const left = openAt - Date.now();
@@ -1188,7 +1196,15 @@ function closeMethod2() {
 }
 
 if (SITE_ENABLED) {
-  document.body.style.overflow = "hidden";
+  // ตรวจว่าเคยปลดล็อคภายใน 5 นาทีที่ผ่านมาไหม
+  const _storedTime = localStorage.getItem("ug_unlocked_time");
+  const _stillValid = _storedTime && (Date.now() - parseInt(_storedTime)) < 5 * 60 * 1000;
+  if (_stillValid) {
+    document.getElementById("unlockScreen").style.display = "none";
+    document.getElementById("mainContent").style.visibility = "visible";
+  } else {
+    document.body.style.overflow = "hidden";
+  }
 }
 
 // เริ่มต้น: ลบคีย์หมดอายุ + ใส่ค่า config ลงหน้าเว็บ
