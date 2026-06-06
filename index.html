@@ -653,9 +653,9 @@
 // ╚═══════════════════════════════════════════════════════════════╝
 
 // ── เปิด/ปิดเว็บ ──────────────────────────────────────────────
-const SITE_ENABLED      = false;    // true = เปิดเว็บ | false = ปิดเว็บ
+const SITE_ENABLED      = true;    // true = เปิดเว็บ | false = ปิดเว็บ
 const SITE_CLOSED_MSG   = "เว็บปิดให้บริการชั่วคราว";   // หัวข้อหน้าปิด
-const SITE_CLOSED_DESC  = "แก้ปัญหาแล้วบั๊กต่างๆของตัวเว็บ";  // คำอธิบายหน้าปิด
+const SITE_CLOSED_DESC  = "กรุณากลับมาใหม่ในภายหลัง";  // คำอธิบายหน้าปิด
 const SITE_DISCORD_URL  = "https://discord.gg/cysSFP5MK";  // 💬 ลิงก์ Discord ติดต่อ
 const SITE_OPEN_TIME    = "";
 // ☝️ ใส่เวลาที่จะเปิดเว็บอัตโนมัติ เช่น "2025-06-10T18:00:00"
@@ -679,14 +679,14 @@ const UNLOCK_EXPIRE_MINUTES = 5;
 //    5 = 5 นาที | 30 = ครึ่งชั่วโมง | 60 = 1 ชั่วโมง | 1440 = 1 วัน
 
 // ── ระบบคีย์ ──────────────────────────────────────────────────
-const KEY_PAGE_URL     = "กรุณาใส่เว็บตรงนี้ด้วยนะถ้าไม่ใส่จะไปกระทืบถึงหน้าบ้าน";
+const KEY_PAGE_URL     = "https://regretevator638-lab.github.io/UG-HUB-GET-KEY/";
 // ☝️ ลิงก์หน้าเว็บที่แจกคีย์ (แยกจาก BYPASS_URL ด้านบน)
-const KEY_EXPIRE_HOURS = 0.1;
+const KEY_EXPIRE_HOURS = 24;
 // ☝️ คีย์หมดอายุกี่ชั่วโมง — 4=4ชม. | 12=ครึ่งวัน | 24=1วัน | 48=2วัน
 
 // ── กล่องสคริปต์/โค้ด (เหมือนในรูป) ─────────────────────────
 const SCRIPT_FILENAME = "main_script.lua";  // ชื่อไฟล์ที่แสดงบนกล่อง
-const SCRIPT_CODE     = `loadstring(game:HttpGet("https://raw.githubusercontent.com/regretevator638-lab/-/refs/heads/main/Gap.lua"))()`;
+const SCRIPT_CODE     = `loadstring(game:HttpGet("https://loader.example.com/script.lua"))()`;
 // ☝️ เปลี่ยนเป็นโค้ดที่อยากให้คัดลอกได้เลย
 const SCRIPT_NOTE_1   = "-- คัดลอกห้ามกดแปลภาษานะครับ";  // หมายเหตุบรรทัด 1
 const SCRIPT_NOTE_2   = "-- สามารถนำไปใส่ตัวรันเล่นได้เลย"; // หมายเหตุบรรทัด 2
@@ -950,6 +950,10 @@ function verifyAndGetKey() {
   if (!progressDone) {
     showStatus("statusMsg", "กรุณารอให้ progress bar เต็มก่อน", "error"); return;
   }
+  // ซ่อนปุ่มรับคีย์ทันที ป้องกันกดซ้ำ
+  const vbList = document.querySelectorAll("#progressWrap button");
+  vbList.forEach(b => b.style.display = "none");
+
   cleanExpired();
   const newKey = genKeyString();
   const exp = getKeyExpiry();
@@ -961,6 +965,7 @@ function verifyAndGetKey() {
   document.getElementById("keySection").style.display = "block";
   showStatus("statusMsg", "✅ สำเร็จ! คัดลอกคีย์ด้านล่างได้เลย", "success");
   startCountdown(exp);
+  progressDone = false; // รีเซ็ตป้องกันกดซ้ำ
 }
 
 // คัดลอกคีย์ที่ได้รับ
