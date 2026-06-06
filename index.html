@@ -681,8 +681,9 @@ const UNLOCK_EXPIRE_MINUTES = 5;
 // ── ระบบคีย์ ──────────────────────────────────────────────────
 const KEY_PAGE_URL     = "https://regretevator638-lab.github.io/UG-HUB-GET-KEY/";
 // ☝️ ลิงก์หน้าเว็บที่แจกคีย์ (แยกจาก BYPASS_URL ด้านบน)
-const KEY_EXPIRE_HOURS = 24;
-// ☝️ คีย์หมดอายุกี่ชั่วโมง — 4=4ชม. | 12=ครึ่งวัน | 24=1วัน | 48=2วัน
+const KEY_EXPIRE_HOURS   = 24;  // ⏱ ชั่วโมง  — 0=ไม่นับ | 1=1ชม. | 12=ครึ่งวัน | 24=1วัน
+const KEY_EXPIRE_MINUTES = 0;   // ⏱ นาที     — 0=ไม่นับ | 15=15นาที | 30=ครึ่งชม. | 45=45นาที
+// ☝️ รวมกันได้เลย เช่น HOURS=1 MINUTES=30 = 1ชม.30นาที | HOURS=0 MINUTES=15 = 15นาทีเฉยๆ
 
 // ── กล่องสคริปต์/โค้ด (เหมือนในรูป) ─────────────────────────
 const SCRIPT_FILENAME = "main_script.lua";  // ชื่อไฟล์ที่แสดงบนกล่อง
@@ -736,9 +737,10 @@ function getKeys() {
 // บันทึกคีย์ลง localStorage
 function saveKeys(k) { localStorage.setItem("ug_keys", JSON.stringify(k)); }
 
-// คำนวณเวลาหมดอายุของคีย์ (ตามชั่วโมงที่กำหนด)
+// คำนวณเวลาหมดอายุของคีย์ (ชั่วโมง + นาที)
 function getKeyExpiry() {
-  return Date.now() + (KEY_EXPIRE_HOURS * 60 * 60 * 1000);
+  const totalMs = (KEY_EXPIRE_HOURS * 60 * 60 * 1000) + (KEY_EXPIRE_MINUTES * 60 * 1000);
+  return Date.now() + (totalMs > 0 ? totalMs : 60000); // ขั้นต่ำ 1 นาที
 }
 
 // สร้างคีย์ random รูปแบบ xxxx-xxxx-xxxx-xxxx
