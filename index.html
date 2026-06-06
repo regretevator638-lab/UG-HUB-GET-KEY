@@ -659,6 +659,7 @@ const FOOTER_TEXT   = "© 2025 UG Hub — All rights reserved";  // ข้อค
 const BYPASS_URL    = "กรุณาใส่เว็บตรงนี้ด้วยนะถ้าไม่ใส่จะไปกระทืบถึงหน้าบ้าน"; // 🌐 ลิงก์ที่จะให้ผู้ใช้ไปก่อนรับคีย์
 const WAIT_SECONDS  = 5;   // ⏱ ต้องอยู่ในลิงก์กี่วินาที
 const MIN_SECONDS   = 5;   // ⚠️ ถ้ากลับมาก่อนกี่วิถือว่าเร็วเกิน
+const UNLOCK_EXPIRE_MINUTES = 5; // 🔓 จำการปลดล็อคกี่นาที (5=5นาที, 60=1ชม., 1440=1วัน)
 
 // ── ระบบคีย์ ──────────────────────────────────────────────────
 const KEY_EXPIRE_HOURS = 24; // ⏱ คีย์หมดอายุกี่ชั่วโมง (เช่น 4, 12, 24, 48)
@@ -1198,7 +1199,7 @@ function closeMethod2() {
 if (SITE_ENABLED) {
   // ตรวจว่าเคยปลดล็อคภายใน 5 นาทีที่ผ่านมาไหม
   const _storedTime = localStorage.getItem("ug_unlocked_time");
-  const _stillValid = _storedTime && (Date.now() - parseInt(_storedTime)) < 5 * 60 * 1000;
+  const _stillValid = _storedTime && (Date.now() - parseInt(_storedTime)) < UNLOCK_EXPIRE_MINUTES * 60 * 1000;
   if (_stillValid) {
     document.getElementById("unlockScreen").style.display = "none";
     document.getElementById("mainContent").style.visibility = "visible";
