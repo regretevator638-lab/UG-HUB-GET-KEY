@@ -491,6 +491,18 @@
       <span style="font-family:'Share Tech Mono',monospace;font-size:0.82rem;color:var(--text-dim);margin-left:4px;" id="scriptFilename">main_script.lua</span>
     </div>
 
+    <!-- ปุ่มไปหน้ารับคีย์ -->
+    <a id="keyPageLink" href="#" target="_blank" style="
+      display:flex;align-items:center;justify-content:center;gap:8px;
+      width:100%;padding:10px;margin-bottom:10px;
+      background:rgba(139,0,255,0.12);
+      border:1px solid rgba(139,0,255,0.3);
+      border-radius:10px;cursor:pointer;
+      font-family:'Itim','Rajdhani',sans-serif;font-size:0.9rem;
+      color:var(--purple-neon);text-decoration:none;
+      transition:all 0.2s;
+    ">🔑 ไปรับคีย์ที่เว็บ</a>
+
     <!-- ปุ่มคัดลอกสคริปต์ -->
     <button id="copyScriptBtn" onclick="copyScript()" style="
       width:100%;padding:13px;
@@ -655,15 +667,22 @@ const SITE_TITLE    = "UG Hub";          // ชื่อที่แสดงบ
 const SITE_TAGLINE  = "key system v3.2 — ระบบคีย์อัตโนมัติ"; // คำใต้โลโก้
 const FOOTER_TEXT   = "© 2025 UG Hub — All rights reserved";  // ข้อความ footer
 
-// ── ระบบ Bypass ───────────────────────────────────────────────
-const BYPASS_URL    = "กรุณาใส่เว็บตรงนี้ด้วยนะถ้าไม่ใส่จะไปกระทืบถึงหน้าบ้าน"; // 🔒 ลิงก์ปลดล็อค (ไปก่อนเข้าเว็บ) เช่น YouTube
-const KEY_PAGE_URL  = "กรุณาใส่เว็บตรงนี้ด้วยนะถ้าไม่ใส่จะไปกระทืบถึงหน้าบ้าน"; // 🔑 ลิงก์หน้าเว็บรับคีย์ (คนละอันกับบน)
+// ── ระบบปลดล็อคก่อนเข้าเว็บ ──────────────────────────────────
+const BYPASS_URL    = "กรุณาใส่เว็บตรงนี้ด้วยนะถ้าไม่ใส่จะไปกระทืบถึงหน้าบ้าน";
+// ☝️ ลิงก์ที่ให้คนไปก่อน เช่น YouTube — ก่อนถึงจะเข้าเว็บได้
 const WAIT_SECONDS  = 5;   // ⏱ ต้องอยู่ในลิงก์กี่วินาที
-const MIN_SECONDS   = 5;   // ⚠️ ถ้ากลับมาก่อนกี่วิถือว่าเร็วเกิน
-const UNLOCK_EXPIRE_MINUTES = 5; // 🔓 จำการปลดล็อคกี่นาที (5=5นาที, 60=1ชม., 1440=1วัน)
+const MIN_SECONDS   = 5;   // ⚠️ ถ้ากลับมาก่อนกี่วิถือว่าเร็วเกิน (ขึ้น Error)
+
+// ── ระบบจำการปลดล็อค ──────────────────────────────────────────
+const UNLOCK_EXPIRE_MINUTES = 5;
+// ☝️ หลังปลดล็อคแล้ว จำไว้กี่นาที (ไม่ต้องปลดซ้ำถ้ายังไม่หมดเวลา)
+//    5 = 5 นาที | 30 = ครึ่งชั่วโมง | 60 = 1 ชั่วโมง | 1440 = 1 วัน
 
 // ── ระบบคีย์ ──────────────────────────────────────────────────
-const KEY_EXPIRE_HOURS = 24; // ⏱ คีย์หมดอายุกี่ชั่วโมง (เช่น 4, 12, 24, 48)
+const KEY_PAGE_URL     = "https://regretevator638-lab.github.io/UG-HUB-GET-KEY/";
+// ☝️ ลิงก์หน้าเว็บที่แจกคีย์ (แยกจาก BYPASS_URL ด้านบน)
+const KEY_EXPIRE_HOURS = 24;
+// ☝️ คีย์หมดอายุกี่ชั่วโมง — 4=4ชม. | 12=ครึ่งวัน | 24=1วัน | 48=2วัน
 
 // ── กล่องสคริปต์/โค้ด (เหมือนในรูป) ─────────────────────────
 const SCRIPT_FILENAME = "main_script.lua";  // ชื่อไฟล์ที่แสดงบนกล่อง
@@ -1240,6 +1259,7 @@ document.getElementById("scriptFilename").textContent  = SCRIPT_FILENAME;
 document.getElementById("scriptNote1").textContent     = SCRIPT_NOTE_1;
 document.getElementById("scriptCodeDisplay").textContent = SCRIPT_CODE;
 document.getElementById("scriptNote2").textContent     = SCRIPT_NOTE_2;
+document.getElementById("keyPageLink").href            = KEY_PAGE_URL;
 
 // ใส่วิดีโอ YouTube
 const embedUrl = getYoutubeEmbedUrl(YOUTUBE_URL);
