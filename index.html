@@ -335,7 +335,7 @@
   position:fixed;
   top:0; left:0;
   width:100vw; height:100vh;
-  z-index:9998;
+  z-index:19999;
   background:#08000f;
   align-items:center;
   justify-content:center;
@@ -448,6 +448,8 @@
 <div class="bg-orb b"></div>
 <div class="bg-orb c"></div>
 
+<!-- เนื้อหาหลัก ซ่อนไว้ก่อน แสดงหลังปลดล็อค -->
+<div id="mainContent" style="visibility:hidden;">
 <div class="container">
 
   <!-- หัวข้อเว็บ -->
@@ -626,6 +628,7 @@
 
   <div class="footer">© 2025 UG Hub — All rights reserved</div>
 </div>
+</div> <!-- end mainContent -->
 
 <script>
 // ╔═══════════════════════════════════════════════════════════════╗
@@ -831,7 +834,8 @@ function enterMainSite() {
   screen.style.opacity = "0";
   setTimeout(() => {
     screen.style.display = "none";
-    document.body.style.overflow = ""; // คืน scroll
+    document.getElementById("mainContent").style.visibility = "visible";
+    document.body.style.overflow = "";
   }, 500);
 }
 
