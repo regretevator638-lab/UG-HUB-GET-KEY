@@ -25,7 +25,11 @@
     --sans:        'Itim', 'Rajdhani', sans-serif;
   }
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  /* animation เด้งขึ้นลง */
+  @keyframes bounce {
+    0%,100% { transform: translateY(0); }
+    50%      { transform: translateY(-10px); }
+  }
 
   body {
     background: var(--purple-deep);
@@ -414,7 +418,7 @@
 
     <!-- === STATE 2: กำลังเช็ค (progress) === -->
     <div id="stateChecking" style="display:none;">
-      <div style="font-size:2.5rem;margin-bottom:14px;">🔍</div>
+      <div style="font-size:2.5rem;margin-bottom:14px;display:inline-block;animation:bounce 0.8s ease-in-out infinite;">🔍</div>
       <div style="font-family:'Rajdhani',sans-serif;font-size:1.4rem;font-weight:700;color:#fff;margin-bottom:6px;">กำลังเช็คความถูกต้อง...</div>
       <div style="font-family:'Rajdhani',sans-serif;font-size:0.9rem;color:#7850aa;margin-bottom:20px;">รอสักครู่ ระบบกำลังตรวจสอบข้อมูล</div>
       <div style="width:100%;height:8px;background:rgba(100,0,200,0.2);border-radius:99px;overflow:hidden;border:1px solid rgba(100,0,200,0.3);">
