@@ -475,6 +475,7 @@
         title="YouTube video"
         frameborder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin"
         allowfullscreen
         style="display:block;border-radius:10px;"
       ></iframe>
@@ -669,8 +670,8 @@ const UNLOCK_EXPIRE_MINUTES = 5;
 // ── ระบบคีย์ ──────────────────────────────────────────────────
 const KEY_PAGE_URL     = "https://regretevator638-lab.github.io/UG-HUB-GET-KEY/";
 // ☝️ ลิงก์หน้าเว็บที่แจกคีย์ (แยกจาก BYPASS_URL ด้านบน)
-const KEY_EXPIRE_HOURS   = 0;  // ⏱ ชั่วโมง  — 0=ไม่นับ | 1=1ชม. | 12=ครึ่งวัน | 24=1วัน
-const KEY_EXPIRE_MINUTES = 5;   // ⏱ นาที     — 0=ไม่นับ | 15=15นาที | 30=ครึ่งชม. | 45=45นาที
+const KEY_EXPIRE_HOURS   = 24;  // ⏱ ชั่วโมง  — 0=ไม่นับ | 1=1ชม. | 12=ครึ่งวัน | 24=1วัน
+const KEY_EXPIRE_MINUTES = 0;   // ⏱ นาที     — 0=ไม่นับ | 15=15นาที | 30=ครึ่งชม. | 45=45นาที
 // ☝️ รวมกันได้เลย เช่น HOURS=1 MINUTES=30 = 1ชม.30นาที | HOURS=0 MINUTES=15 = 15นาทีเฉยๆ
 
 // ── กล่องสคริปต์/โค้ด (เหมือนในรูป) ─────────────────────────
