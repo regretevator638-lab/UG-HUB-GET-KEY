@@ -521,7 +521,7 @@
   </div>
 
   <!-- การ์ดรับคีย์ฟรี -->
-  <div class="card">
+  <div class="card" id="getKeyCard">
     <div class="card-title">รับคีย์ฟรี</div>
 
     <div class="step">
@@ -583,7 +583,7 @@
   </div>
 
   <!-- การ์ดตรวจสอบคีย์ -->
-  <div class="card">
+  <div class="card" id="checkKeyCard">
     <div class="card-title">ตรวจสอบคีย์</div>
     <div class="input-row">
       <input class="inp" id="checkInp" placeholder="วางคีย์ที่นี่..." />
@@ -662,6 +662,10 @@ const BYPASS_URL    = "กรุณาใส่เว็บตรงนี้ด
 const WAIT_SECONDS  = 5;   // ⏱ ต้องอยู่ในลิงก์กี่วินาที
 const MIN_SECONDS   = 5;   // ⚠️ ถ้ากลับมาก่อนกี่วิถือว่าเร็วเกิน (ขึ้น Error)
 
+// ── ซ่อน/แสดงส่วนต่างๆ ────────────────────────────────────────
+const SHOW_GET_KEY   = true; // true=แสดงส่วนรับคีย์ฟรี | false=ซ่อน
+const SHOW_CHECK_KEY = true; // true=แสดงส่วนตรวจสอบคีย์ | false=ซ่อน
+
 // ── ระบบจำการปลดล็อค ──────────────────────────────────────────
 const UNLOCK_EXPIRE_MINUTES = 5;
 // ☝️ หลังปลดล็อคแล้ว จำไว้กี่นาที (ไม่ต้องปลดซ้ำถ้ายังไม่หมดเวลา)
@@ -670,8 +674,8 @@ const UNLOCK_EXPIRE_MINUTES = 5;
 // ── ระบบคีย์ ──────────────────────────────────────────────────
 const KEY_PAGE_URL     = "https://regretevator638-lab.github.io/UG-HUB-GET-KEY/";
 // ☝️ ลิงก์หน้าเว็บที่แจกคีย์ (แยกจาก BYPASS_URL ด้านบน)
-const KEY_EXPIRE_HOURS   = 0;  // ⏱ ชั่วโมง  — 0=ไม่นับ | 1=1ชม. | 12=ครึ่งวัน | 24=1วัน
-const KEY_EXPIRE_MINUTES = 1;   // ⏱ นาที     — 0=ไม่นับ | 15=15นาที | 30=ครึ่งชม. | 45=45นาที
+const KEY_EXPIRE_HOURS   = 24;  // ⏱ ชั่วโมง  — 0=ไม่นับ | 1=1ชม. | 12=ครึ่งวัน | 24=1วัน
+const KEY_EXPIRE_MINUTES = 0;   // ⏱ นาที     — 0=ไม่นับ | 15=15นาที | 30=ครึ่งชม. | 45=45นาที
 // ☝️ รวมกันได้เลย เช่น HOURS=1 MINUTES=30 = 1ชม.30นาที | HOURS=0 MINUTES=15 = 15นาทีเฉยๆ
 
 // ── กล่องสคริปต์/โค้ด (เหมือนในรูป) ─────────────────────────
@@ -1173,10 +1177,19 @@ if (!SITE_ENABLED) {
       const left = openAt - Date.now();
       if (left <= 0) {
         clearInterval(cdTimer);
-        // เปิดเว็บอัตโนมัติ
+        // เปิดเว็บ → ซ่อนหน้าปิด → แสดงหน้าปลดล็อค
         cs.style.transition = "opacity 0.5s";
         cs.style.opacity = "0";
-        setTimeout(() => cs.style.display = "none", 500);
+        setTimeout(() => {
+          cs.style.display = "none";
+          // แสดงหน้าปลดล็อคให้ล็อกอินได้
+          const unlockEl = document.getElementById("unlockScreen");
+          if (unlockEl) {
+            unlockEl.style.display = "flex";
+            unlockEl.style.opacity = "1";
+            document.body.style.overflow = "hidden";
+          }
+        }, 500);
         return;
       }
       const h = Math.floor(left / 3600000);
@@ -1261,6 +1274,10 @@ if (SITE_ENABLED) {
     document.body.style.overflow = "hidden";
   }
 }
+
+// ซ่อน/แสดง ส่วนรับคีย์และตรวจสอบคีย์
+if (!SHOW_GET_KEY)   document.getElementById("getKeyCard").style.display   = "none";
+if (!SHOW_CHECK_KEY) document.getElementById("checkKeyCard").style.display = "none";
 
 // เริ่มต้น: ลบคีย์หมดอายุ + ใส่ค่า config ลงหน้าเว็บ
 cleanExpired();
