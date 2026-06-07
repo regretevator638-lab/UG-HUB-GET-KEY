@@ -230,13 +230,15 @@
 
   /* ปุ่มเปิด Admin Panel */
   .admin-toggle {
-    font-family: var(--mono); font-size: 0.55rem; color: rgba(80,0,120,0.15);
-    cursor: pointer; text-align: center; user-select: none;
-    margin-top: -10px; letter-spacing: 0.1em;
-    transition: color 0.3s;
-    filter: blur(0.3px);
+    position: fixed;
+    bottom: 12px; right: 14px;
+    font-family: var(--mono); font-size: 0.5rem;
+    color: rgba(80,0,120,0.12);
+    cursor: pointer; user-select: none;
+    letter-spacing: 0.1em; z-index: 999;
+    transition: color 0.4s;
   }
-  .admin-toggle:hover { color: rgba(139,0,255,0.4); filter: blur(0px); }
+  .admin-toggle:hover { color: rgba(139,0,255,0.35); }
 
   /* Admin Panel (ซ่อนอยู่ กดถึงจะเปิด) */
   .admin-panel { display: none; width: 100%; }
@@ -593,7 +595,7 @@
   </div>
 
   <!-- ปุ่มเปิด Admin (กดเพื่อเปิด/ปิด) -->
-  <div class="admin-toggle" onclick="toggleAdmin()">[ ADMIN ]</div>
+  <div class="admin-toggle" onclick="toggleAdmin()">[ A ]</div>
 
   <!-- Admin Panel -->
   <div class="admin-panel" id="adminPanel">
