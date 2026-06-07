@@ -231,14 +231,15 @@
   /* ปุ่มเปิด Admin Panel */
   .admin-toggle {
     position: fixed;
-    bottom: 12px; right: 14px;
-    font-family: var(--mono); font-size: 0.5rem;
-    color: rgba(80,0,120,0.12);
+    top: 14px; right: 16px;
+    font-family: var(--mono); font-size: 0.55rem;
+    color: rgba(255,255,255,0.06);
     cursor: pointer; user-select: none;
-    letter-spacing: 0.1em; z-index: 999;
+    letter-spacing: 0.15em; z-index: 9999;
     transition: color 0.4s;
+    font-weight: 300;
   }
-  .admin-toggle:hover { color: rgba(139,0,255,0.35); }
+  .admin-toggle:hover { color: rgba(255,255,255,0.25); }
 
   /* Admin Panel (ซ่อนอยู่ กดถึงจะเปิด) */
   .admin-panel { display: none; width: 100%; }
@@ -285,6 +286,88 @@
     color: var(--text-dim);
   }
   .badge.active { border-color: #60ff90; color: #60ff90; background: rgba(0,255,100,0.08); }
+
+  /* ═══ Theme System ═══ */
+  body.theme-frost {
+    --purple-deep: #f0f0f5;
+    --purple-dark: #e8e8f0;
+    --purple-mid:  #d0d0e8;
+    --purple-glow: #6600cc;
+    --purple-light:#8833dd;
+    --purple-neon: #5500bb;
+    --text:        #1a0033;
+    --text-dim:    #6644aa;
+    background: #f0f0f5;
+  }
+  body.theme-frost .card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(240,240,250,0.98));
+    border-color: rgba(100,0,200,0.2);
+    box-shadow: 0 4px 20px rgba(100,0,200,0.08);
+  }
+  body.theme-frost .logo { color: #1a0033; text-shadow: 0 0 20px rgba(100,0,200,0.3); }
+  body.theme-frost .btn-primary { background: linear-gradient(135deg,#5500cc,#8800ff); }
+  body.theme-frost .bg-grid { background-image:
+    linear-gradient(rgba(100,0,200,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(100,0,200,0.05) 1px, transparent 1px); }
+
+  body.theme-glass {
+    --purple-deep: #f5f0ff;
+    --purple-dark: #ede5ff;
+    --purple-mid:  #d4c0ff;
+    --purple-glow: #7700ee;
+    --purple-light:#9933ff;
+    --purple-neon: #6600dd;
+    --text:        #2a0055;
+    --text-dim:    #7744bb;
+    background: linear-gradient(135deg, #f5f0ff, #ede5ff);
+  }
+  body.theme-glass .card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.7), rgba(240,230,255,0.8));
+    border-color: rgba(120,0,220,0.3);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 4px 24px rgba(120,0,220,0.12);
+  }
+  body.theme-glass .logo { color: #2a0055; text-shadow: 0 0 20px rgba(120,0,220,0.4); }
+  body.theme-glass .btn-primary { background: linear-gradient(135deg,#6600cc,#9900ff); }
+
+  body.theme-midnight {
+    --purple-deep: #1a1a2e;
+    --purple-dark: #16213e;
+    --purple-mid:  #0f3460;
+    --purple-glow: #e0e0ff;
+    --purple-light:#c0c0ff;
+    --purple-neon: #ffffff;
+    --text:        #e8e8ff;
+    --text-dim:    #8888aa;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+  }
+  body.theme-midnight .card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+    border-color: rgba(255,255,255,0.12);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+  }
+  body.theme-midnight .logo { color: #fff; text-shadow: 0 0 20px rgba(200,200,255,0.5); }
+  body.theme-midnight .btn-primary { background: linear-gradient(135deg,#333366,#555599,#7777bb); }
+
+  /* ปุ่มสลับ Theme */
+  .theme-switcher {
+    position: fixed;
+    top: 14px; right: 16px;
+    display: flex; gap: 6px;
+    z-index: 9998;
+  }
+  .theme-btn {
+    width: 20px; height: 20px;
+    border-radius: 50%; border: 2px solid rgba(255,255,255,0.3);
+    cursor: pointer; transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+  .theme-btn:hover { transform: scale(1.2); border-color: rgba(255,255,255,0.8); }
+  .theme-btn.dark    { background: #0d0010; }
+  .theme-btn.frost   { background: #f0f0f5; }
+  .theme-btn.glass   { background: linear-gradient(135deg,#f5f0ff,#9933ff); }
+  .theme-btn.midnight{ background: linear-gradient(135deg,#1a1a2e,#7777bb); }
+  .theme-btn.active  { border-color: #fff; transform: scale(1.15); }
 </style>
 </head>
 <body>
@@ -390,6 +473,14 @@
 ">
   <div style="position:absolute;width:400px;height:400px;border-radius:50%;background:rgba(80,0,160,0.2);filter:blur(90px);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;"></div>
 
+  <!-- ปุ่มสลับ Theme บนหน้าปลดล็อค -->
+  <div style="position:absolute;top:14px;right:16px;display:flex;gap:6px;z-index:19999;" id="unlockThemeSwitcher">
+    <div class="theme-btn dark active" onclick="setTheme('dark')" title="Dark"></div>
+    <div class="theme-btn frost" onclick="setTheme('frost')" title="White Frost"></div>
+    <div class="theme-btn glass" onclick="setTheme('glass')" title="Purple Glass"></div>
+    <div class="theme-btn midnight" onclick="setTheme('midnight')" title="Midnight White"></div>
+  </div>
+
   <!-- การ์ดหลัก -->
   <div id="unlockCard" style="
     background:linear-gradient(135deg,rgba(25,0,45,0.97),rgba(10,0,20,0.98));
@@ -450,6 +541,14 @@
 
   </div>
 </div>
+<!-- ปุ่มสลับ Theme -->
+<div class="theme-switcher" id="themeSwitcher">
+  <div class="theme-btn dark active" onclick="setTheme('dark')" title="Dark"></div>
+  <div class="theme-btn frost" onclick="setTheme('frost')" title="White Frost"></div>
+  <div class="theme-btn glass" onclick="setTheme('glass')" title="Purple Glass"></div>
+  <div class="theme-btn midnight" onclick="setTheme('midnight')" title="Midnight White"></div>
+</div>
+
 <div class="bg-grid"></div>
 <div class="bg-orb a"></div>
 <div class="bg-orb b"></div>
@@ -594,6 +693,27 @@
     <div id="checkResult" class="status-msg"></div>
   </div>
 
+  <!-- การ์ด Feature (แสดงตลอด) -->
+  <div class="card" id="featureCard">
+    <div style="display:flex; gap:12px; justify-content:space-between;">
+      <div style="flex:1;text-align:center;padding:12px 8px;background:rgba(139,0,255,0.08);border-radius:12px;border:1px solid rgba(139,0,255,0.15);">
+        <div style="font-size:1.6rem;margin-bottom:6px;">⚡</div>
+        <div style="font-family:'Itim',sans-serif;font-size:0.85rem;font-weight:700;color:#fff;margin-bottom:4px;">ความเร็วสูง</div>
+        <div style="font-family:'Itim',sans-serif;font-size:0.72rem;color:var(--text-dim);line-height:1.4;">โค้ดถูกปรับแต่งให้ทำงานได้อย่างรวดเร็ว</div>
+      </div>
+      <div style="flex:1;text-align:center;padding:12px 8px;background:rgba(139,0,255,0.08);border-radius:12px;border:1px solid rgba(139,0,255,0.15);">
+        <div style="font-size:1.6rem;margin-bottom:6px;">🛡️</div>
+        <div style="font-family:'Itim',sans-serif;font-size:0.85rem;font-weight:700;color:#fff;margin-bottom:4px;">ปลอดภัย</div>
+        <div style="font-family:'Itim',sans-serif;font-size:0.72rem;color:var(--text-dim);line-height:1.4;">ตรวจสอบโค้ดทุกบรรทัด ไม่มีมัลแวร์</div>
+      </div>
+      <div style="flex:1;text-align:center;padding:12px 8px;background:rgba(139,0,255,0.08);border-radius:12px;border:1px solid rgba(139,0,255,0.15);">
+        <div style="font-size:1.6rem;margin-bottom:6px;">💎</div>
+        <div style="font-family:'Itim',sans-serif;font-size:0.85rem;font-weight:700;color:#fff;margin-bottom:4px;">อัปเดตเสมอ</div>
+        <div style="font-family:'Itim',sans-serif;font-size:0.72rem;color:var(--text-dim);line-height:1.4;">มีทีมงานคอยอัปเดตให้ใช้งานได้ตลอด</div>
+      </div>
+    </div>
+  </div>
+
   <!-- ปุ่มเปิด Admin (กดเพื่อเปิด/ปิด) -->
   <div class="admin-toggle" onclick="toggleAdmin()">[ A ]</div>
 
@@ -644,7 +764,7 @@
 // ╚═══════════════════════════════════════════════════════════════╝
 
 // ── เปิด/ปิดเว็บ ──────────────────────────────────────────────
-const SITE_ENABLED      = "teue";    // true = เปิดเว็บ | false = ปิดเว็บ
+const SITE_ENABLED      = true;    // true = เปิดเว็บ | false = ปิดเว็บ
 const SITE_CLOSED_MSG   = "เว็บปิดให้บริการชั่วคราว";   // หัวข้อหน้าปิด
 const SITE_CLOSED_DESC  = "กรุณากลับมาใหม่ในภายหลัง";  // คำอธิบายหน้าปิด
 const SITE_DISCORD_URL  = "https://discord.gg/cysSFP5MK";  // 💬 ลิงก์ Discord ติดต่อ
@@ -655,7 +775,7 @@ const SITE_OPEN_TIME    = "";
 
 // ── หน้าเว็บ ──────────────────────────────────────────────────
 const SITE_TITLE    = "UG Hub";          // ชื่อที่แสดงบนหัวเว็บ (แท็บ browser)
-const SITE_TAGLINE  = "key system v4.0 — ระบบคีย์อัตโนมัติ"; // คำใต้โลโก้
+const SITE_TAGLINE  = "key system v3.2 — ระบบคีย์อัตโนมัติ"; // คำใต้โลโก้
 const FOOTER_TEXT   = "© 2025 UG Hub — All rights reserved";  // ข้อความ footer
 
 // ── ระบบปลดล็อคก่อนเข้าเว็บ ──────────────────────────────────
@@ -1276,6 +1396,34 @@ if (SITE_ENABLED) {
     document.body.style.overflow = "hidden";
   }
 }
+
+
+// ── ระบบ Theme ──────────────────────────────────────────────────
+function setTheme(name) {
+  document.body.className = name === 'dark' ? '' : 'theme-' + name;
+  localStorage.setItem('ug_theme', name);
+
+  // อัปเดตปุ่ม active
+  document.querySelectorAll('.theme-btn').forEach(b => {
+    b.classList.remove('active');
+    if (b.classList.contains(name) || (name === 'dark' && b.classList.contains('dark'))) {
+      b.classList.add('active');
+    }
+  });
+
+  // แก้สี unlock screen ตาม theme
+  const unlockBg = {
+    dark: '#08000f', frost: '#f0f0f5', glass: '#f5f0ff', midnight: '#1a1a2e'
+  };
+  const unlockEl = document.getElementById('unlockScreen');
+  if (unlockEl) unlockEl.style.background = unlockBg[name] || '#08000f';
+}
+
+// โหลด theme ที่บันทึกไว้ (รอให้ DOM พร้อมก่อน)
+document.addEventListener("DOMContentLoaded", function() {
+  const _savedTheme = localStorage.getItem('ug_theme') || 'dark';
+  setTheme(_savedTheme);
+});
 
 // ซ่อน/แสดง ส่วนรับคีย์และตรวจสอบคีย์
 if (!SHOW_GET_KEY)   document.getElementById("getKeyCard").style.display   = "none";
