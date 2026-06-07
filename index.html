@@ -474,7 +474,7 @@
         src=""
         title="YouTube video"
         frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         allowfullscreen
         style="display:block;border-radius:10px;"
       ></iframe>
@@ -652,7 +652,7 @@ const SITE_OPEN_TIME    = "";
 
 // ── หน้าเว็บ ──────────────────────────────────────────────────
 const SITE_TITLE    = "UG Hub";          // ชื่อที่แสดงบนหัวเว็บ (แท็บ browser)
-const SITE_TAGLINE  = "key system v3.4 — ระบบคีย์อัตโนมัติ"; // คำใต้โลโก้
+const SITE_TAGLINE  = "key system v3.2 — ระบบคีย์อัตโนมัติ"; // คำใต้โลโก้
 const FOOTER_TEXT   = "© 2025 UG Hub — All rights reserved";  // ข้อความ footer
 
 // ── ระบบปลดล็อคก่อนเข้าเว็บ ──────────────────────────────────
@@ -669,13 +669,13 @@ const UNLOCK_EXPIRE_MINUTES = 5;
 // ── ระบบคีย์ ──────────────────────────────────────────────────
 const KEY_PAGE_URL     = "https://regretevator638-lab.github.io/UG-HUB-GET-KEY/";
 // ☝️ ลิงก์หน้าเว็บที่แจกคีย์ (แยกจาก BYPASS_URL ด้านบน)
-const KEY_EXPIRE_HOURS   = 1;  // ⏱ ชั่วโมง  — 0=ไม่นับ | 1=1ชม. | 12=ครึ่งวัน | 24=1วัน
-const KEY_EXPIRE_MINUTES = 0;   // ⏱ นาที     — 0=ไม่นับ | 15=15นาที | 30=ครึ่งชม. | 45=45นาที
+const KEY_EXPIRE_HOURS   = 0;  // ⏱ ชั่วโมง  — 0=ไม่นับ | 1=1ชม. | 12=ครึ่งวัน | 24=1วัน
+const KEY_EXPIRE_MINUTES = 5;   // ⏱ นาที     — 0=ไม่นับ | 15=15นาที | 30=ครึ่งชม. | 45=45นาที
 // ☝️ รวมกันได้เลย เช่น HOURS=1 MINUTES=30 = 1ชม.30นาที | HOURS=0 MINUTES=15 = 15นาทีเฉยๆ
 
 // ── กล่องสคริปต์/โค้ด (เหมือนในรูป) ─────────────────────────
 const SCRIPT_FILENAME = "main_script.lua";  // ชื่อไฟล์ที่แสดงบนกล่อง
-const SCRIPT_CODE     = `loadstring(game:HttpGet("https://raw.githubusercontent.com/regretevator638-lab/-/refs/heads/main/Gap.lua"))()`;
+const SCRIPT_CODE     = `loadstring(game:HttpGet("https://raw.githubusercontent.com/regretevator638-lab/FPSV2.lua/refs/heads/main/fps.lua"))()`;
 // ☝️ เปลี่ยนเป็นโค้ดที่อยากให้คัดลอกได้เลย
 const SCRIPT_NOTE_1   = "-- คัดลอกห้ามกดแปลภาษานะครับ";  // หมายเหตุบรรทัด 1
 const SCRIPT_NOTE_2   = "-- สามารถนำไปใส่ตัวรันเล่นได้เลย"; // หมายเหตุบรรทัด 2
@@ -731,12 +731,23 @@ function getKeyExpiry() {
   return Date.now() + (totalMs > 0 ? totalMs : 60000); // ขั้นต่ำ 1 นาที
 }
 
-// สร้างคีย์ random รูปแบบ xxxx-xxxx-xxxx-xxxx
+// สร้างคีย์ random พร้อมฝัง expiry timestamp (Unix seconds)
+// รูปแบบ: xxxx-xxxx-xxxx-TIMESTAMP (timestamp คือวินาทีหมดอายุ)
 function genKeyString() {
   const chars = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   let k = "";
-  for (let i = 0; i < 32; i++) k += chars[Math.floor(Math.random() * chars.length)];
-  return k.slice(0,8) + "-" + k.slice(8,16) + "-" + k.slice(16,24) + "-" + k.slice(24,32);
+  for (let i = 0; i < 24; i++) k += chars[Math.floor(Math.random() * chars.length)];
+  const expUnix = Math.floor(getKeyExpiry() / 1000); // แปลงเป็น Unix seconds
+  return k.slice(0,8) + "-" + k.slice(8,16) + "-" + k.slice(16,24) + "-" + expUnix;
+}
+
+// อ่าน expiry จากคีย์
+function getExpFromKey(key) {
+  if (!key) return null;
+  const parts = key.split("-");
+  if (parts.length !== 4) return null;
+  const ts = parseInt(parts[3]);
+  return isNaN(ts) ? null : ts * 1000; // แปลงกลับเป็น ms
 }
 
 // ลบคีย์ที่หมดอายุออก
@@ -946,7 +957,7 @@ function verifyAndGetKey() {
 
   cleanExpired();
   const newKey = genKeyString();
-  const exp = getKeyExpiry();
+  const exp = getExpFromKey(newKey); // อ่าน expiry จากคีย์โดยตรง
   const keys = getKeys();
   keys[newKey] = { exp, created: Date.now() };
   saveKeys(keys);
@@ -996,8 +1007,20 @@ function checkKey() {
     const left = keys[inp].exp - Date.now();
     const h = Math.floor(left / 3600000);
     const m = Math.floor((left % 3600000) / 60000);
-    showStatus("checkResult", `✅ คีย์ถูกต้อง — หมดอายุใน ${h}ชม. ${m}นาที`, "success");
+    const s = Math.floor((left % 60000) / 1000);
+    showStatus("checkResult", `✅ คีย์ถูกต้อง — หมดอายุใน ${h}ชม. ${m}น. ${s}วิ`, "success");
+    // นับถอยหลังแบบ realtime
+    clearInterval(window._checkTimer);
+    window._checkTimer = setInterval(() => {
+      const l = keys[inp].exp - Date.now();
+      if (l <= 0) { clearInterval(window._checkTimer); showStatus("checkResult", "❌ คีย์หมดอายุแล้ว", "error"); return; }
+      const hh = Math.floor(l/3600000);
+      const mm = Math.floor((l%3600000)/60000);
+      const ss = Math.floor((l%60000)/1000);
+      showStatus("checkResult", `✅ คีย์ถูกต้อง — หมดอายุใน ${hh}ชม. ${mm}น. ${ss}วิ`, "success");
+    }, 1000);
   } else {
+    clearInterval(window._checkTimer);
     showStatus("checkResult", "❌ คีย์ไม่ถูกต้องหรือหมดอายุแล้ว", "error");
   }
 }
@@ -1028,7 +1051,7 @@ function adminLogin() {
 function adminGenKey() {
   cleanExpired();
   const newKey = genKeyString();
-  const exp = getKeyExpiry();
+  const exp = getExpFromKey(newKey); // อ่าน expiry จากคีย์โดยตรง
   const keys = getKeys();
   keys[newKey] = { exp, created: Date.now() };
   saveKeys(keys);
@@ -1076,12 +1099,27 @@ function renderAdminKeys() {
     const left = v.exp - Date.now();
     const h = Math.floor(left / 3600000);
     const m = Math.floor((left % 3600000) / 60000);
+    const s = Math.floor((left % 60000) / 1000);
     return `<div class="key-item">
       <span class="k">${k}</span>
-      <span class="exp">${h}ชม.${m}น.</span>
+      <span class="exp">${h}ชม.${m}น.${s}วิ</span>
       <span class="del" onclick="deleteKey('${k}')">✕</span>
     </div>`;
   }).join("");
+  // อัปเดตทุก 1 วินาที
+  clearInterval(window._adminTimer);
+  window._adminTimer = setInterval(() => {
+    document.querySelectorAll(".key-item .exp").forEach((el, idx) => {
+      const k = Object.keys(getKeys())[idx];
+      if (!k) return;
+      const l = getKeys()[k].exp - Date.now();
+      if (l <= 0) { renderAdminKeys(); return; }
+      const hh = Math.floor(l/3600000);
+      const mm = Math.floor((l%3600000)/60000);
+      const ss = Math.floor((l%60000)/1000);
+      el.textContent = hh+"ชม."+mm+"น."+ss+"วิ";
+    });
+  }, 1000);
 }
 
 // แสดงข้อความสถานะแล้วหายไปเอง 4 วิ
@@ -1109,7 +1147,7 @@ function getYoutubeEmbedUrl(url) {
   const shorts = url.match(/shorts\/([a-zA-Z0-9_-]{11})/);
   if (shorts) videoId = shorts[1];
 
-  return videoId ? "https://www.youtube.com/embed/" + videoId : null;
+  return videoId ? "https://www.youtube-nocookie.com/embed/" + videoId + "?rel=0&modestbranding=1" : null;
 }
 
 // ตรวจสอบว่าเคยปลดล็อคแล้วหรือยัง
