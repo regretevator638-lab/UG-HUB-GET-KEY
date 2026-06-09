@@ -1104,38 +1104,11 @@ function checkKey() {
   }
 }
 
-
-  } else {
-    showStatus("loginMsg", "❌ ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง", "error");
-  }
-}
-
-
-  list.innerHTML = Object.entries(keys).map(([k, v]) => {
-    const left = v.exp - Date.now();
-    const h = Math.floor(left / 3600000);
-    const m = Math.floor((left % 3600000) / 60000);
-    const s = Math.floor((left % 60000) / 1000);
-    return `<div class="key-item">
-      <span class="k">${k}</span>
-      <span class="exp">${h}ชม.${m}น.${s}วิ</span>
-      <span class="del" onclick="deleteKey('${k}')">✕</span>
-    </div>`;
-  }).join("");
-  // อัปเดตทุก 1 วินาที
-  clearInterval(window._adminTimer);
-  window._adminTimer = setInterval(() => {
-    document.querySelectorAll(".key-item .exp").forEach((el, idx) => {
-      const k = Object.keys(getKeys())[idx];
-      if (!k) return;
-      const l = getKeys()[k].exp - Date.now();
-      if (l <= 0) { renderAdminKeys(); return; }
-      const hh = Math.floor(l/3600000);
-      const mm = Math.floor((l%3600000)/60000);
-      const ss = Math.floor((l%60000)/1000);
-      el.textContent = hh+"ชม."+mm+"น."+ss+"วิ";
-    });
-  }, 1000);
+// ลบคีย์
+function deleteKey(k) {
+  const keys = getKeys();
+  delete keys[k];
+  saveKeys(keys);
 }
 
 // แสดงข้อความสถานะแล้วหายไปเอง 4 วิ
