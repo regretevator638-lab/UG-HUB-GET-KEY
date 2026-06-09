@@ -368,6 +368,53 @@
   .theme-btn.glass   { background: linear-gradient(135deg,#f5f0ff,#9933ff); }
   .theme-btn.midnight{ background: linear-gradient(135deg,#1a1a2e,#7777bb); }
   .theme-btn.active  { border-color: #fff; transform: scale(1.15); }
+
+  /* ── Theme overrides สำหรับ card elements ── */
+  body.theme-frost .card-title { color: var(--purple-glow); }
+  body.theme-frost .step-text { color: #1a0033; }
+  body.theme-frost .step-num { background: rgba(100,0,200,0.1); border-color: rgba(100,0,200,0.3); color: #5500bb; }
+  body.theme-frost .key-box { background: rgba(0,0,0,0.05); border-color: rgba(100,0,200,0.2); }
+  body.theme-frost .key-text { color: #5500bb; }
+  body.theme-frost .expire-badge { background: rgba(100,0,200,0.08); border-color: rgba(100,0,200,0.2); }
+  body.theme-frost .inp { background: rgba(0,0,0,0.05); border-color: rgba(100,0,200,0.2); color: #1a0033; }
+  body.theme-frost .inp::placeholder { color: #9977bb; }
+  body.theme-frost .btn-secondary { background: rgba(100,0,200,0.08); border-color: rgba(100,0,200,0.25); color: #5500bb; }
+  body.theme-frost .status-msg.success { background: rgba(0,150,50,0.08); }
+  body.theme-frost .status-msg.error { background: rgba(200,0,0,0.08); }
+  body.theme-frost .tagline { color: #7744aa; }
+  body.theme-frost .footer { color: #9977bb; }
+  body.theme-frost #scriptCodeDisplay { color: #440099 !important; }
+  body.theme-frost #scriptNote1, body.theme-frost #scriptNote2 { color: #8866aa !important; }
+
+  body.theme-glass .card-title { color: var(--purple-glow); }
+  body.theme-glass .step-text { color: #2a0055; }
+  body.theme-glass .step-num { background: rgba(120,0,220,0.12); border-color: rgba(120,0,220,0.35); color: #6600dd; }
+  body.theme-glass .key-box { background: rgba(255,255,255,0.5); border-color: rgba(120,0,220,0.25); }
+  body.theme-glass .key-text { color: #6600dd; }
+  body.theme-glass .expire-badge { background: rgba(120,0,220,0.1); border-color: rgba(120,0,220,0.25); }
+  body.theme-glass .inp { background: rgba(255,255,255,0.6); border-color: rgba(120,0,220,0.25); color: #2a0055; }
+  body.theme-glass .inp::placeholder { color: #9966cc; }
+  body.theme-glass .btn-secondary { background: rgba(120,0,220,0.1); border-color: rgba(120,0,220,0.3); color: #6600dd; }
+  body.theme-glass .tagline { color: #8855bb; }
+  body.theme-glass .footer { color: #9966cc; }
+  body.theme-glass #scriptCodeDisplay { color: #5500aa !important; }
+  body.theme-glass #scriptNote1, body.theme-glass #scriptNote2 { color: #9966bb !important; }
+
+  body.theme-midnight .card-title { color: rgba(200,200,255,0.8); }
+  body.theme-midnight .step-text { color: #e0e0ff; }
+  body.theme-midnight .step-num { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); color: #c0c0ff; }
+  body.theme-midnight .key-box { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.15); }
+  body.theme-midnight .key-text { color: #ffffff; }
+  body.theme-midnight .expire-badge { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); }
+  body.theme-midnight .inp { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: #e8e8ff; }
+  body.theme-midnight .inp::placeholder { color: #6666aa; }
+  body.theme-midnight .btn-secondary { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); color: #c0c0ff; }
+  body.theme-midnight .btn-primary { box-shadow: 0 4px 20px rgba(100,100,200,0.3); }
+  body.theme-midnight .tagline { color: #8888aa; }
+  body.theme-midnight .footer { color: #6666aa; }
+  body.theme-midnight #scriptCodeDisplay { color: #aaaaff !important; }
+  body.theme-midnight #scriptNote1, body.theme-midnight #scriptNote2 { color: #6666aa !important; }
+  body.theme-midnight .logo { text-shadow: 0 0 20px rgba(150,150,255,0.5); }
 </style>
 </head>
 <body>
@@ -764,7 +811,7 @@
 // ╚═══════════════════════════════════════════════════════════════╝
 
 // ── เปิด/ปิดเว็บ ──────────────────────────────────────────────
-const SITE_ENABLED      = "true";    // true = เปิดเว็บ | false = ปิดเว็บ
+const SITE_ENABLED      = true;    // true = เปิดเว็บ | false = ปิดเว็บ
 const SITE_CLOSED_MSG   = "เว็บปิดให้บริการชั่วคราว";   // หัวข้อหน้าปิด
 const SITE_CLOSED_DESC  = "กรุณากลับมาใหม่ในภายหลัง";  // คำอธิบายหน้าปิด
 const SITE_DISCORD_URL  = "https://discord.gg/cysSFP5MK";  // 💬 ลิงก์ Discord ติดต่อ
@@ -785,11 +832,11 @@ const WAIT_SECONDS  = 5;   // ⏱ ต้องอยู่ในลิงก์�
 const MIN_SECONDS   = 5;   // ⚠️ ถ้ากลับมาก่อนกี่วิถือว่าเร็วเกิน (ขึ้น Error)
 
 // ── ซ่อน/แสดงส่วนต่างๆ ────────────────────────────────────────
-const SHOW_GET_KEY   = false; // true=แสดงส่วนรับคีย์ฟรี | false=ซ่อน
-const SHOW_CHECK_KEY = false; // true=แสดงส่วนตรวจสอบคีย์ | false=ซ่อน
+const SHOW_GET_KEY   = true; // true=แสดงส่วนรับคีย์ฟรี | false=ซ่อน
+const SHOW_CHECK_KEY = true; // true=แสดงส่วนตรวจสอบคีย์ | false=ซ่อน
 
 // ── ระบบจำการปลดล็อค ──────────────────────────────────────────
-const UNLOCK_EXPIRE_MINUTES = 5;
+const UNLOCK_EXPIRE_MINUTES = 10;
 // ☝️ หลังปลดล็อคแล้ว จำไว้กี่นาที (ไม่ต้องปลดซ้ำถ้ายังไม่หมดเวลา)
 //    5 = 5 นาที | 30 = ครึ่งชั่วโมง | 60 = 1 ชั่วโมง | 1440 = 1 วัน
 
