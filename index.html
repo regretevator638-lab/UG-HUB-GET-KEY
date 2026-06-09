@@ -228,22 +228,6 @@
     text-align: center; letter-spacing: 0.08em;
   }
 
-  /* ปุ่มเปิด Admin Panel */
-  .admin-toggle {
-    position: fixed;
-    top: 14px; right: 16px;
-    font-family: var(--mono); font-size: 0.55rem;
-    color: rgba(255,255,255,0.06);
-    cursor: pointer; user-select: none;
-    letter-spacing: 0.15em; z-index: 9999;
-    transition: color 0.4s;
-    font-weight: 300;
-  }
-  .admin-toggle:hover { color: rgba(255,255,255,0.25); }
-
-  /* Admin Panel (ซ่อนอยู่ กดถึงจะเปิด) */
-  .admin-panel { display: none; width: 100%; }
-  .admin-panel.open { display: block; }
 
   .input-row { display: flex; gap: 8px; margin-bottom: 10px; }
   .inp {
@@ -288,47 +272,9 @@
   .badge.active { border-color: #60ff90; color: #60ff90; background: rgba(0,255,100,0.08); }
 
   /* ═══ Theme System ═══ */
-  body.theme-frost {
-    --purple-deep: #f0f0f5;
-    --purple-dark: #e8e8f0;
-    --purple-mid:  #d0d0e8;
-    --purple-glow: #6600cc;
-    --purple-light:#8833dd;
-    --purple-neon: #5500bb;
-    --text:        #1a0033;
-    --text-dim:    #6644aa;
-    background: #f0f0f5;
-  }
-  body.theme-frost .card {
-    background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(240,240,250,0.98));
-    border-color: rgba(100,0,200,0.2);
-    box-shadow: 0 4px 20px rgba(100,0,200,0.08);
-  }
-  body.theme-frost .logo { color: #1a0033; text-shadow: 0 0 20px rgba(100,0,200,0.3); }
-  body.theme-frost .btn-primary { background: linear-gradient(135deg,#5500cc,#8800ff); }
-  body.theme-frost .bg-grid { background-image:
-    linear-gradient(rgba(100,0,200,0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(100,0,200,0.05) 1px, transparent 1px); }
 
-  body.theme-glass {
-    --purple-deep: #f5f0ff;
-    --purple-dark: #ede5ff;
-    --purple-mid:  #d4c0ff;
-    --purple-glow: #7700ee;
-    --purple-light:#9933ff;
-    --purple-neon: #6600dd;
-    --text:        #2a0055;
-    --text-dim:    #7744bb;
-    background: linear-gradient(135deg, #f5f0ff, #ede5ff);
-  }
-  body.theme-glass .card {
-    background: linear-gradient(135deg, rgba(255,255,255,0.7), rgba(240,230,255,0.8));
-    border-color: rgba(120,0,220,0.3);
-    backdrop-filter: blur(20px);
-    box-shadow: 0 4px 24px rgba(120,0,220,0.12);
-  }
-  body.theme-glass .logo { color: #2a0055; text-shadow: 0 0 20px rgba(120,0,220,0.4); }
-  body.theme-glass .btn-primary { background: linear-gradient(135deg,#6600cc,#9900ff); }
+
+
 
   body.theme-midnight {
     --purple-deep: #1a1a2e;
@@ -349,25 +295,6 @@
   body.theme-midnight .logo { color: #fff; text-shadow: 0 0 20px rgba(200,200,255,0.5); }
   body.theme-midnight .btn-primary { background: linear-gradient(135deg,#333366,#555599,#7777bb); }
 
-  /* ปุ่มสลับ Theme */
-  .theme-switcher {
-    position: fixed;
-    top: 14px; right: 16px;
-    display: flex; gap: 6px;
-    z-index: 9998;
-  }
-  .theme-btn {
-    width: 20px; height: 20px;
-    border-radius: 50%; border: 2px solid rgba(255,255,255,0.3);
-    cursor: pointer; transition: all 0.2s;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  }
-  .theme-btn:hover { transform: scale(1.2); border-color: rgba(255,255,255,0.8); }
-  .theme-btn.dark    { background: #0d0010; }
-  .theme-btn.frost   { background: #f0f0f5; }
-  .theme-btn.glass   { background: linear-gradient(135deg,#f5f0ff,#9933ff); }
-  .theme-btn.midnight{ background: linear-gradient(135deg,#1a1a2e,#7777bb); }
-  .theme-btn.active  { border-color: #fff; transform: scale(1.15); }
 
   /* ── Theme overrides สำหรับ card elements ── */
   body.theme-frost .card-title { color: var(--purple-glow); }
@@ -522,10 +449,7 @@
 
   <!-- ปุ่มสลับ Theme บนหน้าปลดล็อค -->
   <div style="position:absolute;top:14px;right:16px;display:flex;gap:6px;z-index:19999;" id="unlockThemeSwitcher">
-    <div class="theme-btn dark active" onclick="setTheme('dark')" title="Dark"></div>
-    <div class="theme-btn frost" onclick="setTheme('frost')" title="White Frost"></div>
-    <div class="theme-btn glass" onclick="setTheme('glass')" title="Purple Glass"></div>
-    <div class="theme-btn midnight" onclick="setTheme('midnight')" title="Midnight White"></div>
+    
   </div>
 
   <!-- การ์ดหลัก -->
@@ -589,12 +513,23 @@
   </div>
 </div>
 <!-- ปุ่มสลับ Theme -->
-<div class="theme-switcher" id="themeSwitcher">
-  <div class="theme-btn dark active" onclick="setTheme('dark')" title="Dark"></div>
-  <div class="theme-btn frost" onclick="setTheme('frost')" title="White Frost"></div>
-  <div class="theme-btn glass" onclick="setTheme('glass')" title="Purple Glass"></div>
-  <div class="theme-btn midnight" onclick="setTheme('midnight')" title="Midnight White"></div>
-</div>
+<button id="themeSwitcher" onclick="toggleTheme()" style="
+  position:fixed; top:14px; right:16px; z-index:9998;
+  width:36px; height:36px; border-radius:10px;
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.15);
+  cursor:pointer; font-size:1.1rem;
+  display:flex; align-items:center; justify-content:center;
+  transition:all 0.2s; backdrop-filter:blur(8px);
+" title="เปลี่ยนธีม">🌙</button>
+
+<div style="
+  position:fixed; top:14px; left:16px; z-index:9998;
+  font-family:'Itim',sans-serif; font-size:0.72rem;
+  color:rgba(255,255,255,0.25);
+  letter-spacing:0.05em;
+  user-select:none;
+" id="siteCredit">UG Hub | @regretevator638</div>
 
 <div class="bg-grid"></div>
 <div class="bg-orb a"></div>
@@ -760,45 +695,6 @@
       </div>
     </div>
   </div>
-
-  <!-- ปุ่มเปิด Admin (กดเพื่อเปิด/ปิด) -->
-  <div class="admin-toggle" onclick="toggleAdmin()">[ A ]</div>
-
-  <!-- Admin Panel -->
-  <div class="admin-panel" id="adminPanel">
-    <div class="card">
-      <div class="card-title">Admin Panel</div>
-
-      <!-- หน้า login admin -->
-      <div id="adminLogin">
-        <div class="input-row">
-          <input class="inp" id="adminUser" placeholder="Username" />
-        </div>
-        <div class="input-row">
-          <input class="inp" id="adminPass" placeholder="Password" type="password" />
-        </div>
-        <button class="btn btn-primary" onclick="adminLogin()">เข้าสู่ระบบ</button>
-        <div id="loginMsg" class="status-msg"></div>
-      </div>
-
-      <!-- dashboard admin (โผล่หลัง login สำเร็จ) -->
-      <div id="adminDash" style="display:none;">
-        <div class="badge-row" id="adminBadges"></div>
-
-        <div class="card-title" style="margin-bottom:10px;">สร้างคีย์ใหม่</div>
-        <div class="input-row">
-          <button class="btn btn-primary" style="flex:1" onclick="adminGenKey()">⚡ สร้างคีย์</button>
-          <button class="btn btn-secondary" style="width:auto;padding:10px 14px;" onclick="adminClearExpired()">🗑 ลบหมดอายุ</button>
-        </div>
-        <div id="adminNewKey" class="key-box" style="margin-bottom:14px;display:none;">
-          <div class="key-text" id="adminKeyText">—</div>
-          <button class="btn btn-secondary" style="width:auto;padding:8px 14px;font-size:0.8rem;" onclick="copyAdminKey()">📋</button>
-        </div>
-
-        <div class="card-title" style="margin-bottom:8px;">คีย์ทั้งหมด</div>
-        <div class="admin-keys-list" id="keyList"></div>
-      </div>
-    </div>
   </div>
 
   <div class="footer">© 2025 UG Hub — All rights reserved</div>
@@ -836,15 +732,15 @@ const SHOW_GET_KEY   = true; // true=แสดงส่วนรับคีย�
 const SHOW_CHECK_KEY = true; // true=แสดงส่วนตรวจสอบคีย์ | false=ซ่อน
 
 // ── ระบบจำการปลดล็อค ──────────────────────────────────────────
-const UNLOCK_EXPIRE_MINUTES = 10;
+const UNLOCK_EXPIRE_MINUTES = 5;
 // ☝️ หลังปลดล็อคแล้ว จำไว้กี่นาที (ไม่ต้องปลดซ้ำถ้ายังไม่หมดเวลา)
 //    5 = 5 นาที | 30 = ครึ่งชั่วโมง | 60 = 1 ชั่วโมง | 1440 = 1 วัน
 
 // ── ระบบคีย์ ──────────────────────────────────────────────────
 const KEY_PAGE_URL     = "https://regretevator638-lab.github.io/UG-HUB-GET-KEY/";
 // ☝️ ลิงก์หน้าเว็บที่แจกคีย์ (แยกจาก BYPASS_URL ด้านบน)
-const KEY_EXPIRE_HOURS   = 0;  // ⏱ ชั่วโมง  — 0=ไม่นับ | 1=1ชม. | 12=ครึ่งวัน | 24=1วัน
-const KEY_EXPIRE_MINUTES = 1;   // ⏱ นาที     — 0=ไม่นับ | 15=15นาที | 30=ครึ่งชม. | 45=45นาที
+const KEY_EXPIRE_HOURS   = 24;  // ⏱ ชั่วโมง  — 0=ไม่นับ | 1=1ชม. | 12=ครึ่งวัน | 24=1วัน
+const KEY_EXPIRE_MINUTES = 0;   // ⏱ นาที     — 0=ไม่นับ | 15=15นาที | 30=ครึ่งชม. | 45=45นาที
 // ☝️ รวมกันได้เลย เช่น HOURS=1 MINUTES=30 = 1ชม.30นาที | HOURS=0 MINUTES=15 = 15นาทีเฉยๆ
 
 // ── กล่องสคริปต์/โค้ด (เหมือนในรูป) ─────────────────────────
@@ -875,8 +771,6 @@ const YOUTUBE_URL   = "https://youtu.be/aXzELDcyIKs?si=JX_EH5J_NHggFZoV"; // �
 const YOUTUBE_TITLE = "📺 วิดีโอแนะนำ";  // หัวข้อเหนือวิดีโอ
 
 // ── Admin Panel ───────────────────────────────────────────────
-const ADMIN_USER    = "RWGXLC";    // 👤 ชื่อ admin
-const ADMIN_PASS    = "12380645";  // 🔒 รหัสผ่าน admin
 
 // ╔═══════════════════════════════════════════════════════════════╗
 // ║                                                               ║
@@ -1199,75 +1093,12 @@ function checkKey() {
   }
 }
 
-// --- Admin Panel ---
-let adminLoggedIn = false;
 
-// เปิด/ปิด Admin Panel
-function toggleAdmin() {
-  document.getElementById("adminPanel").classList.toggle("open");
-}
-
-// login admin
-function adminLogin() {
-  const u = document.getElementById("adminUser").value;
-  const p = document.getElementById("adminPass").value;
-  if (u === ADMIN_USER && p === ADMIN_PASS) {
-    adminLoggedIn = true;
-    document.getElementById("adminLogin").style.display = "none";
-    document.getElementById("adminDash").style.display = "block";
-    renderAdminKeys();
   } else {
     showStatus("loginMsg", "❌ ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง", "error");
   }
 }
 
-// สร้างคีย์ใหม่ (admin)
-function adminGenKey() {
-  cleanExpired();
-  const newKey = genKeyString();
-  const exp = getExpFromKey(newKey); // อ่าน expiry จากคีย์โดยตรง
-  const keys = getKeys();
-  keys[newKey] = { exp, created: Date.now() };
-  saveKeys(keys);
-  document.getElementById("adminNewKey").style.display = "flex";
-  document.getElementById("adminKeyText").textContent = newKey;
-  renderAdminKeys();
-}
-
-// คัดลอกคีย์ที่สร้างโดย admin
-function copyAdminKey() {
-  const k = document.getElementById("adminKeyText").textContent;
-  navigator.clipboard.writeText(k);
-}
-
-// ลบคีย์หมดอายุทั้งหมด
-function adminClearExpired() {
-  cleanExpired();
-  renderAdminKeys();
-}
-
-// ลบคีย์รายตัว
-function deleteKey(k) {
-  const keys = getKeys();
-  delete keys[k];
-  saveKeys(keys);
-  renderAdminKeys();
-}
-
-// แสดงรายการคีย์ทั้งหมดใน admin
-function renderAdminKeys() {
-  cleanExpired();
-  const keys = getKeys();
-  const list = document.getElementById("keyList");
-  const total = Object.keys(keys).length;
-
-  document.getElementById("adminBadges").innerHTML =
-    `<div class="badge active">คีย์ที่ใช้ได้: ${total}</div>`;
-
-  if (total === 0) {
-    list.innerHTML = '<div style="color:var(--text-dim);font-family:var(--mono);font-size:0.75rem;text-align:center;padding:12px;">ไม่มีคีย์</div>';
-    return;
-  }
 
   list.innerHTML = Object.entries(keys).map(([k, v]) => {
     const left = v.exp - Date.now();
@@ -1446,17 +1277,22 @@ if (SITE_ENABLED) {
 
 
 // ── ระบบ Theme ──────────────────────────────────────────────────
+function toggleTheme() {
+  const current = localStorage.getItem('ug_theme') || 'dark';
+  setTheme(current === 'dark' ? 'midnight' : 'dark');
+}
+
 function setTheme(name) {
   document.body.className = name === 'dark' ? '' : 'theme-' + name;
   localStorage.setItem('ug_theme', name);
 
   // อัปเดตปุ่ม active
-  document.querySelectorAll('.theme-btn').forEach(b => {
-    b.classList.remove('active');
-    if (b.classList.contains(name) || (name === 'dark' && b.classList.contains('dark'))) {
-      b.classList.add('active');
-    }
-  });
+  const icon = name === 'dark' ? '🌙' : '☀️';
+  const btns = document.querySelectorAll('#themeSwitcher, #unlockThemeBtn');
+  btns.forEach(b => { if(b) b.textContent = icon; });
+  // เครดิต
+  const credit = document.getElementById('siteCredit');
+  if (credit) credit.style.color = name === 'dark' ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,50,0.3)';
 
   // แก้สี unlock screen ตาม theme
   const unlockBg = {
