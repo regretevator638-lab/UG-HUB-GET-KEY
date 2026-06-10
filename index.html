@@ -276,6 +276,10 @@
 
 
 
+  html.theme-midnight, body.theme-midnight {
+    background: linear-gradient(135deg, #1a1a2e, #16213e) !important;
+    min-height: 100vh;
+  }
   body.theme-midnight {
     --purple-deep: #1a1a2e;
     --purple-dark: #16213e;
@@ -1267,7 +1271,9 @@ function toggleTheme() {
 }
 
 function setTheme(name) {
-  document.body.className = name === 'dark' ? '' : 'theme-' + name;
+  const cls = name === 'dark' ? '' : 'theme-' + name;
+  document.body.className = cls;
+  document.documentElement.className = cls; // ครอบ html ด้วย
   localStorage.setItem('ug_theme', name);
 
   // อัปเดตปุ่ม active
