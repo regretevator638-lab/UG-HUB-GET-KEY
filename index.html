@@ -17,12 +17,14 @@
 body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--dk);font-size:14px}
 
 /* MODE BAR */
-#modebar{display:flex;align-items:center;justify-content:center;gap:6px;background:#212121;padding:6px 12px;position:sticky;top:0;z-index:300}
-#modebar span{color:#aaa;font-size:11px}
-.mbtn{padding:6px 18px;border:none;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;transition:.2s}
-.mbtn.c{background:var(--or);color:#fff}
-.mbtn.a{background:var(--ad);color:#fff}
-.mbtn.off{opacity:.35}
+#modebar{display:flex;align-items:center;justify-content:center;gap:8px;background:#111;padding:8px 16px;position:sticky;top:0;z-index:300;border-bottom:2px solid #333}
+#modebar .mbar-label{color:#aaa;font-size:11px;margin-right:4px}
+.mbtn{padding:8px 20px;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:800;transition:.2s;display:flex;align-items:center;gap:6px;letter-spacing:.3px}
+.mbtn.c{background:var(--or);color:#fff;box-shadow:0 2px 8px rgba(238,77,45,.4)}
+.mbtn.a{background:var(--ad);color:#fff;box-shadow:0 2px 8px rgba(26,35,126,.4)}
+.mbtn.off{opacity:.3;box-shadow:none}
+.mbtn:hover:not(.off){filter:brightness(1.1)}
+.mbar-divider{width:1px;height:24px;background:#444;margin:0 4px}
 
 /* COUPON TICKER */
 #couponBar{background:linear-gradient(90deg,#7B1FA2,#C62828,#1565C0);color:#fff;padding:6px 0;overflow:hidden;position:sticky;top:37px;z-index:250;font-size:12px}
@@ -270,9 +272,10 @@ tr:hover td{background:#fafafa}
 
 <!-- MODE BAR -->
 <div id="modebar">
-  <span>🏪 ShopSimTH</span>
-  <button class="mbtn c" id="btnC" onclick="setMode('c')">👤 ลูกค้า</button>
-  <button class="mbtn a off" id="btnA" onclick="setMode('a')">🔧 แอดมิน</button>
+  <span class="mbar-label">🏪 ShopSimTH</span>
+  <div class="mbar-divider"></div>
+  <button class="mbtn c" id="btnC" onclick="setMode('c')">👤 หน้าลูกค้า</button>
+  <button class="mbtn a off" id="btnA" onclick="setMode('a')">🔧 หน้าแอดมิน (คนขาย)</button>
 </div>
 
 <!-- COUPON TICKER -->
@@ -644,7 +647,7 @@ function showPage(p){
   if(el) el.classList.add('active');
   if(p==='cart') renderCart();
   if(p==='checkout') renderCheckout();
-  if(p==='orders') renderOrders();
+  if(p==='orders'){ renderOrders(); setTimeout(initOrderQRs,50); }
   if(p==='admin') renderAdminDash();
   window.scrollTo(0,0);
 }
@@ -926,6 +929,11 @@ function renderOrders(){
         <div class="tn">${o.tracking}</div>
         <div style="font-size:11px;color:#388E3C">${o.courier}</div>
       </div>
+      <div style="background:#fff;border-radius:8px;padding:14px;margin:8px 0;text-align:center;box-shadow:var(--sh)">
+        <div style="font-weight:700;font-size:12px;margin-bottom:10px">📲 QR Code ติดตามพัสดุ</div>
+        <div id="qr_order_${o.oid}" style="display:inline-block;padding:8px;border:2px solid var(--bd);border-radius:8px"></div>
+        <div style="font-size:10px;color:var(--mu);margin-top:6px">สแกนเพื่อตรวจสอบออเดอร์ ${o.oid}</div>
+      </div>
       <div>${o.items.map(i=>`<div class="irow"><span style="font-size:18px">${i.emoji}</span>
         <div style="flex:1;font-size:12px">${i.name} x${i.qty}</div>
         <span style="font-weight:700;color:var(--or);font-size:12px">฿${(i.price*i.qty).toLocaleString()}</span></div>`).join('')}</div>
@@ -1096,6 +1104,18 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'),2800);
 }
 
+// ══ ORDER QR CODES ══
+function initOrderQRs(){
+  orders.forEach(o=>{
+    const el=document.getElementById('qr_order_'+o.oid);
+    if(el&&!el.hasAttribute('data-qr-done')){
+      el.setAttribute('data-qr-done','1');
+      const url=TRACK_URL+'?oid='+o.oid+'&track='+o.tracking;
+      new QRCode(el,{text:url,width:140,height:140,colorDark:'#EE4D2D',colorLight:'#FFFFFF',correctLevel:QRCode.CorrectLevel.H});
+    }
+  });
+}
+
 // ══ INIT ══
 initCats(); renderP();
 genCoupons(); startCouponTimer();
@@ -1103,7 +1123,7 @@ setMode('c');
 
 // Auto-refresh orders page every 3s when visible
 setInterval(()=>{
-  if(document.getElementById('page-orders').classList.contains('active')) renderOrders();
+  if(document.getElementById('page-orders').classList.contains('active')) { renderOrders(); initOrderQRs(); }
   if(document.getElementById('page-admin').classList.contains('active')) renderAdminDash();
 },3000);
 </script>
