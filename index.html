@@ -3,1344 +3,637 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UG Hub — Key System</title>
-<link href="https://fonts.googleapis.com/css2?family=Itim&family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
-
-<!-- =====================================================================
-  ⛔  โซนแก้ไม่ได้ — CSS สไตล์หน้าเว็บ
-     ถ้าแก้อาจทำให้หน้าตาพัง
-===================================================================== -->
+<title>ShopSimTH - ช้อปออนไลน์</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
-  /* สีหลักทั้งหมดของเว็บ */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
   :root {
-    --purple-deep: #0d0010;   /* พื้นหลังดำม่วงเข้มมาก */
-    --purple-dark: #120018;
-    --purple-mid:  #2a0040;
-    --purple-glow: #8b00ff;   /* สีม่วงเรืองแสง */
-    --purple-light:#c060ff;
-    --purple-neon: #df80ff;   /* สีม่วงสว่าง */
-    --text:        #e8c8ff;   /* สีตัวอักษรหลัก */
-    --text-dim:    #9060aa;   /* สีตัวอักษรจาง */
-    --mono:        'Share Tech Mono', monospace;
-    --sans:        'Itim', 'Rajdhani', sans-serif;
+    --orange: #EE4D2D;
+    --orange-light: #FF6633;
+    --orange-pale: #FFF3F0;
+    --gray-bg: #F5F5F5;
+    --gray-border: #E8E8E8;
+    --gray-text: #757575;
+    --dark: #212121;
+    --white: #fff;
+    --green: #26AA99;
+    --shadow: 0 2px 8px rgba(0,0,0,0.08);
   }
+  body { font-family: 'Segoe UI', sans-serif; background: var(--gray-bg); color: var(--dark); font-size: 14px; }
 
-  /* animation เด้งขึ้นลง */
-  @keyframes bounce {
-    0%,100% { transform: translateY(0); }
-    50%      { transform: translateY(-10px); }
-  }
+  /* HEADER */
+  header { background: var(--orange); padding: 0 16px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(238,77,45,0.3); }
+  .header-top { display: flex; align-items: center; gap: 12px; padding: 10px 0; max-width: 1200px; margin: 0 auto; }
+  .logo { color: white; font-size: 22px; font-weight: 800; letter-spacing: -0.5px; white-space: nowrap; }
+  .logo span { background: white; color: var(--orange); padding: 1px 6px; border-radius: 4px; }
+  .search-bar { flex: 1; display: flex; background: white; border-radius: 4px; overflow: hidden; max-width: 600px; }
+  .search-bar input { flex: 1; border: none; padding: 8px 12px; outline: none; font-size: 13px; }
+  .search-bar button { background: var(--orange-light); border: none; padding: 8px 16px; cursor: pointer; color: white; font-size: 14px; }
+  .header-icons { display: flex; gap: 16px; color: white; font-size: 20px; cursor: pointer; }
+  .cart-btn { position: relative; background: none; border: none; color: white; font-size: 22px; cursor: pointer; }
+  .cart-count { position: absolute; top: -6px; right: -8px; background: white; color: var(--orange); font-size: 10px; font-weight: bold; border-radius: 10px; padding: 1px 5px; min-width: 18px; text-align: center; }
+  nav { background: rgba(0,0,0,0.12); }
+  nav ul { display: flex; gap: 0; max-width: 1200px; margin: 0 auto; list-style: none; overflow-x: auto; }
+  nav ul li a { display: block; color: white; text-decoration: none; padding: 7px 14px; font-size: 12px; white-space: nowrap; opacity: 0.9; }
+  nav ul li a:hover { background: rgba(255,255,255,0.15); opacity: 1; }
 
-  body {
-    background: var(--purple-deep);
-    color: var(--text);
-    font-family: var(--sans);
-    min-height: 100vh;
-    overflow-x: hidden;
-    position: relative;
-  }
+  /* LAYOUT */
+  .page { display: none; }
+  .page.active { display: block; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 16px; }
 
-  /* กริดพื้นหลังเคลื่อนไหว */
-  .bg-grid {
-    position: fixed; inset: 0; z-index: 0;
-    background-image:
-      linear-gradient(rgba(139,0,255,0.07) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(139,0,255,0.07) 1px, transparent 1px);
-    background-size: 40px 40px;
-    animation: gridShift 20s linear infinite;
-  }
-  @keyframes gridShift {
-    from { background-position: 0 0; }
-    to   { background-position: 40px 40px; }
-  }
+  /* BANNER */
+  .banner { background: linear-gradient(135deg, #FF6633 0%, #EE4D2D 50%, #CC2200 100%); border-radius: 8px; padding: 32px 40px; color: white; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
+  .banner h1 { font-size: 28px; font-weight: 800; line-height: 1.3; }
+  .banner p { opacity: 0.9; margin-top: 6px; font-size: 15px; }
+  .banner-emoji { font-size: 64px; }
+  .banner-cta { background: white; color: var(--orange); border: none; padding: 10px 24px; border-radius: 4px; font-weight: 700; font-size: 14px; cursor: pointer; margin-top: 12px; display: inline-block; }
 
-  /* วงแสงม่วงลอยพื้นหลัง */
-  .bg-orb {
-    position: fixed; border-radius: 50%; filter: blur(80px); z-index: 0;
-    animation: orbFloat 8s ease-in-out infinite alternate;
-  }
-  .bg-orb.a { width:400px; height:400px; top:-100px; left:-100px; background:rgba(80,0,160,0.35); animation-delay:0s; }
-  .bg-orb.b { width:300px; height:300px; bottom:-80px; right:-80px; background:rgba(120,0,200,0.3); animation-delay:-3s; }
-  .bg-orb.c { width:200px; height:200px; top:50%; left:60%; background:rgba(60,0,120,0.25); animation-delay:-5s; }
-  @keyframes orbFloat {
-    from { transform: translate(0,0) scale(1); }
-    to   { transform: translate(30px,20px) scale(1.1); }
-  }
+  /* CATEGORY PILLS */
+  .categories { display: flex; gap: 8px; overflow-x: auto; padding: 8px 0; margin-bottom: 12px; scrollbar-width: none; }
+  .categories::-webkit-scrollbar { display: none; }
+  .cat-pill { background: white; border: 2px solid var(--gray-border); border-radius: 20px; padding: 6px 16px; font-size: 12px; cursor: pointer; white-space: nowrap; transition: all 0.2s; color: var(--gray-text); }
+  .cat-pill.active, .cat-pill:hover { border-color: var(--orange); color: var(--orange); background: var(--orange-pale); }
 
-  /* เส้น scanline ทับหน้าจอ */
-  body::after {
-    content:''; position:fixed; inset:0; z-index:1; pointer-events:none;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
-  }
+  /* PRODUCTS */
+  .section-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .section-title::before { content: ''; width: 4px; height: 18px; background: var(--orange); border-radius: 2px; display: inline-block; }
+  .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+  .product-card { background: white; border-radius: 6px; overflow: hidden; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-shadow: var(--shadow); }
+  .product-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.12); }
+  .product-img { width: 100%; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 56px; background: #fafafa; position: relative; }
+  .badge { position: absolute; top: 8px; left: 8px; background: var(--orange); color: white; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 3px; }
+  .product-info { padding: 10px; }
+  .product-name { font-size: 13px; color: var(--dark); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .product-price { color: var(--orange); font-weight: 700; font-size: 16px; margin-top: 6px; }
+  .product-old-price { color: var(--gray-text); font-size: 11px; text-decoration: line-through; margin-left: 4px; font-weight: 400; }
+  .product-sold { color: var(--gray-text); font-size: 11px; margin-top: 4px; }
+  .stars { color: #FFBF00; font-size: 11px; }
+  .add-cart-btn { width: 100%; background: var(--orange-pale); color: var(--orange); border: 1px solid var(--orange); border-radius: 0 0 6px 6px; padding: 7px; font-size: 12px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+  .add-cart-btn:hover { background: var(--orange); color: white; }
 
-  .container {
-    position: relative; z-index: 2;
-    max-width: 520px; margin: 0 auto;
-    padding: 40px 20px 60px;
-    display: flex; flex-direction: column; align-items: center; gap: 28px;
-  }
+  /* CART */
+  .cart-empty { text-align: center; padding: 60px 20px; color: var(--gray-text); }
+  .cart-empty-icon { font-size: 64px; margin-bottom: 12px; }
+  .cart-item { background: white; border-radius: 8px; padding: 14px; margin-bottom: 10px; display: flex; gap: 14px; align-items: center; box-shadow: var(--shadow); }
+  .cart-item-emoji { font-size: 40px; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; background: #fafafa; border-radius: 6px; flex-shrink: 0; }
+  .cart-item-info { flex: 1; }
+  .cart-item-name { font-weight: 600; font-size: 14px; }
+  .cart-item-price { color: var(--orange); font-weight: 700; margin-top: 4px; }
+  .qty-control { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+  .qty-btn { width: 26px; height: 26px; border: 1px solid var(--gray-border); background: white; border-radius: 50%; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; }
+  .qty-btn:hover { border-color: var(--orange); color: var(--orange); }
+  .qty-num { font-weight: 600; min-width: 20px; text-align: center; }
+  .remove-btn { color: var(--gray-text); border: none; background: none; cursor: pointer; font-size: 18px; padding: 4px; }
+  .remove-btn:hover { color: var(--orange); }
+  .cart-summary { background: white; border-radius: 8px; padding: 16px; box-shadow: var(--shadow); }
+  .summary-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--gray-border); font-size: 13px; }
+  .summary-row:last-of-type { border-bottom: none; }
+  .summary-total { font-weight: 700; font-size: 16px; color: var(--orange); }
+  .checkout-btn { width: 100%; background: var(--orange); color: white; border: none; padding: 14px; border-radius: 6px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 12px; transition: background 0.2s; }
+  .checkout-btn:hover { background: var(--orange-light); }
 
-  /* หัวข้อบนสุด */
-  .header { text-align: center; }
-  .logo {
-    font-family: var(--mono);
-    font-size: 2.8rem; font-weight: 700;
-    color: #fff;
-    text-shadow: 0 0 20px var(--purple-glow), 0 0 60px rgba(139,0,255,0.5);
-    letter-spacing: 0.12em;
-    animation: logoPulse 3s ease-in-out infinite;
-  }
-  @keyframes logoPulse {
-    0%,100% { text-shadow: 0 0 20px var(--purple-glow), 0 0 60px rgba(139,0,255,0.5); }
-    50%      { text-shadow: 0 0 30px var(--purple-neon), 0 0 80px rgba(180,0,255,0.7), 0 0 120px rgba(139,0,255,0.3); }
-  }
-  .logo span { color: var(--purple-neon); }
-  .tagline {
-    margin-top: 6px; font-size: 0.95rem; color: var(--text-dim);
-    font-family: var(--mono); letter-spacing: 0.08em;
-  }
+  /* CHECKOUT FORM */
+  .form-card { background: white; border-radius: 8px; padding: 20px; box-shadow: var(--shadow); margin-bottom: 16px; }
+  .form-title { font-weight: 700; font-size: 15px; margin-bottom: 14px; color: var(--orange); display: flex; align-items: center; gap: 6px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-group { margin-bottom: 12px; }
+  .form-group label { display: block; font-size: 12px; color: var(--gray-text); margin-bottom: 4px; font-weight: 600; }
+  .form-group input, .form-group select { width: 100%; border: 1px solid var(--gray-border); border-radius: 4px; padding: 9px 12px; font-size: 13px; outline: none; transition: border-color 0.2s; }
+  .form-group input:focus, .form-group select:focus { border-color: var(--orange); }
+  .payment-options { display: flex; gap: 10px; flex-wrap: wrap; }
+  .pay-opt { border: 2px solid var(--gray-border); border-radius: 6px; padding: 10px 16px; cursor: pointer; text-align: center; font-size: 12px; transition: all 0.2s; flex: 1; min-width: 100px; }
+  .pay-opt.selected { border-color: var(--orange); background: var(--orange-pale); color: var(--orange); font-weight: 700; }
+  .pay-icon { font-size: 22px; display: block; margin-bottom: 4px; }
+  .place-order-btn { width: 100%; background: var(--orange); color: white; border: none; padding: 14px; border-radius: 6px; font-size: 15px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+  .place-order-btn:hover { background: var(--orange-light); }
 
-  /* กล่องการ์ด */
-  .card {
-    width: 100%;
-    background: linear-gradient(135deg, rgba(30,0,50,0.85), rgba(15,0,25,0.9));
-    border: 1px solid rgba(139,0,255,0.35);
-    border-radius: 16px;
-    padding: 28px 24px;
-    backdrop-filter: blur(12px);
-    box-shadow: 0 0 30px rgba(139,0,255,0.15), inset 0 1px 0 rgba(200,100,255,0.1);
-    position: relative; overflow: hidden;
-  }
-  .card::before {
-    content:''; position:absolute; top:0; left:0; right:0; height:1px;
-    background: linear-gradient(90deg, transparent, var(--purple-light), transparent);
-  }
+  /* SUCCESS */
+  .success-card { background: white; border-radius: 12px; padding: 32px 24px; text-align: center; box-shadow: var(--shadow); margin-bottom: 16px; }
+  .success-icon { font-size: 64px; margin-bottom: 12px; }
+  .success-title { font-size: 22px; font-weight: 800; color: #2E7D32; margin-bottom: 6px; }
+  .order-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; text-align: left; }
+  .info-box { background: var(--gray-bg); border-radius: 8px; padding: 14px; }
+  .info-box-label { font-size: 11px; color: var(--gray-text); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  .info-box-value { font-size: 15px; font-weight: 700; margin-top: 4px; color: var(--dark); }
+  .info-box-value.highlight { color: var(--orange); }
+  .tracking-box { background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%); border: 1px solid #A5D6A7; border-radius: 8px; padding: 14px; margin: 12px 0; }
+  .tracking-box-label { font-size: 11px; color: #388E3C; font-weight: 700; text-transform: uppercase; }
+  .tracking-number { font-size: 18px; font-weight: 800; color: #1B5E20; letter-spacing: 1px; margin-top: 4px; font-family: monospace; }
+  .qr-section { background: white; border-radius: 12px; padding: 24px; box-shadow: var(--shadow); margin-bottom: 16px; }
+  .qr-title { font-weight: 700; font-size: 15px; margin-bottom: 16px; text-align: center; color: var(--dark); }
+  .qr-wrapper { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  #qrcode { padding: 12px; background: white; border: 2px solid var(--gray-border); border-radius: 8px; display: inline-block; }
+  .qr-caption { font-size: 12px; color: var(--gray-text); text-align: center; }
+  .order-items-list { text-align: left; background: var(--gray-bg); border-radius: 8px; padding: 12px; margin: 12px 0; }
+  .order-item-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--gray-border); }
+  .order-item-row:last-child { border-bottom: none; }
+  .order-item-emoji { font-size: 24px; }
+  .order-item-detail { flex: 1; font-size: 13px; }
+  .order-item-price { font-weight: 700; color: var(--orange); font-size: 13px; }
+  .btn-group { display: flex; gap: 10px; margin-top: 16px; }
+  .btn-secondary { flex: 1; background: white; color: var(--orange); border: 2px solid var(--orange); padding: 12px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 14px; }
+  .btn-primary { flex: 1; background: var(--orange); color: white; border: none; padding: 12px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 14px; }
+  .status-timeline { display: flex; justify-content: space-between; margin: 20px 0; position: relative; }
+  .status-timeline::before { content: ''; position: absolute; top: 16px; left: 10%; right: 10%; height: 2px; background: var(--gray-border); z-index: 0; }
+  .status-step { display: flex; flex-direction: column; align-items: center; gap: 6px; z-index: 1; flex: 1; }
+  .status-dot { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; background: white; border: 2px solid var(--gray-border); }
+  .status-dot.done { background: var(--green); border-color: var(--green); color: white; }
+  .status-dot.current { background: var(--orange); border-color: var(--orange); color: white; animation: pulse 1.5s infinite; }
+  .status-label { font-size: 10px; color: var(--gray-text); text-align: center; }
+  .status-label.active { color: var(--orange); font-weight: 700; }
+  @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(238,77,45,0.4); } 50% { box-shadow: 0 0 0 8px rgba(238,77,45,0); } }
 
-  /* หัวข้อในการ์ด */
-  .card-title {
-    font-family: var(--mono); font-size: 0.75rem;
-    color: var(--purple-light); letter-spacing: 0.15em; text-transform: uppercase;
-    margin-bottom: 18px;
-  }
-  .card-title::before { content: '> '; color: var(--purple-glow); }
+  /* TOAST */
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px); background: #323232; color: white; padding: 12px 24px; border-radius: 24px; font-size: 13px; font-weight: 600; z-index: 999; transition: transform 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+  .toast.show { transform: translateX(-50%) translateY(0); }
 
-  /* ขั้นตอน 1-2-3 */
-  .step {
-    display: flex; align-items: flex-start; gap: 14px;
-    padding: 12px 0;
-    border-bottom: 1px solid rgba(139,0,255,0.12);
+  @media (max-width: 600px) {
+    .banner { padding: 20px; }
+    .banner h1 { font-size: 20px; }
+    .banner-emoji { font-size: 40px; }
+    .products-grid { grid-template-columns: repeat(2, 1fr); }
+    .order-info-grid { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
   }
-  .step:last-child { border-bottom: none; }
-  .step-num {
-    width: 26px; height: 26px; flex-shrink: 0;
-    background: rgba(139,0,255,0.25); border: 1px solid rgba(139,0,255,0.5);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--mono); font-size: 0.75rem; color: var(--purple-neon);
-  }
-  .step-text { font-size: 0.95rem; color: var(--text); line-height: 1.5; }
-  .step-text small { display: block; color: var(--text-dim); font-size: 0.78rem; margin-top: 2px; font-family: var(--mono); }
-
-  /* กล่องแสดงคีย์ */
-  .key-box {
-    background: rgba(0,0,0,0.5);
-    border: 1px solid rgba(139,0,255,0.4);
-    border-radius: 10px; padding: 16px 18px;
-    display: flex; align-items: center; gap: 12px;
-    margin-top: 8px;
-  }
-  .key-text {
-    flex: 1; font-family: var(--mono); font-size: 0.85rem;
-    color: var(--purple-neon); word-break: break-all; line-height: 1.5;
-    min-height: 20px;
-  }
-  .key-text.placeholder { color: var(--text-dim); font-style: italic; }
-
-  /* ปุ่มทั่วไป */
-  .btn {
-    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    padding: 13px 24px; border-radius: 10px; border: none; cursor: pointer;
-    font-family: var(--sans); font-size: 1rem; font-weight: 700;
-    letter-spacing: 0.05em; transition: all 0.2s ease;
-    text-decoration: none; width: 100%;
-  }
-  /* ปุ่มหลัก (ม่วงเข้ม) */
-  .btn-primary {
-    background: linear-gradient(135deg, #5500cc, #8800ff, #aa00ff);
-    color: #fff;
-    box-shadow: 0 4px 20px rgba(139,0,255,0.4);
-  }
-  .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(139,0,255,0.6), 0 0 20px rgba(180,0,255,0.3);
-  }
-  .btn-primary:active { transform: translateY(0); }
-  /* ปุ่มรอง (ขอบม่วง) */
-  .btn-secondary {
-    background: rgba(139,0,255,0.15);
-    border: 1px solid rgba(139,0,255,0.4);
-    color: var(--purple-neon);
-  }
-  .btn-secondary:hover {
-    background: rgba(139,0,255,0.25);
-    box-shadow: 0 0 15px rgba(139,0,255,0.3);
-  }
-  .btn:disabled {
-    opacity: 0.5; cursor: not-allowed; transform: none !important;
-    box-shadow: none !important;
-  }
-
-  /* นับถอยหลังหมดอายุ */
-  .expire-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: rgba(139,0,255,0.15); border: 1px solid rgba(139,0,255,0.3);
-    border-radius: 6px; padding: 5px 10px;
-    font-family: var(--mono); font-size: 0.72rem; color: var(--text-dim);
-    margin-top: 10px;
-  }
-  .expire-badge .dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--purple-glow);
-    animation: blink 1.2s ease-in-out infinite;
-  }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
-  .expire-time { color: var(--purple-light); font-weight: bold; }
-
-  /* ข้อความแจ้งสถานะ (สำเร็จ/ผิดพลาด) */
-  .status-msg {
-    font-family: var(--mono); font-size: 0.8rem; text-align: center;
-    padding: 8px 12px; border-radius: 8px; margin-top: 8px;
-    display: none;
-  }
-  .status-msg.success {
-    display: block; background: rgba(0,255,100,0.08);
-    border: 1px solid rgba(0,255,100,0.25); color: #60ff90;
-  }
-  .status-msg.error {
-    display: block; background: rgba(255,50,50,0.08);
-    border: 1px solid rgba(255,50,50,0.25); color: #ff6060;
-  }
-    .logo { font-size: 3.6rem; }
-    .card { padding: 36px 32px; }
-    .btn { font-size: 1.1rem; }
-  }
-    font-family: var(--mono); font-size: 0.7rem; color: var(--text-dim);
-    text-align: center; letter-spacing: 0.08em;
-  }
-
-
-  .input-row { display: flex; gap: 8px; margin-bottom: 10px; }
-  .inp {
-    flex: 1; background: rgba(0,0,0,0.5);
-    border: 1px solid rgba(139,0,255,0.35); border-radius: 8px;
-    padding: 10px 14px; color: var(--text);
-    font-family: var(--mono); font-size: 0.85rem;
-    outline: none; transition: border-color 0.2s;
-  }
-  .inp:focus { border-color: var(--purple-glow); box-shadow: 0 0 10px rgba(139,0,255,0.25); }
-  .inp::placeholder { color: var(--text-dim); }
-
-  /* รายการคีย์ใน Admin */
-  .admin-keys-list {
-    max-height: 200px; overflow-y: auto;
-    background: rgba(0,0,0,0.4); border-radius: 8px;
-    border: 1px solid rgba(139,0,255,0.2);
-    padding: 10px;
-  }
-  .admin-keys-list::-webkit-scrollbar { width: 4px; }
-  .admin-keys-list::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
-  .admin-keys-list::-webkit-scrollbar-thumb { background: var(--purple-mid); border-radius: 2px; }
-
-  .key-item {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 6px 0; border-bottom: 1px solid rgba(139,0,255,0.1);
-    font-family: var(--mono); font-size: 0.72rem;
-  }
-  .key-item:last-child { border-bottom: none; }
-  .key-item .k { color: var(--purple-neon); word-break: break-all; flex:1; }
-  .key-item .exp { color: var(--text-dim); font-size: 0.65rem; margin: 0 8px; white-space: nowrap; }
-  .key-item .del { color: #ff4060; cursor: pointer; padding: 2px 6px; border-radius: 4px; }
-  .key-item .del:hover { background: rgba(255,0,0,0.15); }
-
-  .badge-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
-  .badge {
-    font-family: var(--mono); font-size: 0.65rem;
-    padding: 3px 10px; border-radius: 20px;
-    border: 1px solid rgba(139,0,255,0.4);
-    color: var(--text-dim);
-  }
-  .badge.active { border-color: #60ff90; color: #60ff90; background: rgba(0,255,100,0.08); }
-
-  /* ═══ Theme System ═══ */
-
-
-
-
-  html.theme-midnight, body.theme-midnight {
-    background: linear-gradient(135deg, #1a1a2e, #16213e) !important;
-    min-height: 100vh;
-  }
-  body.theme-midnight {
-    --purple-deep: #1a1a2e;
-    --purple-dark: #16213e;
-    --purple-mid:  #0f3460;
-    --purple-glow: #e0e0ff;
-    --purple-light:#c0c0ff;
-    --purple-neon: #ffffff;
-    --text:        #e8e8ff;
-    --text-dim:    #8888aa;
-    background: linear-gradient(135deg, #1a1a2e, #16213e);
-  }
-  body.theme-midnight .card {
-    background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
-    border-color: rgba(255,255,255,0.12);
-    box-shadow: 0 4px 24px rgba(0,0,0,0.3);
-  }
-  body.theme-midnight .logo { color: #fff; text-shadow: 0 0 20px rgba(200,200,255,0.5); }
-  body.theme-midnight .btn-primary { background: linear-gradient(135deg,#333366,#555599,#7777bb); }
-
-
-  /* ── Theme overrides สำหรับ card elements ── */
-  body.theme-frost .card-title { color: var(--purple-glow); }
-  body.theme-frost .step-text { color: #1a0033; }
-  body.theme-frost .step-num { background: rgba(100,0,200,0.1); border-color: rgba(100,0,200,0.3); color: #5500bb; }
-  body.theme-frost .key-box { background: rgba(0,0,0,0.05); border-color: rgba(100,0,200,0.2); }
-  body.theme-frost .key-text { color: #5500bb; }
-  body.theme-frost .expire-badge { background: rgba(100,0,200,0.08); border-color: rgba(100,0,200,0.2); }
-  body.theme-frost .inp { background: rgba(0,0,0,0.05); border-color: rgba(100,0,200,0.2); color: #1a0033; }
-  body.theme-frost .inp::placeholder { color: #9977bb; }
-  body.theme-frost .btn-secondary { background: rgba(100,0,200,0.08); border-color: rgba(100,0,200,0.25); color: #5500bb; }
-  body.theme-frost .status-msg.success { background: rgba(0,150,50,0.08); }
-  body.theme-frost .status-msg.error { background: rgba(200,0,0,0.08); }
-  body.theme-frost .tagline { color: #7744aa; }
-  body.theme-frost .footer { color: #9977bb; }
-  body.theme-frost #scriptCodeDisplay { color: #440099 !important; }
-  body.theme-frost #scriptNote1, body.theme-frost #scriptNote2 { color: #8866aa !important; }
-
-  body.theme-glass .card-title { color: var(--purple-glow); }
-  body.theme-glass .step-text { color: #2a0055; }
-  body.theme-glass .step-num { background: rgba(120,0,220,0.12); border-color: rgba(120,0,220,0.35); color: #6600dd; }
-  body.theme-glass .key-box { background: rgba(255,255,255,0.5); border-color: rgba(120,0,220,0.25); }
-  body.theme-glass .key-text { color: #6600dd; }
-  body.theme-glass .expire-badge { background: rgba(120,0,220,0.1); border-color: rgba(120,0,220,0.25); }
-  body.theme-glass .inp { background: rgba(255,255,255,0.6); border-color: rgba(120,0,220,0.25); color: #2a0055; }
-  body.theme-glass .inp::placeholder { color: #9966cc; }
-  body.theme-glass .btn-secondary { background: rgba(120,0,220,0.1); border-color: rgba(120,0,220,0.3); color: #6600dd; }
-  body.theme-glass .tagline { color: #8855bb; }
-  body.theme-glass .footer { color: #9966cc; }
-  body.theme-glass #scriptCodeDisplay { color: #5500aa !important; }
-  body.theme-glass #scriptNote1, body.theme-glass #scriptNote2 { color: #9966bb !important; }
-
-  body.theme-midnight .card-title { color: rgba(200,200,255,0.8); }
-  body.theme-midnight .step-text { color: #e0e0ff; }
-  body.theme-midnight .step-num { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); color: #c0c0ff; }
-  body.theme-midnight .key-box { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.15); }
-  body.theme-midnight .key-text { color: #ffffff; }
-  body.theme-midnight .expire-badge { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); }
-  body.theme-midnight .inp { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: #e8e8ff; }
-  body.theme-midnight .inp::placeholder { color: #6666aa; }
-  body.theme-midnight .btn-secondary { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); color: #c0c0ff; }
-  body.theme-midnight .btn-primary { box-shadow: 0 4px 20px rgba(100,100,200,0.3); }
-  body.theme-midnight .tagline { color: #8888aa; }
-  body.theme-midnight .footer { color: #6666aa; }
-  body.theme-midnight #scriptCodeDisplay { color: #aaaaff !important; }
-  body.theme-midnight #scriptNote1, body.theme-midnight #scriptNote2 { color: #6666aa !important; }
-  body.theme-midnight .logo { text-shadow: 0 0 20px rgba(150,150,255,0.5); }
 </style>
 </head>
 <body>
 
-<!-- หน้าปิดเว็บ (แสดงเมื่อ SITE_ENABLED = false) -->
-<div id="closedScreen" style="
-  display:none;
-  position:fixed;
-  top:0; left:0;
-  width:100vw; height:100vh;
-  z-index:99999;
-  background:#08000f;
-  align-items:center;
-  justify-content:center;
-  
-">
-  <div style="position:absolute;width:400px;height:400px;border-radius:50%;background:rgba(80,0,160,0.2);filter:blur(90px);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;"></div>
-  <div style="
-    background:linear-gradient(135deg,rgba(25,0,45,0.97),rgba(10,0,20,0.98));
-    border:1px solid rgba(100,0,200,0.3); border-radius:20px;
-    padding:40px 28px 32px; width:85%; max-width:340px;
-    text-align:center;
-    box-shadow:0 0 50px rgba(100,0,200,0.15);
-  ">
-    <div style="font-size:3rem;margin-bottom:16px;">🔒</div>
-    <div style="font-family:'Rajdhani',sans-serif;font-size:1.5rem;font-weight:700;color:#fff;margin-bottom:10px;" id="closedTitle">เว็บปิดให้บริการชั่วคราว</div>
-    <div style="font-family:'Rajdhani',sans-serif;font-size:0.95rem;color:#7850aa;line-height:1.5;margin-bottom:20px;" id="closedDesc">กรุณากลับมาใหม่ในภายหลัง</div>
+<header>
+  <div class="header-top">
+    <div class="logo">Shop<span>Sim</span>TH</div>
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="🔍  ค้นหาสินค้า..." oninput="filterProducts()">
+      <button onclick="filterProducts()">ค้นหา</button>
+    </div>
+    <button class="cart-btn" onclick="showPage('cart')">🛒<span class="cart-count" id="cartCount">0</span></button>
+  </div>
+  <nav>
+    <ul>
+      <li><a href="#" onclick="showPage('home')">🏠 หน้าหลัก</a></li>
+      <li><a href="#" onclick="showPage('cart')">🛒 ตะกร้า</a></li>
+      <li><a href="#" onclick="showPage('orders')">📦 คำสั่งซื้อ</a></li>
+    </ul>
+  </nav>
+</header>
 
-    <!-- นับถอยหลังเปิดเว็บ (โผล่เมื่อตั้ง SITE_OPEN_TIME) -->
-    <div id="closedCountdownWrap" style="display:none;margin-bottom:18px;">
-      <div style="font-family:'Share Tech Mono',monospace;font-size:0.72rem;color:#5030aa;margin-bottom:6px;">เปิดอีกครั้งใน</div>
-      <div style="font-family:'Share Tech Mono',monospace;font-size:1.4rem;color:#c060ff;font-weight:bold;" id="closedCountdown">--:--:--</div>
+<!-- HOME PAGE -->
+<div id="page-home" class="page active">
+  <div class="container">
+    <div class="banner">
+      <div>
+        <h1>🔥 ลดสูงสุด 70%<br>ทุกหมวดสินค้า</h1>
+        <p>สั่งง่าย ส่งไว พร้อม QR Tracking</p>
+        <button class="banner-cta" onclick="document.getElementById('products-section').scrollIntoView({behavior:'smooth'})">ช้อปเลย →</button>
+      </div>
+      <div class="banner-emoji">🛍️</div>
     </div>
 
-    <!-- ปุ่ม Discord -->
-    <a id="discordBtn" href="#" target="_blank" style="
-      display:flex;align-items:center;justify-content:center;gap:8px;
-      width:100%;padding:13px;
-      background:linear-gradient(135deg,#3a0080,#5500cc);
-      border:1px solid rgba(139,0,255,0.4);
-      border-radius:12px;cursor:pointer;
-      font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:700;
-      color:#fff;letter-spacing:0.04em;text-decoration:none;
-      box-shadow:0 4px 16px rgba(100,0,200,0.3);
-      transition:all 0.2s;
-    ">
-      💬 ติดต่อทาง Discord
-    </a>
+    <div class="categories" id="categoryFilter">
+      <div class="cat-pill active" onclick="filterCat('all', this)">ทั้งหมด</div>
+      <div class="cat-pill" onclick="filterCat('electronics', this)">📱 อิเล็กทรอนิกส์</div>
+      <div class="cat-pill" onclick="filterCat('fashion', this)">👕 แฟชั่น</div>
+      <div class="cat-pill" onclick="filterCat('home', this)">🏠 บ้านและสวน</div>
+      <div class="cat-pill" onclick="filterCat('beauty', this)">💄 ความงาม</div>
+      <div class="cat-pill" onclick="filterCat('sport', this)">⚽ กีฬา</div>
+      <div class="cat-pill" onclick="filterCat('food', this)">🍜 อาหาร</div>
+      <div class="cat-pill" onclick="filterCat('toys', this)">🧸 ของเล่น</div>
+    </div>
+
+    <div class="section-title" id="products-section">สินค้าแนะนำ</div>
+    <div class="products-grid" id="productsGrid"></div>
   </div>
 </div>
 
-<!-- หน้าวิธีปลดล็อคแบบที่ 2 -->
-<div id="method2Screen" style="
-  display:none;
-  position:fixed;
-  top:0; left:0;
-  width:100vw; height:100vh;
-  z-index:19999;
-  background:#08000f;
-  align-items:center;
-  justify-content:center;
-  overflow-y:auto;
-  
-">
-  <div style="position:absolute;width:400px;height:400px;border-radius:50%;background:rgba(80,0,160,0.2);filter:blur(90px);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;"></div>
-  <div style="
-    background:linear-gradient(135deg,rgba(25,0,45,0.97),rgba(10,0,20,0.98));
-    border:1px solid rgba(100,0,200,0.3); border-radius:20px;
-    padding:32px 24px 28px; width:88%; max-width:380px;
-    position:relative; margin:20px 0;
-    box-shadow:0 0 50px rgba(100,0,200,0.15);
-  ">
-    <div style="font-size:2.5rem;margin-bottom:12px;text-align:center;">🎬</div>
-    <div style="font-family:'Rajdhani',sans-serif;font-size:1.4rem;font-weight:700;color:#fff;margin-bottom:8px;text-align:center;" id="m2Title">วิธีปลดล็อคแบบที่ 2</div>
-    <div style="font-family:'Rajdhani',sans-serif;font-size:0.85rem;color:#7850aa;margin-bottom:22px;text-align:center;line-height:1.5;" id="m2Desc">กดเข้าไปดูให้ครบทั้ง 5 คลิป</div>
-
-    <!-- รายการคลิป -->
-    <div id="m2ClipList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;"></div>
-
-    <!-- กลับไปวิธีแรก -->
-    <div style="text-align:center;">
-      <span onclick="closeMethod2()" style="
-        font-family:'Rajdhani',sans-serif;font-size:0.85rem;
-        color:#5030aa;text-decoration:underline;cursor:pointer;
-      ">กลับไปใช้วิธีแรก</span>
-    </div>
+<!-- CART PAGE -->
+<div id="page-cart" class="page">
+  <div class="container">
+    <div class="section-title">🛒 ตะกร้าสินค้า</div>
+    <div id="cartContent"></div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     หน้าปลดล็อค (แสดงก่อนเข้าเว็บหลัก)
-     ════════════════════════════════════════════════ -->
-<div id="unlockScreen" style="
-  position:fixed;
-  top:0; left:0;
-  width:100vw; height:100vh;
-  z-index:9999;
-  background:#08000f;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  
-">
-  <div style="position:absolute;width:400px;height:400px;border-radius:50%;background:rgba(80,0,160,0.2);filter:blur(90px);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;"></div>
-
-  <!-- ปุ่มสลับ Theme บนหน้าปลดล็อค -->
-  <div style="position:absolute;top:14px;right:16px;display:flex;gap:6px;z-index:19999;" id="unlockThemeSwitcher">
-    
-  </div>
-
-  <!-- ปุ่มสลับ Theme บนหน้าปลดล็อค -->
-  <button onclick="toggleTheme()" id="unlockThemeBtn" style="
-    position:absolute; top:14px; right:16px; z-index:19999;
-    width:36px; height:36px; border-radius:10px;
-    background:rgba(255,255,255,0.08);
-    border:1px solid rgba(255,255,255,0.15);
-    cursor:pointer; font-size:1.1rem;
-    display:flex; align-items:center; justify-content:center;
-    transition:all 0.2s; backdrop-filter:blur(8px);
-  ">🌙</button>
-
-  <!-- การ์ดหลัก -->
-  <div id="unlockCard" style="
-    background:linear-gradient(135deg,rgba(25,0,45,0.97),rgba(10,0,20,0.98));
-    border:1px solid rgba(100,0,200,0.3);
-    border-radius:20px; padding:36px 28px 28px;
-    width:85%; max-width:340px;
-    text-align:center; position:relative;
-    box-shadow:0 0 50px rgba(100,0,200,0.15);
-  ">
-
-    <!-- === STATE 1: ปลดล็อค === -->
-    <div id="stateUnlock">
-      <div style="font-size:2.8rem;margin-bottom:14px;">📢</div>
-      <div style="font-family:'Rajdhani',sans-serif;font-size:1.55rem;font-weight:700;color:#fff;margin-bottom:8px;" id="unlockTitle">ปลดล็อคสคริปต์</div>
-      <div style="font-family:'Rajdhani',sans-serif;font-size:0.95rem;color:#7850aa;margin-bottom:26px;line-height:1.5;" id="unlockDesc">กรุณากดไลค์คลิป เพื่อรับสคริปต์ฟรี</div>
-      <button id="unlockBtnEl" onclick="startUnlock()" style="
-        width:100%;padding:15px;
-        background:linear-gradient(135deg,#5500cc,#7700ee,#9900ff);
-        border:none;border-radius:12px;cursor:pointer;
-        font-family:'Rajdhani',sans-serif;font-size:1.05rem;font-weight:700;
-        color:#fff;letter-spacing:0.04em;
-        box-shadow:0 4px 24px rgba(120,0,255,0.4);
-        transition:transform 0.15s;
-      ">กดไลค์เพื่อปลดล็อค</button>
-      <div style="margin-top:14px;">
-        <span onclick="openMethod2()" style="font-family:'Rajdhani',sans-serif;font-size:0.85rem;color:#5030aa;text-decoration:underline;cursor:pointer;" id="unlockAlt">คลิกไม่ได้หรือบัค? ลองวิธีอื่น</span>
-      </div>
-    </div>
-
-    <!-- === STATE 2: กำลังเช็ค (progress) === -->
-    <div id="stateChecking" style="display:none;">
-      <div style="font-size:2.5rem;margin-bottom:14px;display:inline-block;animation:bounce 0.8s ease-in-out infinite;">🔍</div>
-      <div style="font-family:'Rajdhani',sans-serif;font-size:1.4rem;font-weight:700;color:#fff;margin-bottom:6px;">กำลังเช็คความถูกต้อง...</div>
-      <div style="font-family:'Rajdhani',sans-serif;font-size:0.9rem;color:#7850aa;margin-bottom:20px;">รอสักครู่ ระบบกำลังตรวจสอบข้อมูล</div>
-      <div style="width:100%;height:8px;background:rgba(100,0,200,0.2);border-radius:99px;overflow:hidden;border:1px solid rgba(100,0,200,0.3);">
-        <div id="unlockBar" style="height:100%;width:0%;border-radius:99px;background:linear-gradient(90deg,#5500cc,#aa00ff);transition:width 0.25s linear;box-shadow:0 0 10px rgba(150,0,255,0.6);"></div>
-      </div>
-      <div style="margin-top:8px;font-family:'Share Tech Mono',monospace;font-size:0.7rem;color:#5030aa;" id="unlockProgressSec"></div>
-    </div>
-
-    <!-- === STATE 3: Error (กลับมาเร็วเกิน) === -->
-    <div id="stateError" style="display:none;">
-      <div style="font-size:3rem;margin-bottom:14px;color:#cc0000;">✖</div>
-      <div style="font-family:'Rajdhani',sans-serif;font-size:1.4rem;font-weight:700;color:#ff4040;margin-bottom:8px;">ทำรายการไม่ถูกต้อง!</div>
-      <div style="font-family:'Rajdhani',sans-serif;font-size:0.9rem;color:#aa4040;margin-bottom:24px;line-height:1.5;">ระบบตรวจพบว่าคุณยังไม่ได้กดไลค์วิดีโอบน Youtube<br>(กรุณาอยู่ในหน้าวิดีโอให้นานขึ้น)</div>
-      <button onclick="resetUnlock()" style="
-        width:100%;padding:15px;
-        background:linear-gradient(135deg,#aa0000,#cc0000,#ee2020);
-        border:none;border-radius:12px;cursor:pointer;
-        font-family:'Rajdhani',sans-serif;font-size:1.05rem;font-weight:700;
-        color:#fff;letter-spacing:0.04em;
-        box-shadow:0 4px 20px rgba(200,0,0,0.35);
-      ">ลองใหม่อีกครั้ง</button>
-      <div style="margin-top:14px;">
-        <span onclick="resetUnlock()" style="font-family:'Rajdhani',sans-serif;font-size:0.85rem;color:#663333;text-decoration:underline;cursor:pointer;">ลองวิธีอื่น (ชัวร์กว่า)</span>
-      </div>
-    </div>
-
-  </div>
-</div>
-<!-- ปุ่มสลับ Theme -->
-<button id="themeSwitcher" onclick="toggleTheme()" style="
-  position:fixed; top:14px; right:16px; z-index:9998;
-  width:36px; height:36px; border-radius:10px;
-  background:rgba(255,255,255,0.08);
-  border:1px solid rgba(255,255,255,0.15);
-  cursor:pointer; font-size:1.1rem;
-  display:flex; align-items:center; justify-content:center;
-  transition:all 0.2s; backdrop-filter:blur(8px);
-" title="เปลี่ยนธีม">🌙</button>
-
-<div style="
-  position:fixed; top:14px; left:16px; z-index:9998;
-  font-family:'Itim',sans-serif; font-size:0.72rem;
-  color:rgba(255,255,255,0.25);
-  letter-spacing:0.05em;
-  user-select:none;
-" id="siteCredit">UG Hub | @regretevator638</div>
-
-<div class="bg-grid"></div>
-<div class="bg-orb a"></div>
-<div class="bg-orb b"></div>
-<div class="bg-orb c"></div>
-
-<!-- เนื้อหาหลัก ซ่อนไว้ก่อน แสดงหลังปลดล็อค -->
-<div id="mainContent" style="visibility:hidden;">
-<div class="container">
-
-  <!-- หัวข้อเว็บ -->
-  <div class="header">
-    <div class="logo">UG<span>Hub</span></div>
-    <div class="tagline">// key system v3.2 — ระบบคีย์อัตโนมัติ</div>
-  </div>
-
-  <!-- การ์ดวิดีโอ YouTube (ย้ายมาด้านบน) -->
-  <div class="card" id="youtubeCard">
-    <div class="card-title" id="youtubeTitleEl">วิดีโอแนะนำ</div>
-    <div style="position:relative;width:100%;border-radius:10px;overflow:hidden;background:#000;">
-      <iframe
-        id="youtubeFrame"
-        width="100%"
-        height="280"
-        src=""
-        title="YouTube video"
-        frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        referrerpolicy="strict-origin-when-cross-origin"
-        allowfullscreen
-        style="display:block;border-radius:10px;"
-      ></iframe>
-    </div>
-  </div>
-
-  <!-- การ์ดกล่องสคริปต์ (เหมือนในรูป) -->
-  <div class="card">
-    <!-- แถบชื่อไฟล์ -->
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
-      <span style="width:11px;height:11px;border-radius:50%;background:#ff5f57;display:inline-block;"></span>
-      <span style="width:11px;height:11px;border-radius:50%;background:#ffbd2e;display:inline-block;"></span>
-      <span style="width:11px;height:11px;border-radius:50%;background:#28c840;display:inline-block;"></span>
-      <span style="font-family:'Share Tech Mono',monospace;font-size:0.82rem;color:var(--text-dim);margin-left:4px;" id="scriptFilename">main_script.lua</span>
-    </div>
-
-    <!-- ปุ่มคัดลอกสคริปต์ -->
-    <button id="copyScriptBtn" onclick="copyScript()" style="
-      width:100%;padding:13px;
-      background:linear-gradient(135deg,#5500cc,#8800ff,#aa00ff);
-      border:none;border-radius:10px;cursor:pointer;
-      font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:700;
-      color:#fff;letter-spacing:0.04em;
-      box-shadow:0 4px 20px rgba(139,0,255,0.35);
-      display:flex;align-items:center;justify-content:center;gap:8px;
-      transition:all 0.2s;margin-bottom:14px;
-    ">
-      <span>📋</span> <span id="copyScriptText">คัดลอกสคริปต์</span>
-    </button>
-
-    <!-- กล่องโค้ด -->
-    <div style="
-      background:rgba(0,0,0,0.55);
-      border:1px solid rgba(100,0,200,0.25);
-      border-radius:8px;padding:12px 14px;
-      font-family:'Share Tech Mono',monospace;font-size:0.78rem;
-      line-height:1.7;overflow-x:auto;
-    ">
-      <div style="color:#888;" id="scriptNote1">-- คัดลอกห้ามกดแปลภาษานะครับ</div>
-      <div style="color:#c084fc;" id="scriptCodeDisplay">loadstring(...)</div>
-      <div style="color:#888;" id="scriptNote2">-- สามารถนำไปใส่ตัวรันเล่นได้เลย</div>
-    </div>
-  </div>
-
-  <!-- การ์ดรับคีย์ฟรี -->
-  <div class="card" id="getKeyCard">
-    <div class="card-title">รับคีย์ฟรี</div>
-
-    <div class="step">
-      <div class="step-num">1</div>
-      <div class="step-text">
-        กดปุ่มด้านล่างเพื่อไปยังลิงก์ภายนอก
-        <small>// ต้องรออยู่ในหน้านั้นอย่างน้อย 3 วินาที</small>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <div class="step-text">
-        รอให้ progress bar เต็ม (5 วินาที)
-        <small>// ถ้ากลับมาเร็วเกินไปจะขึ้น error</small>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <div class="step-text">
-        คัดลอกคีย์แล้วนำไปใส่ในสคริปต์
-        <small>// คีย์หมดอายุทุกวัน 00:00 น.</small>
-      </div>
-    </div>
-
-    <div style="margin-top:18px; display:flex; flex-direction:column; gap:10px;">
-      <!-- ปุ่มไปลิงก์ภายนอก -->
-      <button class="btn btn-primary" id="linkBtn" onclick="openLink()">
-        🔗 ไปยังลิงก์ภายนอก
-      </button>
-
-      <!-- progress bar (ซ่อนอยู่ โผล่หลังกดปุ่ม) -->
-      <div id="progressWrap" style="display:none; flex-direction:column; gap:6px;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <span style="font-family:var(--mono);font-size:0.72rem;color:var(--text-dim);" id="progressLabel">รอสักครู่...</span>
-          <span style="font-family:var(--mono);font-size:0.72rem;color:var(--purple-light);" id="progressSec">5s</span>
+<!-- CHECKOUT PAGE -->
+<div id="page-checkout" class="page">
+  <div class="container">
+    <div class="section-title">📋 กรอกข้อมูลสั่งซื้อ</div>
+    <div class="form-card">
+      <div class="form-title">📍 ที่อยู่จัดส่ง</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>ชื่อ</label>
+          <input type="text" id="fname" placeholder="ชื่อจริง" value="สมชาย">
         </div>
-        <div style="width:100%;height:8px;background:rgba(139,0,255,0.15);border-radius:99px;overflow:hidden;border:1px solid rgba(139,0,255,0.25);">
-          <div id="progressBar" style="height:100%;width:0%;border-radius:99px;background:linear-gradient(90deg,#5500cc,#aa00ff);transition:width 0.25s linear;box-shadow:0 0 8px rgba(139,0,255,0.6);"></div>
+        <div class="form-group">
+          <label>นามสกุล</label>
+          <input type="text" id="lname" placeholder="นามสกุล" value="ใจดี">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>เบอร์โทรศัพท์</label>
+        <input type="tel" id="phone" placeholder="0XX-XXX-XXXX" value="081-234-5678">
+      </div>
+      <div class="form-group">
+        <label>ที่อยู่</label>
+        <input type="text" id="address" placeholder="บ้านเลขที่ ถนน ซอย" value="123/45 ถ.สุขุมวิท">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>จังหวัด</label>
+          <select id="province">
+            <option>กรุงเทพมหานคร</option>
+            <option>เชียงใหม่</option>
+            <option>ภูเก็ต</option>
+            <option>ขอนแก่น</option>
+            <option>ชลบุรี</option>
+            <option>นครราชสีมา</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>รหัสไปรษณีย์</label>
+          <input type="text" id="zipcode" placeholder="10XXX" value="10110">
         </div>
       </div>
     </div>
 
-    <!-- ข้อความสถานะ -->
-    <div id="statusMsg" class="status-msg"></div>
-
-    <!-- กล่องแสดงคีย์ (ซ่อนอยู่ โผล่หลังรับคีย์) -->
-    <div id="keySection" style="display:none; margin-top:16px;">
-      <div class="card-title" style="margin-bottom:10px;">คีย์ของคุณ</div>
-      <div class="key-box">
-        <div class="key-text" id="keyDisplay">—</div>
-        <button class="btn btn-secondary" style="width:auto;padding:8px 14px;font-size:0.8rem;" onclick="copyKey()">📋</button>
-      </div>
-      <div class="expire-badge">
-        <div class="dot"></div>
-        หมดอายุใน: <span class="expire-time" id="expireCountdown">--:--:--</span>
-        <span style="font-size:0.65rem;color:var(--text-dim);">(~<span id="expireHours"></span>ชม.)</span>
+    <div class="form-card">
+      <div class="form-title">💳 วิธีชำระเงิน</div>
+      <div class="payment-options" id="paymentOptions">
+        <div class="pay-opt selected" onclick="selectPay(this)"><span class="pay-icon">💳</span>บัตรเครดิต</div>
+        <div class="pay-opt" onclick="selectPay(this)"><span class="pay-icon">📱</span>พร้อมเพย์</div>
+        <div class="pay-opt" onclick="selectPay(this)"><span class="pay-icon">🏦</span>โอนธนาคาร</div>
+        <div class="pay-opt" onclick="selectPay(this)"><span class="pay-icon">💵</span>เก็บเงินปลายทาง</div>
       </div>
     </div>
-  </div>
 
-  <!-- การ์ดตรวจสอบคีย์ -->
-  <div class="card" id="checkKeyCard">
-    <div class="card-title">ตรวจสอบคีย์</div>
-    <div class="input-row">
-      <input class="inp" id="checkInp" placeholder="วางคีย์ที่นี่..." />
-      <button class="btn btn-secondary" style="width:auto;padding:10px 18px;" onclick="checkKey()">ตรวจ</button>
+    <div class="form-card">
+      <div class="form-title">📦 สรุปคำสั่งซื้อ</div>
+      <div id="checkoutSummary"></div>
     </div>
-    <div id="checkResult" class="status-msg"></div>
-  </div>
 
-  <!-- การ์ด Feature (แสดงตลอด) -->
-  <div class="card" id="featureCard">
-    <div style="display:flex; gap:12px; justify-content:space-between;">
-      <div style="flex:1;text-align:center;padding:12px 8px;background:rgba(139,0,255,0.08);border-radius:12px;border:1px solid rgba(139,0,255,0.15);">
-        <div style="font-size:1.6rem;margin-bottom:6px;">⚡</div>
-        <div style="font-family:'Itim',sans-serif;font-size:0.85rem;font-weight:700;color:#fff;margin-bottom:4px;">ความเร็วสูง</div>
-        <div style="font-family:'Itim',sans-serif;font-size:0.72rem;color:var(--text-dim);line-height:1.4;">โค้ดถูกปรับแต่งให้ทำงานได้อย่างรวดเร็ว</div>
-      </div>
-      <div style="flex:1;text-align:center;padding:12px 8px;background:rgba(139,0,255,0.08);border-radius:12px;border:1px solid rgba(139,0,255,0.15);">
-        <div style="font-size:1.6rem;margin-bottom:6px;">🛡️</div>
-        <div style="font-family:'Itim',sans-serif;font-size:0.85rem;font-weight:700;color:#fff;margin-bottom:4px;">ปลอดภัย</div>
-        <div style="font-family:'Itim',sans-serif;font-size:0.72rem;color:var(--text-dim);line-height:1.4;">ตรวจสอบโค้ดทุกบรรทัด ไม่มีมัลแวร์</div>
-      </div>
-      <div style="flex:1;text-align:center;padding:12px 8px;background:rgba(139,0,255,0.08);border-radius:12px;border:1px solid rgba(139,0,255,0.15);">
-        <div style="font-size:1.6rem;margin-bottom:6px;">💎</div>
-        <div style="font-family:'Itim',sans-serif;font-size:0.85rem;font-weight:700;color:#fff;margin-bottom:4px;">อัปเดตเสมอ</div>
-        <div style="font-family:'Itim',sans-serif;font-size:0.72rem;color:var(--text-dim);line-height:1.4;">มีทีมงานคอยอัปเดตให้ใช้งานได้ตลอด</div>
-      </div>
-    </div>
+    <button class="place-order-btn" onclick="placeOrder()">✅ ยืนยันสั่งซื้อ</button>
   </div>
-  </div>
-
-  <div class="footer">© 2025 UG Hub — All rights reserved</div>
 </div>
-</div> <!-- end mainContent -->
+
+<!-- SUCCESS PAGE -->
+<div id="page-success" class="page">
+  <div class="container">
+    <div class="success-card">
+      <div class="success-icon">🎉</div>
+      <div class="success-title">สั่งซื้อสำเร็จ!</div>
+      <p style="color:var(--gray-text); font-size:13px;">ขอบคุณที่ใช้บริการ ShopSimTH</p>
+
+      <div class="status-timeline">
+        <div class="status-step">
+          <div class="status-dot done">✓</div>
+          <div class="status-label active">รับออเดอร์</div>
+        </div>
+        <div class="status-step">
+          <div class="status-dot current">📦</div>
+          <div class="status-label active">กำลังแพ็ค</div>
+        </div>
+        <div class="status-step">
+          <div class="status-dot">🚚</div>
+          <div class="status-label">จัดส่ง</div>
+        </div>
+        <div class="status-step">
+          <div class="status-dot">🏠</div>
+          <div class="status-label">ถึงมือคุณ</div>
+        </div>
+      </div>
+
+      <div class="order-info-grid">
+        <div class="info-box">
+          <div class="info-box-label">🔖 หมายเลขสินค้า / Order ID</div>
+          <div class="info-box-value highlight" id="displayOrderId">-</div>
+        </div>
+        <div class="info-box">
+          <div class="info-box-label">📅 วันที่สั่งซื้อ</div>
+          <div class="info-box-value" id="displayDate">-</div>
+        </div>
+        <div class="info-box">
+          <div class="info-box-label">💳 วิธีชำระ</div>
+          <div class="info-box-value" id="displayPayment">-</div>
+        </div>
+        <div class="info-box">
+          <div class="info-box-label">💰 ยอดรวม</div>
+          <div class="info-box-value highlight" id="displayTotal">-</div>
+        </div>
+      </div>
+
+      <div class="tracking-box">
+        <div class="tracking-box-label">🚚 หมายเลขพัสดุ / Tracking Number</div>
+        <div class="tracking-number" id="displayTracking">-</div>
+        <div style="font-size:11px; color:#388E3C; margin-top:4px;">ขนส่ง: <span id="displayCourier">-</span></div>
+      </div>
+
+      <div class="order-items-list">
+        <div style="font-weight:700; font-size:13px; margin-bottom:8px;">รายการสินค้า</div>
+        <div id="displayItems"></div>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn-secondary" onclick="showPage('orders')">📋 ดูคำสั่งซื้อทั้งหมด</button>
+        <button class="btn-primary" onclick="continueShopping()">🛍️ ช้อปต่อ</button>
+      </div>
+    </div>
+
+    <div class="qr-section">
+      <div class="qr-title">📲 QR Code หมายเลขสินค้า</div>
+      <div class="qr-wrapper">
+        <div id="qrcode"></div>
+        <div class="qr-caption">สแกน QR เพื่อตรวจสอบสถานะคำสั่งซื้อ<br><strong id="qrOrderId">-</strong></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ORDERS PAGE -->
+<div id="page-orders" class="page">
+  <div class="container">
+    <div class="section-title">📦 ประวัติคำสั่งซื้อ</div>
+    <div id="ordersContent"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
 
 <script>
-// ╔═══════════════════════════════════════════════════════════════╗
-// ║  ✏️  แก้ได้ทั้งหมด — อยู่ตรงนี้ที่เดียวเลย               ║
-// ╚═══════════════════════════════════════════════════════════════╝
-
-// ── เปิด/ปิดเว็บ ──────────────────────────────────────────────
-const SITE_ENABLED      = true;    // true = เปิดเว็บ | false = ปิดเว็บ
-const SITE_CLOSED_MSG   = "เว็บปิดให้บริการชั่วคราว";   // หัวข้อหน้าปิด
-const SITE_CLOSED_DESC  = "กรุณากลับมาใหม่ในภายหลัง";  // คำอธิบายหน้าปิด
-const SITE_DISCORD_URL  = "https://discord.gg/cysSFP5MK";  // 💬 ลิงก์ Discord ติดต่อ
-const SITE_OPEN_TIME    = "";
-// ☝️ ใส่เวลาที่จะเปิดเว็บอัตโนมัติ เช่น "2025-06-10T18:00:00"
-//    รูปแบบ: "วัน/เดือน/ปี/เวลา" เช่น "10/06/2025/18:00"
-//    ถ้าไม่ต้องการตั้งเวลาให้เว้นว่างไว้ ""
-
-// ── หน้าเว็บ ──────────────────────────────────────────────────
-const SITE_TITLE    = "UG Hub";          // ชื่อที่แสดงบนหัวเว็บ (แท็บ browser)
-const SITE_TAGLINE  = "key system v3.2 — ระบบคีย์อัตโนมัติ"; // คำใต้โลโก้
-const FOOTER_TEXT   = "© 2025 UG Hub — All rights reserved";  // ข้อความ footer
-
-// ── ระบบปลดล็อคก่อนเข้าเว็บ ──────────────────────────────────
-const BYPASS_URL    = "กรุณาใส่เว็บตรงนี้ด้วยนะถ้าไม่ใส่จะไปกระทืบถึงหน้าบ้าน";
-// ☝️ ลิงก์ที่ให้คนไปก่อน เช่น YouTube — ก่อนถึงจะเข้าเว็บได้
-const WAIT_SECONDS  = 5;   // ⏱ ต้องอยู่ในลิงก์กี่วินาที
-const MIN_SECONDS   = 5;   // ⚠️ ถ้ากลับมาก่อนกี่วิถือว่าเร็วเกิน (ขึ้น Error)
-
-// ── ซ่อน/แสดงส่วนต่างๆ ────────────────────────────────────────
-const SHOW_GET_KEY   = true; // true=แสดงส่วนรับคีย์ฟรี | false=ซ่อน
-const SHOW_CHECK_KEY = true; // true=แสดงส่วนตรวจสอบคีย์ | false=ซ่อน
-
-// ── ระบบจำการปลดล็อค ──────────────────────────────────────────
-const UNLOCK_EXPIRE_MINUTES = 5;
-// ☝️ หลังปลดล็อคแล้ว จำไว้กี่นาที (ไม่ต้องปลดซ้ำถ้ายังไม่หมดเวลา)
-//    5 = 5 นาที | 30 = ครึ่งชั่วโมง | 60 = 1 ชั่วโมง | 1440 = 1 วัน
-
-// ── ระบบคีย์ ──────────────────────────────────────────────────
-const KEY_PAGE_URL     = "https://regretevator638-lab.github.io/UG-HUB-GET-KEY/";
-// ☝️ ลิงก์หน้าเว็บที่แจกคีย์ (แยกจาก BYPASS_URL ด้านบน)
-const KEY_EXPIRE_HOURS   = 24;  // ⏱ ชั่วโมง  — 0=ไม่นับ | 1=1ชม. | 12=ครึ่งวัน | 24=1วัน
-const KEY_EXPIRE_MINUTES = 0;   // ⏱ นาที     — 0=ไม่นับ | 15=15นาที | 30=ครึ่งชม. | 45=45นาที
-// ☝️ รวมกันได้เลย เช่น HOURS=1 MINUTES=30 = 1ชม.30นาที | HOURS=0 MINUTES=15 = 15นาทีเฉยๆ
-
-// ── กล่องสคริปต์/โค้ด (เหมือนในรูป) ─────────────────────────
-const SCRIPT_FILENAME = "main_script.lua";  // ชื่อไฟล์ที่แสดงบนกล่อง
-const SCRIPT_CODE     = `loadstring(game:HttpGet("https://raw.githubusercontent.com/regretevator638-lab/FPSV2.lua/refs/heads/main/fps.lua"))()`;
-// ☝️ เปลี่ยนเป็นโค้ดที่อยากให้คัดลอกได้เลย
-const SCRIPT_NOTE_1   = "-- คัดลอกห้ามกดแปลภาษานะครับ";  // หมายเหตุบรรทัด 1
-const SCRIPT_NOTE_2   = "-- สามารถนำไปใส่ตัวรันเล่นได้เลย"; // หมายเหตุบรรทัด 2
-
-// ── วิธีปลดล็อคแบบที่ 2 (กด "ลองวิธีอื่น") ───────────────────
-const METHOD2_TITLE = "ปลดล็อคสคริปต์";
-const METHOD2_DESC  = "กรุณากดไลค์คลิป เพื่อรับสคริปต์ฟรี";
-const METHOD2_CLIPS = [
-  { label: "กดไลค์คลิป 1", url: "กรุณาใส่เว็บตรงนี้ด้วยนะถ้าไม่ใส่จะไปกระทืบถึงหน้าบ้าน" },
-  { label: "กดไลค์คลิป 2", url: "กรุณาใส่เว็บตรงนี้ด้วยนะถ้าไม่ใส่จะไปกระทืบถึงหน้าบ้าน" },
-  { label: "กดไลค์คลิป 3", url: "กรุณาใส่เว็บตรงนี้ด้วยนะถ้าไม่ใส่จะไปกระทืบถึงหน้าบ้าน" },
-  { label: "กดไลค์คลิป 4", url: "กรุณาใส่เว็บตรงนี้ด้วยนะถ้าไม่ใส่จะไปกระทืบถึงหน้าบ้าน" },
-  { label: "กดไลค์คลิป 5", url: "กรุณาใส่เว็บตรงนี้ด้วยนะถ้าไม่ใส่จะไปกระทืบถึงหน้าบ้าน" },
+const products = [
+  { id: 1, name: 'iPhone 16 Pro 256GB เครื่องศูนย์ไทย', emoji: '📱', price: 38900, oldPrice: 42900, category: 'electronics', sold: 1243, rating: 4.9, badge: 'ขายดี' },
+  { id: 2, name: 'หูฟัง AirPods Pro 3 ตัดเสียง Active', emoji: '🎧', price: 7990, oldPrice: 9990, category: 'electronics', sold: 856, rating: 4.8, badge: 'ลด 20%' },
+  { id: 3, name: 'Smart Watch สายสุขภาพ วัดออกซิเจน', emoji: '⌚', price: 1290, oldPrice: 2490, category: 'electronics', sold: 2341, rating: 4.5, badge: 'HOT' },
+  { id: 4, name: 'เสื้อยืด Oversize Cotton 100% 5 สี', emoji: '👕', price: 299, oldPrice: 590, category: 'fashion', sold: 5621, rating: 4.7, badge: 'ลด 50%' },
+  { id: 5, name: 'กระเป๋า Tote Canvas พิมพ์ลาย', emoji: '👜', price: 459, oldPrice: 750, category: 'fashion', sold: 3201, rating: 4.6 },
+  { id: 6, name: 'รองเท้า Sneaker ใส่สบาย 36-45', emoji: '👟', price: 890, oldPrice: 1590, category: 'fashion', sold: 4102, rating: 4.8, badge: 'ขายดี' },
+  { id: 7, name: 'หม้อหุงข้าว Digital 1.8L ประหยัดไฟ', emoji: '🍚', price: 1190, oldPrice: 1990, category: 'home', sold: 987, rating: 4.7 },
+  { id: 8, name: 'โคมไฟตั้งโต๊ะ LED ปรับแสง USB', emoji: '💡', price: 349, oldPrice: 599, category: 'home', sold: 2103, rating: 4.5, badge: 'ใหม่' },
+  { id: 9, name: 'เครื่องปั่นน้ำผลไม้ พกพา 400ml', emoji: '🥤', price: 590, oldPrice: 990, category: 'home', sold: 1543, rating: 4.6 },
+  { id: 10, name: 'เซรั่มหน้าใส Vitamin C 30ml', emoji: '✨', price: 399, oldPrice: 699, category: 'beauty', sold: 7823, rating: 4.9, badge: 'ขายดีที่สุด' },
+  { id: 11, name: 'ครีมกันแดด SPF50+ PA++++ 50g', emoji: '🌞', price: 249, oldPrice: 350, category: 'beauty', sold: 9102, rating: 4.8 },
+  { id: 12, name: 'ลิปสติก Matte ติดทน 24ชม. 10เฉด', emoji: '💄', price: 199, oldPrice: 380, category: 'beauty', sold: 4502, rating: 4.7, badge: 'ลด 48%' },
+  { id: 13, name: 'ดัมเบล ยาง 2 ข้าง 5kg ต่อคู่', emoji: '🏋️', price: 790, oldPrice: 1200, category: 'sport', sold: 2341, rating: 4.6 },
+  { id: 14, name: 'เสื่อโยคะ 6mm กันลื่น NBR', emoji: '🧘', price: 390, oldPrice: 690, category: 'sport', sold: 5621, rating: 4.7, badge: 'ขายดี' },
+  { id: 15, name: 'ลูกฟุตบอล PVC ขนาด 5 มาตรฐาน', emoji: '⚽', price: 290, oldPrice: 499, category: 'sport', sold: 3102, rating: 4.5 },
+  { id: 16, name: 'บะหมี่กึ่งสำเร็จรูปสไตล์เกาหลี 5 ซอง', emoji: '🍜', price: 145, oldPrice: 195, category: 'food', sold: 12034, rating: 4.8, badge: 'ขายดีที่สุด' },
+  { id: 17, name: 'กาแฟดริปซองพรีเมียม อาราบิก้า 10ซอง', emoji: '☕', price: 189, oldPrice: 250, category: 'food', sold: 6732, rating: 4.9 },
+  { id: 18, name: 'โปรตีนบาร์ ออร์แกนิค 12 แท่ง', emoji: '🍫', price: 360, oldPrice: 450, category: 'food', sold: 4102, rating: 4.7 },
+  { id: 19, name: 'ตัวต่อเลโก้ ชุดปราสาท 500 ชิ้น', emoji: '🧸', price: 890, oldPrice: 1490, category: 'toys', sold: 1834, rating: 4.8, badge: 'ใหม่' },
+  { id: 20, name: 'โดรนบังคับ WiFi กล้อง HD พับได้', emoji: '🚁', price: 1290, oldPrice: 2490, category: 'toys', sold: 923, rating: 4.5 },
 ];
 
-// ── ข้อความในหน้าปลดล็อค ─────────────────────────────────────
-const UNLOCK_TITLE  = "ปลดล็อคสคริปต์";           // หัวข้อหน้าปลดล็อค
-const UNLOCK_DESC   = "กรุณากดไลค์คลิป เพื่อรับสคริปต์ฟรี"; // คำอธิบาย
-const UNLOCK_BTN    = "กดไลค์เพื่อปลดล็อค";        // ข้อความบนปุ่ม
+let cart = [];
+let orders = [];
+let currentCategory = 'all';
+let searchQuery = '';
 
-// ── วิดีโอ YouTube ────────────────────────────────────────────
-const YOUTUBE_URL   = "https://youtu.be/aXzELDcyIKs?si=JX_EH5J_NHggFZoV"; // 🎬 ลิงก์ YouTube ที่อยากแสดง
-const YOUTUBE_TITLE = "📺 วิดีโอแนะนำ";  // หัวข้อเหนือวิดีโอ
-
-// ── Admin Panel ───────────────────────────────────────────────
-
-// ╔═══════════════════════════════════════════════════════════════╗
-// ║                                                               ║
-// ║   ⛔  หยุด! ห้ามแก้ไขใต้บรรทัดนี้                          ║
-// ║   ⛔  โค้ดหลักของระบบทำงานอยู่ตรงนี้                       ║
-// ║   ⛔  ถ้าแก้อาจทำให้เว็บพังทั้งหมด                         ║
-// ║                                                               ║
-// ╚═══════════════════════════════════════════════════════════════╝
-
-// =====================================================================
-//  ⛔  โซนแก้ไม่ได้ — ระบบทำงานอยู่ตรงนี้
-// =====================================================================
-
-// --- จัดการ Storage (เก็บคีย์ใน localStorage) ---
-
-// ดึงคีย์ทั้งหมดจาก localStorage
-function getKeys() {
-  try { return JSON.parse(localStorage.getItem("ug_keys") || "{}"); } catch { return {}; }
-}
-// บันทึกคีย์ลง localStorage
-function saveKeys(k) { localStorage.setItem("ug_keys", JSON.stringify(k)); }
-
-// คำนวณเวลาหมดอายุของคีย์ (ชั่วโมง + นาที)
-function getKeyExpiry() {
-  const totalMs = (KEY_EXPIRE_HOURS * 60 * 60 * 1000) + (KEY_EXPIRE_MINUTES * 60 * 1000);
-  return Date.now() + (totalMs > 0 ? totalMs : 60000); // ขั้นต่ำ 1 นาที
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  if (page === 'cart') renderCart();
+  if (page === 'checkout') renderCheckout();
+  if (page === 'orders') renderOrders();
+  window.scrollTo(0, 0);
 }
 
-// สร้างคีย์ random พร้อมฝัง expiry timestamp (Unix seconds)
-// รูปแบบ: xxxx-xxxx-xxxx-TIMESTAMP (timestamp คือวินาทีหมดอายุ)
-function genKeyString() {
-  const chars = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  let k = "";
-  for (let i = 0; i < 24; i++) k += chars[Math.floor(Math.random() * chars.length)];
-  const expUnix = Math.floor(getKeyExpiry() / 1000); // แปลงเป็น Unix seconds
-  return k.slice(0,8) + "-" + k.slice(8,16) + "-" + k.slice(16,24) + "-" + expUnix;
+function filterCat(cat, el) {
+  currentCategory = cat;
+  document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  renderProducts();
 }
 
-// อ่าน expiry จากคีย์
-function getExpFromKey(key) {
-  if (!key) return null;
-  const parts = key.split("-");
-  if (parts.length !== 4) return null;
-  const ts = parseInt(parts[3]);
-  return isNaN(ts) ? null : ts * 1000; // แปลงกลับเป็น ms
+function filterProducts() {
+  searchQuery = document.getElementById('searchInput').value.toLowerCase();
+  renderProducts();
 }
 
-// ลบคีย์ที่หมดอายุออก
-function cleanExpired() {
-  const keys = getKeys();
-  const now = Date.now();
-  let changed = false;
-  for (const k in keys) {
-    if (keys[k].exp < now) { delete keys[k]; changed = true; }
-  }
-  if (changed) saveKeys(keys);
-}
-
-// --- ระบบหน้าปลดล็อค ---
-
-let unlockOpened    = false;
-let unlockOpenTime  = 0;
-let unlockDone      = false;
-let unlockTimer     = null;
-let timeOnBypassTab = 0; // เวลาสะสมที่อยู่ใน tab ลิงก์จริงๆ
-let bypassTabRef    = null;
-
-function showState(name) {
-  document.getElementById("stateUnlock").style.display   = name === "unlock"   ? "block" : "none";
-  document.getElementById("stateChecking").style.display = name === "checking" ? "block" : "none";
-  document.getElementById("stateError").style.display    = name === "error"    ? "block" : "none";
-}
-
-// blur/focus handlers เป็น global เพื่อให้ removeEventListener ทำงานได้
-let _countingStart = null;
-
-function _onBlur() {
-  if (!unlockDone && unlockOpened) _countingStart = Date.now();
-}
-
-function _onFocus() {
-  if (!unlockOpened || unlockDone) return;
-
-  if (_countingStart !== null) {
-    timeOnBypassTab += Date.now() - _countingStart;
-    _countingStart = null;
-  }
-
-  // ถอด listener ทันที ป้องกันทำงานซ้ำเวลาไปเว็บอื่น
-  window.removeEventListener("blur", _onBlur);
-  window.removeEventListener("focus", _onFocus);
-  unlockOpened = false; // ปิด flag
-
-  if (timeOnBypassTab < MIN_SECONDS * 1000) {
-    showState("error");
-  } else {
-    showState("checking");
-    startCheckingProgress();
-  }
-}
-
-function startUnlock() {
-  unlockOpened    = true;
-  unlockOpenTime  = Date.now();
-  unlockDone      = false;
-  timeOnBypassTab = 0;
-  _countingStart  = null;
-
-  // ถอดก่อนเผื่อมีค้างอยู่
-  window.removeEventListener("blur", _onBlur);
-  window.removeEventListener("focus", _onFocus);
-
-  window.open(BYPASS_URL, "_blank");
-
-  window.addEventListener("blur", _onBlur);
-  window.addEventListener("focus", _onFocus);
-}
-
-function startCheckingProgress() {
-  let elapsed = 0;
-  const TOTAL = WAIT_SECONDS * 1000;
-  const TICK  = 100;
-
-  document.getElementById("unlockBar").style.width = "0%";
-
-  clearInterval(unlockTimer);
-  unlockTimer = setInterval(() => {
-    elapsed += TICK;
-    const pct     = Math.min((elapsed / TOTAL) * 100, 100);
-    const secLeft = Math.max(0, Math.ceil((TOTAL - elapsed) / 1000));
-
-    document.getElementById("unlockBar").style.width = pct + "%";
-    document.getElementById("unlockProgressSec").textContent = secLeft > 0 ? secLeft + "s" : "";
-
-    if (elapsed >= TOTAL) {
-      clearInterval(unlockTimer);
-      unlockDone = true;
-      setTimeout(() => enterMainSite(), 600);
-    }
-  }, TICK);
-}
-
-function resetUnlock() {
-  unlockOpened    = false;
-  unlockDone      = false;
-  timeOnBypassTab = 0;
-  clearInterval(unlockTimer);
-  document.getElementById("unlockBar").style.width = "0%";
-  showState("unlock");
-}
-
-function enterMainSite() {
-  localStorage.setItem("ug_unlocked_time", Date.now().toString()); // จำไว้ 5 นาที
-  const screen = document.getElementById("unlockScreen");
-  screen.style.transition = "opacity 0.5s";
-  screen.style.opacity = "0";
-  setTimeout(() => {
-    screen.style.display = "none";
-    document.getElementById("mainContent").style.visibility = "visible";
-    document.body.style.overflow = "";
-  }, 500);
-}
-
-// --- ระบบ Bypass (progress bar ในหน้าหลัก) ---
-
-let linkOpened    = false;
-let linkOpenTime  = 0;
-let progressDone  = false;
-let progressTimer = null;
-
-// เมื่อกดปุ่มไปลิงก์ภายนอก
-function openLink() {
-  linkOpened   = true;
-  linkOpenTime = Date.now();
-  progressDone = false;
-
-  // เปิดลิงก์ใน tab ใหม่
-  window.open(BYPASS_URL, "_blank");
-
-  // ซ่อนปุ่ม แสดง progress bar
-  document.getElementById("linkBtn").style.display = "none";
-  document.getElementById("progressWrap").style.display = "flex";
-  document.getElementById("progressBar").style.width = "0%";
-  document.getElementById("progressLabel").textContent = "กรุณารออยู่ในหน้าเว็บนั้น " + WAIT_SECONDS + " วินาที...";
-  document.getElementById("progressSec").textContent = WAIT_SECONDS + "s";
-
-  let elapsed = 0;
-  const TOTAL = WAIT_SECONDS * 1000;
-  const TICK  = 100;
-
-  clearInterval(progressTimer);
-  progressTimer = setInterval(() => {
-    elapsed += TICK;
-    const pct = Math.min((elapsed / TOTAL) * 100, 100);
-    const secLeft = Math.max(0, Math.ceil((TOTAL - elapsed) / 1000));
-
-    // อัปเดต progress bar
-    document.getElementById("progressBar").style.width = pct + "%";
-    document.getElementById("progressSec").textContent = secLeft + "s";
-
-    if (elapsed >= TOTAL) {
-      // ครบเวลา → แสดงปุ่มรับคีย์
-      clearInterval(progressTimer);
-      progressDone = true;
-      document.getElementById("progressLabel").textContent = "✅ ครบแล้ว! กลับมาหน้านี้แล้วรับคีย์ได้เลย";
-      document.getElementById("progressSec").textContent = "0s";
-      const vb = document.createElement("button");
-      vb.className = "btn btn-secondary";
-      vb.style.marginTop = "8px";
-      vb.textContent = "⚡ รับคีย์";
-      vb.onclick = verifyAndGetKey;
-      document.getElementById("progressWrap").appendChild(vb);
-    }
-  }, TICK);
-}
-
-// ตรวจจับว่ากลับมาเร็วเกินไปหรือเปล่า
-document.addEventListener("visibilitychange", function() {
-  if (!linkOpened || progressDone) return;
-  if (document.visibilityState === "visible") {
-    const elapsed = Date.now() - linkOpenTime;
-    if (elapsed < MIN_SECONDS * 1000) {
-      // กลับมาเร็วเกิน → error
-      clearInterval(progressTimer);
-      document.getElementById("progressBar").style.width = "0%";
-      document.getElementById("progressBar").style.background = "linear-gradient(90deg,#cc0000,#ff4040)";
-      document.getElementById("progressLabel").textContent = "❌ ข้อผิดพลาด: กลับมาเร็วเกินไป!";
-      document.getElementById("progressSec").textContent = "";
-      showStatus("statusMsg", "⚠ กรุณาไปอยู่ในเว็บที่เตรียมไว้อย่างน้อย " + MIN_SECONDS + " วินาที แล้วลองใหม่", "error");
-
-      // รีเซ็ตให้ลองใหม่ได้หลัง 3 วิ
-      setTimeout(() => {
-        linkOpened = false;
-        document.getElementById("progressBar").style.background = "linear-gradient(90deg,#5500cc,#aa00ff)";
-        document.getElementById("progressBar").style.width = "0%";
-        document.getElementById("progressWrap").style.display = "none";
-        document.getElementById("linkBtn").style.display = "flex";
-        document.getElementById("linkBtn").textContent = "🔗 ลองอีกครั้ง";
-      }, 3000);
-    }
-  }
-});
-
-// สร้างคีย์และแสดงผลหลัง progress bar เต็ม
-function verifyAndGetKey() {
-  if (!progressDone) {
-    showStatus("statusMsg", "กรุณารอให้ progress bar เต็มก่อน", "error"); return;
-  }
-  // ซ่อนปุ่มรับคีย์ทันที ป้องกันกดซ้ำ
-  const vbList = document.querySelectorAll("#progressWrap button");
-  vbList.forEach(b => b.style.display = "none");
-
-  cleanExpired();
-  const newKey = genKeyString();
-  const exp = getExpFromKey(newKey); // อ่าน expiry จากคีย์โดยตรง
-  const keys = getKeys();
-  keys[newKey] = { exp, created: Date.now() };
-  saveKeys(keys);
-
-  document.getElementById("keyDisplay").textContent = newKey;
-  document.getElementById("keySection").style.display = "block";
-  showStatus("statusMsg", "✅ สำเร็จ! คัดลอกคีย์ด้านล่างได้เลย", "success");
-  startCountdown(exp);
-  progressDone = false; // รีเซ็ตป้องกันกดซ้ำ
-}
-
-// คัดลอกคีย์ที่ได้รับ
-function copyKey() {
-  const k = document.getElementById("keyDisplay").textContent;
-  navigator.clipboard.writeText(k).then(() => showStatus("statusMsg", "📋 คัดลอกแล้ว!", "success"));
-}
-
-// --- นับถอยหลังหมดอายุ ---
-let countdownInterval = null;
-function startCountdown(exp) {
-  if (countdownInterval) clearInterval(countdownInterval);
-  // แสดงชั่วโมงที่เหลือ
-  const hLeft = Math.ceil((exp - Date.now()) / 3600000);
-  const el = document.getElementById("expireHours");
-  if (el) el.textContent = hLeft;
-
-  countdownInterval = setInterval(() => {
-    const left = exp - Date.now();
-    if (left <= 0) {
-      document.getElementById("expireCountdown").textContent = "หมดอายุแล้ว";
-      clearInterval(countdownInterval); return;
-    }
-    const h = Math.floor(left / 3600000);
-    const m = Math.floor((left % 3600000) / 60000);
-    const s = Math.floor((left % 60000) / 1000);
-    document.getElementById("expireCountdown").textContent =
-      String(h).padStart(2,"0") + ":" + String(m).padStart(2,"0") + ":" + String(s).padStart(2,"0");
-  }, 1000);
-}
-
-// --- ตรวจสอบคีย์ ---
-function checkKey() {
-  cleanExpired();
-  const inp = document.getElementById("checkInp").value.trim();
-  const keys = getKeys();
-  if (keys[inp]) {
-    const left = keys[inp].exp - Date.now();
-    const h = Math.floor(left / 3600000);
-    const m = Math.floor((left % 3600000) / 60000);
-    const s = Math.floor((left % 60000) / 1000);
-    showStatus("checkResult", `✅ คีย์ถูกต้อง — หมดอายุใน ${h}ชม. ${m}น. ${s}วิ`, "success");
-    // นับถอยหลังแบบ realtime
-    clearInterval(window._checkTimer);
-    window._checkTimer = setInterval(() => {
-      const l = keys[inp].exp - Date.now();
-      if (l <= 0) { clearInterval(window._checkTimer); showStatus("checkResult", "❌ คีย์หมดอายุแล้ว", "error"); return; }
-      const hh = Math.floor(l/3600000);
-      const mm = Math.floor((l%3600000)/60000);
-      const ss = Math.floor((l%60000)/1000);
-      showStatus("checkResult", `✅ คีย์ถูกต้อง — หมดอายุใน ${hh}ชม. ${mm}น. ${ss}วิ`, "success");
-    }, 1000);
-  } else {
-    clearInterval(window._checkTimer);
-    showStatus("checkResult", "❌ คีย์ไม่ถูกต้องหรือหมดอายุแล้ว", "error");
-  }
-}
-
-// ลบคีย์
-function deleteKey(k) {
-  const keys = getKeys();
-  delete keys[k];
-  saveKeys(keys);
-}
-
-// แสดงข้อความสถานะแล้วหายไปเอง 4 วิ
-function showStatus(id, msg, type) {
-  const el = document.getElementById(id);
-  el.textContent = msg;
-  el.className = "status-msg " + type;
-  setTimeout(() => { if (el.textContent === msg) el.className = "status-msg"; }, 4000);
-}
-
-// แปลง YouTube URL เป็น embed URL
-function getYoutubeEmbedUrl(url) {
-  if (!url) return null;
-  let videoId = null;
-
-  // รูปแบบ youtu.be/ID
-  const short = url.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
-  if (short) videoId = short[1];
-
-  // รูปแบบ youtube.com/watch?v=ID
-  const watch = url.match(/[?&]v=([a-zA-Z0-9_-]{11})/);
-  if (watch) videoId = watch[1];
-
-  // รูปแบบ youtube.com/shorts/ID
-  const shorts = url.match(/shorts\/([a-zA-Z0-9_-]{11})/);
-  if (shorts) videoId = shorts[1];
-
-  return videoId ? "https://www.youtube-nocookie.com/embed/" + videoId + "?rel=0&modestbranding=1" : null;
-}
-
-// ตรวจสอบว่าเคยปลดล็อคแล้วหรือยัง
-if (!SITE_ENABLED) {
-  const cs = document.getElementById("closedScreen");
-  cs.style.display = "flex";
-  document.getElementById("closedTitle").textContent = SITE_CLOSED_MSG;
-  document.getElementById("closedDesc").textContent  = SITE_CLOSED_DESC;
-  document.getElementById("discordBtn").href = SITE_DISCORD_URL;
-  document.getElementById("unlockScreen").style.display = "none";
-
-  // นับถอยหลังเปิดเว็บอัตโนมัติ
-  if (SITE_OPEN_TIME) {
-    // แปลง "วัน/เดือน/ปี/เวลา" เช่น "10/06/2025/18:00"
-    const parts = SITE_OPEN_TIME.split("/");
-    const openAt = parts.length === 4
-      ? new Date(parseInt(parts[2]), parseInt(parts[1])-1, parseInt(parts[0]),
-                 parseInt(parts[3].split(":")[0]), parseInt(parts[3].split(":")[1])).getTime()
-      : new Date(SITE_OPEN_TIME).getTime();
-    document.getElementById("closedCountdownWrap").style.display = "block";
-    const cdTimer = setInterval(() => {
-      const left = openAt - Date.now();
-      if (left <= 0) {
-        clearInterval(cdTimer);
-        // เปิดเว็บ → ซ่อนหน้าปิด → แสดงหน้าปลดล็อค
-        cs.style.transition = "opacity 0.5s";
-        cs.style.opacity = "0";
-        setTimeout(() => {
-          cs.style.display = "none";
-          // แสดงหน้าปลดล็อคให้ล็อกอินได้
-          const unlockEl = document.getElementById("unlockScreen");
-          if (unlockEl) {
-            unlockEl.style.display = "flex";
-            unlockEl.style.opacity = "1";
-            document.body.style.overflow = "hidden";
-          }
-        }, 500);
-        return;
-      }
-      const h = Math.floor(left / 3600000);
-      const m = Math.floor((left % 3600000) / 60000);
-      const s = Math.floor((left % 60000) / 1000);
-      document.getElementById("closedCountdown").textContent =
-        String(h).padStart(2,"0") + ":" + String(m).padStart(2,"0") + ":" + String(s).padStart(2,"0");
-    }, 1000);
-  }
-}
-
-// --- วิธีปลดล็อคแบบที่ 2 ---
-let m2Done = [];
-
-function openMethod2() {
-  const screen = document.getElementById("method2Screen");
-  screen.style.display = "flex";
-  document.body.style.overflow = "hidden"; // ล็อค scroll
-
-  document.getElementById("m2Title").textContent = METHOD2_TITLE;
-  document.getElementById("m2Desc").textContent  = METHOD2_DESC;
-
-  const list = document.getElementById("m2ClipList");
-  list.innerHTML = "";
-  m2Done = new Array(METHOD2_CLIPS.length).fill(false);
-
-  METHOD2_CLIPS.forEach((clip, i) => {
-    const row = document.createElement("div");
-    row.style.cssText = `
-      display:flex;align-items:center;justify-content:space-between;
-      background:rgba(30,0,50,0.7);border:1px solid rgba(100,0,200,0.25);
-      border-radius:10px;padding:12px 14px;
-    `;
-    row.innerHTML = `
-      <span style="font-family:'Itim','Rajdhani',sans-serif;font-size:1rem;color:#e0c0ff;" id="m2label${i}">${clip.label}</span>
-      <button id="m2btn${i}" onclick="openClip(${i})" style="
-        padding:7px 16px;background:linear-gradient(135deg,#5500cc,#8800ff);
-        border:none;border-radius:8px;cursor:pointer;
-        font-family:'Itim','Rajdhani',sans-serif;font-size:0.9rem;font-weight:700;
-        color:#fff;white-space:nowrap;
-      ">ดูคลิป</button>
-    `;
-    list.appendChild(row);
+function renderProducts() {
+  const grid = document.getElementById('productsGrid');
+  let filtered = products.filter(p => {
+    const matchCat = currentCategory === 'all' || p.category === currentCategory;
+    const matchSearch = p.name.toLowerCase().includes(searchQuery);
+    return matchCat && matchSearch;
   });
-}
-
-function openClip(i) {
-  window.open(METHOD2_CLIPS[i].url, "_blank");
-
-  const btn = document.getElementById("m2btn" + i);
-  btn.disabled = true;
-  btn.textContent = "⏳";
-  btn.style.background = "rgba(100,0,200,0.3)";
-
-  setTimeout(() => {
-    m2Done[i] = true;
-    btn.textContent = "✅";
-    btn.style.background = "linear-gradient(135deg,#006600,#009900)";
-
-    if (m2Done.every(v => v)) {
-      setTimeout(() => {
-        document.getElementById("method2Screen").style.display = "none";
-        enterMainSite();
-      }, 800);
-    }
-  }, MIN_SECONDS * 1000);
-}
-
-function closeMethod2() {
-  document.getElementById("method2Screen").style.display = "none";
-  // ยังล็อค scroll ไว้เพราะยังอยู่หน้าปลดล็อค
-}
-
-if (SITE_ENABLED) {
-  // ตรวจว่าเคยปลดล็อคภายใน 5 นาทีที่ผ่านมาไหม
-  const _storedTime = localStorage.getItem("ug_unlocked_time");
-  const _stillValid = _storedTime && (Date.now() - parseInt(_storedTime)) < UNLOCK_EXPIRE_MINUTES * 60 * 1000;
-  if (_stillValid) {
-    document.getElementById("unlockScreen").style.display = "none";
-    document.getElementById("mainContent").style.visibility = "visible";
-  } else {
-    document.body.style.overflow = "hidden";
+  grid.innerHTML = filtered.map(p => `
+    <div class="product-card">
+      <div class="product-img">
+        ${p.badge ? `<div class="badge">${p.badge}</div>` : ''}
+        <span style="font-size:56px">${p.emoji}</span>
+      </div>
+      <div class="product-info">
+        <div class="product-name">${p.name}</div>
+        <div style="margin-top:4px">
+          <span class="stars">${'★'.repeat(Math.floor(p.rating))}${'☆'.repeat(5-Math.floor(p.rating))}</span>
+          <span style="font-size:11px; color:var(--gray-text); margin-left:4px">${p.rating}</span>
+        </div>
+        <div>
+          <span class="product-price">฿${p.price.toLocaleString()}</span>
+          <span class="product-old-price">฿${p.oldPrice.toLocaleString()}</span>
+        </div>
+        <div class="product-sold">ขายแล้ว ${p.sold.toLocaleString()} ชิ้น</div>
+      </div>
+      <button class="add-cart-btn" onclick="addToCart(${p.id})">🛒 เพิ่มลงตะกร้า</button>
+    </div>
+  `).join('');
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gray-text)">ไม่พบสินค้า 😅</div>';
   }
 }
 
-
-// ── ระบบ Theme ──────────────────────────────────────────────────
-function toggleTheme() {
-  const current = localStorage.getItem('ug_theme') || 'dark';
-  setTheme(current === 'dark' ? 'midnight' : 'dark');
+function addToCart(id) {
+  const product = products.find(p => p.id === id);
+  const existing = cart.find(i => i.id === id);
+  if (existing) { existing.qty++; } else { cart.push({ ...product, qty: 1 }); }
+  updateCartCount();
+  showToast(`✅ เพิ่ม "${product.name.substring(0, 20)}..." ลงตะกร้าแล้ว`);
 }
 
-function setTheme(name) {
-  const cls = name === 'dark' ? '' : 'theme-' + name;
-  document.body.className = cls;
-  document.documentElement.className = cls; // ครอบ html ด้วย
-  localStorage.setItem('ug_theme', name);
-
-  // อัปเดตปุ่ม active
-  const icon = name === 'dark' ? '🌙' : '☀️';
-  const btns = document.querySelectorAll('#themeSwitcher, #unlockThemeBtn');
-  btns.forEach(b => { if(b) b.textContent = icon; });
-  // เครดิต
-  const credit = document.getElementById('siteCredit');
-  if (credit) credit.style.color = name === 'dark' ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,50,0.3)';
-
-  // แก้สี unlock screen ตาม theme
-  const unlockBg = {
-    dark: '#08000f', frost: '#f0f0f5', glass: '#f5f0ff', midnight: '#1a1a2e'
-  };
-  const unlockEl = document.getElementById('unlockScreen');
-  if (unlockEl) unlockEl.style.background = unlockBg[name] || '#08000f';
+function updateCartCount() {
+  const total = cart.reduce((s, i) => s + i.qty, 0);
+  document.getElementById('cartCount').textContent = total;
 }
 
-// โหลด theme ที่บันทึกไว้ (รอให้ DOM พร้อมก่อน)
-document.addEventListener("DOMContentLoaded", function() {
-  const _savedTheme = localStorage.getItem('ug_theme') || 'dark';
-  setTheme(_savedTheme);
-});
+function renderCart() {
+  const el = document.getElementById('cartContent');
+  if (cart.length === 0) {
+    el.innerHTML = `<div class="cart-empty"><div class="cart-empty-icon">🛒</div><p>ตะกร้าว่างเปล่า</p><br><button class="checkout-btn" onclick="showPage('home')" style="width:auto;padding:10px 24px">ช้อปสินค้าเลย →</button></div>`;
+    return;
+  }
+  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const shipping = subtotal > 500 ? 0 : 50;
+  const total = subtotal + shipping;
+  el.innerHTML = cart.map(item => `
+    <div class="cart-item">
+      <div class="cart-item-emoji">${item.emoji}</div>
+      <div class="cart-item-info">
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-price">฿${(item.price * item.qty).toLocaleString()}</div>
+        <div class="qty-control">
+          <button class="qty-btn" onclick="changeQty(${item.id}, -1)">−</button>
+          <span class="qty-num">${item.qty}</span>
+          <button class="qty-btn" onclick="changeQty(${item.id}, 1)">+</button>
+          <span style="font-size:12px;color:var(--gray-text);margin-left:4px">฿${item.price.toLocaleString()}/ชิ้น</span>
+        </div>
+      </div>
+      <button class="remove-btn" onclick="removeFromCart(${item.id})">🗑️</button>
+    </div>
+  `).join('') + `
+    <div class="cart-summary">
+      <div class="summary-row"><span>ยอดสินค้า</span><span>฿${subtotal.toLocaleString()}</span></div>
+      <div class="summary-row"><span>ค่าจัดส่ง</span><span>${shipping === 0 ? '<span style="color:var(--green)">ฟรี!</span>' : '฿' + shipping}</span></div>
+      ${subtotal < 500 ? '<div style="font-size:11px;color:var(--gray-text);padding:4px 0">ช้อปเพิ่ม ฿' + (500 - subtotal) + ' เพื่อรับส่งฟรี!</div>' : ''}
+      <div class="summary-row"><span class="summary-total">ยอดรวมทั้งหมด</span><span class="summary-total">฿${total.toLocaleString()}</span></div>
+      <button class="checkout-btn" onclick="showPage('checkout')">สั่งซื้อเลย (฿${total.toLocaleString()}) →</button>
+    </div>`;
+}
 
-// ซ่อน/แสดง ส่วนรับคีย์และตรวจสอบคีย์
-if (!SHOW_GET_KEY)   document.getElementById("getKeyCard").style.display   = "none";
-if (!SHOW_CHECK_KEY) document.getElementById("checkKeyCard").style.display = "none";
+function changeQty(id, delta) {
+  const item = cart.find(i => i.id === id);
+  if (!item) return;
+  item.qty += delta;
+  if (item.qty <= 0) cart = cart.filter(i => i.id !== id);
+  updateCartCount();
+  renderCart();
+}
 
-// เริ่มต้น: ลบคีย์หมดอายุ + ใส่ค่า config ลงหน้าเว็บ
-cleanExpired();
-document.title = SITE_TITLE + " — Key System";
-document.querySelector(".logo").innerHTML = SITE_TITLE.slice(0,-3) + "<span>" + SITE_TITLE.slice(-3) + "</span>";
-document.querySelector(".tagline").textContent = "// " + SITE_TAGLINE;
-document.querySelector(".footer").textContent = FOOTER_TEXT;
+function removeFromCart(id) {
+  cart = cart.filter(i => i.id !== id);
+  updateCartCount();
+  renderCart();
+}
 
-// คัดลอกสคริปต์จากกล่องโค้ด
-function copyScript() {
-  navigator.clipboard.writeText(SCRIPT_CODE).then(() => {
-    const btn  = document.getElementById("copyScriptBtn");
-    const text = document.getElementById("copyScriptText");
-    text.textContent = "คัดลอกแล้ว! ✅";
-    btn.style.background = "linear-gradient(135deg,#006600,#009900,#00bb00)";
-    setTimeout(() => {
-      text.textContent = "คัดลอกสคริปต์";
-      btn.style.background = "linear-gradient(135deg,#5500cc,#8800ff,#aa00ff)";
-    }, 2000);
+function renderCheckout() {
+  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const shipping = subtotal > 500 ? 0 : 50;
+  const total = subtotal + shipping;
+  document.getElementById('checkoutSummary').innerHTML = cart.map(i => `
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--gray-border)">
+      <span style="font-size:24px">${i.emoji}</span>
+      <span style="flex:1;font-size:13px">${i.name} x${i.qty}</span>
+      <span style="font-weight:700;color:var(--orange)">฿${(i.price*i.qty).toLocaleString()}</span>
+    </div>
+  `).join('') + `
+    <div style="display:flex;justify-content:space-between;padding:10px 0;font-weight:700;font-size:15px">
+      <span>ยอดรวม</span><span style="color:var(--orange)">฿${total.toLocaleString()}</span>
+    </div>`;
+}
+
+function selectPay(el) {
+  document.querySelectorAll('.pay-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function generateOrderId() {
+  const prefix = 'SST';
+  const date = new Date();
+  const dateStr = date.getFullYear().toString().slice(-2) +
+    String(date.getMonth()+1).padStart(2,'0') +
+    String(date.getDate()).padStart(2,'0');
+  const random = Math.floor(Math.random() * 900000 + 100000);
+  return `${prefix}${dateStr}${random}`;
+}
+
+function generateTracking() {
+  const couriers = [
+    { name: 'Kerry Express', prefix: 'KY' },
+    { name: 'Flash Express', prefix: 'TH' },
+    { name: 'J&T Express', prefix: 'JT' },
+    { name: 'Thai Post', prefix: 'ET' },
+  ];
+  const courier = couriers[Math.floor(Math.random() * couriers.length)];
+  const num = Math.floor(Math.random() * 9000000000 + 1000000000);
+  return { number: `${courier.prefix}${num}TH`, courier: courier.name };
+}
+
+function placeOrder() {
+  if (cart.length === 0) { showToast('⚠️ ตะกร้าว่างเปล่า'); return; }
+  const fname = document.getElementById('fname').value;
+  const lname = document.getElementById('lname').value;
+  if (!fname || !lname) { showToast('⚠️ กรุณากรอกชื่อ-นามสกุล'); return; }
+
+  const orderId = generateOrderId();
+  const tracking = generateTracking();
+  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const shipping = subtotal > 500 ? 0 : 50;
+  const total = subtotal + shipping;
+  const payMethod = document.querySelector('.pay-opt.selected')?.textContent?.trim() || 'บัตรเครดิต';
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit' });
+
+  const order = { orderId, tracking: tracking.number, courier: tracking.courier, total, payMethod, date: dateStr, items: [...cart] };
+  orders.unshift(order);
+
+  document.getElementById('displayOrderId').textContent = orderId;
+  document.getElementById('displayTracking').textContent = tracking.number;
+  document.getElementById('displayCourier').textContent = tracking.courier;
+  document.getElementById('displayDate').textContent = dateStr;
+  document.getElementById('displayPayment').textContent = payMethod;
+  document.getElementById('displayTotal').textContent = '฿' + total.toLocaleString();
+  document.getElementById('qrOrderId').textContent = orderId;
+  document.getElementById('displayItems').innerHTML = cart.map(i => `
+    <div class="order-item-row">
+      <span class="order-item-emoji">${i.emoji}</span>
+      <div class="order-item-detail">${i.name}<br><span style="color:var(--gray-text);font-size:11px">x${i.qty} ชิ้น</span></div>
+      <span class="order-item-price">฿${(i.price*i.qty).toLocaleString()}</span>
+    </div>`).join('');
+
+  // Generate QR Code
+  document.getElementById('qrcode').innerHTML = '';
+  new QRCode(document.getElementById('qrcode'), {
+    text: `ShopSimTH | OrderID: ${orderId} | Tracking: ${tracking.number} | Total: ${total}THB`,
+    width: 180, height: 180,
+    colorDark: '#EE4D2D', colorLight: '#FFFFFF',
+    correctLevel: QRCode.CorrectLevel.H
   });
+
+  cart = [];
+  updateCartCount();
+  showPage('success');
+  showToast('🎉 สั่งซื้อสำเร็จ!');
 }
 
-// ใส่ค่า config ลงหน้าปลดล็อค
-document.getElementById("unlockTitle").textContent  = UNLOCK_TITLE;
-document.getElementById("unlockDesc").textContent   = UNLOCK_DESC;
-document.getElementById("unlockBtnEl").textContent  = UNLOCK_BTN;
-
-// ใส่ค่า config ลงกล่องสคริปต์
-document.getElementById("scriptFilename").textContent  = SCRIPT_FILENAME;
-document.getElementById("scriptNote1").textContent     = SCRIPT_NOTE_1;
-document.getElementById("scriptCodeDisplay").textContent = SCRIPT_CODE;
-document.getElementById("scriptNote2").textContent     = SCRIPT_NOTE_2;
-// ใส่วิดีโอ YouTube
-const embedUrl = getYoutubeEmbedUrl(YOUTUBE_URL);
-if (embedUrl) {
-  document.getElementById("youtubeFrame").src = embedUrl;
-  document.getElementById("youtubeTitleEl").textContent = YOUTUBE_TITLE;
-} else {
-  document.getElementById("youtubeCard").style.display = "none";
+function renderOrders() {
+  const el = document.getElementById('ordersContent');
+  if (orders.length === 0) {
+    el.innerHTML = `<div class="cart-empty"><div class="cart-empty-icon">📭</div><p>ยังไม่มีคำสั่งซื้อ</p><br><button class="checkout-btn" onclick="showPage('home')" style="width:auto;padding:10px 24px">เริ่มช้อปเลย</button></div>`;
+    return;
+  }
+  el.innerHTML = orders.map(o => `
+    <div class="form-card" style="margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px">
+        <div>
+          <div style="font-weight:700;color:var(--orange);font-size:15px">${o.orderId}</div>
+          <div style="font-size:12px;color:var(--gray-text);margin-top:2px">${o.date}</div>
+        </div>
+        <div style="background:#E8F5E9;color:#2E7D32;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700">✅ สำเร็จ</div>
+      </div>
+      <div class="tracking-box" style="margin:12px 0">
+        <div class="tracking-box-label">🚚 Tracking</div>
+        <div class="tracking-number">${o.tracking}</div>
+        <div style="font-size:11px;color:#388E3C">${o.courier}</div>
+      </div>
+      <div>${o.items.map(i => `<div class="order-item-row"><span class="order-item-emoji">${i.emoji}</span><div class="order-item-detail">${i.name} x${i.qty}</div><span class="order-item-price">฿${(i.price*i.qty).toLocaleString()}</span></div>`).join('')}</div>
+      <div style="display:flex;justify-content:space-between;padding-top:10px;font-weight:700;font-size:14px;border-top:1px solid var(--gray-border);margin-top:8px">
+        <span>ยอดรวม</span><span style="color:var(--orange)">฿${o.total.toLocaleString()}</span>
+      </div>
+    </div>`).join('');
 }
+
+function continueShopping() {
+  showPage('home');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// Init
+renderProducts();
 </script>
 </body>
 </html>
