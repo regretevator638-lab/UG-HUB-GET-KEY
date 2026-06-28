@@ -17,7 +17,9 @@
 body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--dk);font-size:14px}
 
 /* MODE BAR */
-#modebar{display:flex;align-items:center;justify-content:center;gap:8px;background:#111;padding:8px 16px;position:sticky;top:0;z-index:300;border-bottom:2px solid #333}
+#modebar-wrap{position:sticky;top:0;z-index:300;background:#111}
+#modebar{display:flex;align-items:center;justify-content:center;gap:8px;background:#111;padding:8px 16px;border-bottom:2px solid #333;overflow:hidden;max-height:60px;transition:max-height .3s ease,padding .3s ease,border .3s ease}
+#modebar.collapsed{max-height:0;padding:0;border-bottom:none}
 #modebar .mbar-label{color:#aaa;font-size:11px;margin-right:4px}
 .mbtn{padding:8px 20px;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:800;transition:.2s;display:flex;align-items:center;gap:6px;letter-spacing:.3px}
 .mbtn.c{background:var(--or);color:#fff;box-shadow:0 2px 8px rgba(238,77,45,.4)}
@@ -25,9 +27,13 @@ body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--dk);font
 .mbtn.off{opacity:.3;box-shadow:none}
 .mbtn:hover:not(.off){filter:brightness(1.1)}
 .mbar-divider{width:1px;height:24px;background:#444;margin:0 4px}
+#modebar-toggle{width:100%;background:#1a1a1a;border:none;color:#666;font-size:11px;padding:3px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;transition:.2s}
+#modebar-toggle:hover{background:#222;color:#aaa}
+#modebar-toggle .arrow{display:inline-block;transition:transform .3s}
+#modebar-toggle.collapsed .arrow{transform:rotate(180deg)}
 
 /* COUPON TICKER */
-#couponBar{background:linear-gradient(90deg,#7B1FA2,#C62828,#1565C0);color:#fff;padding:6px 0;overflow:hidden;position:sticky;top:37px;z-index:250;font-size:12px}
+#couponBar{background:linear-gradient(90deg,#7B1FA2,#C62828,#1565C0);color:#fff;padding:6px 0;overflow:hidden;position:sticky;top:0;z-index:250;font-size:12px}
 .ticker-inner{display:flex;gap:24px;white-space:nowrap;animation:ticker 30s linear infinite}
 @keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 .c-tag{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.4);border-radius:20px;padding:3px 12px;cursor:pointer;transition:.2s;font-weight:600}
@@ -35,7 +41,7 @@ body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--dk);font
 .c-timer{font-size:11px;opacity:.8;margin-left:8px}
 
 /* HEADER */
-header{padding:0 16px;position:sticky;top:67px;z-index:200;transition:background .3s}
+header{padding:0 16px;position:sticky;top:0;z-index:200;transition:background .3s,top .3s}
 header.cm{background:var(--or);box-shadow:0 2px 8px rgba(238,77,45,.3)}
 header.am{background:var(--ad);box-shadow:0 2px 8px rgba(26,35,126,.3)}
 .htop{display:flex;align-items:center;gap:12px;padding:10px 0;max-width:1200px;margin:0 auto}
@@ -245,6 +251,30 @@ tr:hover td{background:#fafafa}
 .mclose{float:right;background:none;border:none;font-size:20px;cursor:pointer;color:var(--mu)}
 #modalQr{display:flex;justify-content:center;margin:12px 0}
 
+/* PACK SIMULATION */
+.pack-stage{background:#fff;border-radius:12px;padding:20px;box-shadow:var(--sh);margin-bottom:14px;text-align:center}
+.pack-scene{width:260px;height:200px;margin:0 auto 16px;position:relative;display:flex;align-items:center;justify-content:center}
+.box-body{width:140px;height:100px;background:linear-gradient(145deg,#F9A825,#F57F17);border-radius:4px 4px 0 0;position:absolute;bottom:20px;display:flex;align-items:center;justify-content:center;font-size:40px;transition:.5s;box-shadow:4px 4px 0 #E65100}
+.box-lid{width:148px;height:30px;background:linear-gradient(145deg,#FBC02D,#F9A825);border-radius:4px;position:absolute;bottom:116px;transition:.8s;transform-origin:bottom center;box-shadow:2px 2px 0 #E65100}
+.box-lid.closed{transform:translateY(4px)}
+.box-lid.taped{background:linear-gradient(145deg,#FBC02D,#F9A825)}
+.tape-strip{position:absolute;width:160px;height:14px;background:rgba(139,195,74,.6);border:1px solid rgba(139,195,74,.8);border-radius:2px;bottom:112px;display:none;z-index:2}
+.tape-strip.show{display:block}
+.product-float{position:absolute;font-size:36px;transition:1s;top:10px}
+.product-float.in-box{top:70px;opacity:0;transform:scale(.5)}
+.pack-step-label{font-size:14px;font-weight:700;color:var(--dk);margin-bottom:8px;min-height:22px}
+.pack-progress{display:flex;justify-content:center;gap:6px;margin:12px 0}
+.pp-dot{width:10px;height:10px;border-radius:50%;background:var(--bd);transition:.3s}
+.pp-dot.on{background:var(--or)}
+.pp-dot.done{background:var(--gn)}
+.pack-btn{background:var(--or);color:#fff;border:none;padding:10px 28px;border-radius:6px;font-weight:700;font-size:14px;cursor:pointer;transition:.2s;margin-top:4px}
+.pack-btn:hover{background:var(--or2)}
+.pack-btn:disabled{background:var(--bd);cursor:not-allowed}
+.pack-btn.green{background:#2E7D32}.pack-btn.green:hover{background:#1B5E20}
+.label-preview{background:#fff;border:2px solid var(--dk);border-radius:8px;padding:14px;text-align:left;margin:12px 0;font-size:12px}
+.label-preview .lp-title{font-size:10px;color:var(--mu);font-weight:700;text-transform:uppercase;margin-bottom:4px}
+.label-preview .lp-val{font-size:13px;font-weight:600;margin-bottom:8px}
+
 /* PRINT */
 @media print{
   #modebar,#couponBar,header,nav,.mbtn,.no-print{display:none!important}
@@ -271,11 +301,16 @@ tr:hover td{background:#fafafa}
 <body>
 
 <!-- MODE BAR -->
-<div id="modebar">
-  <span class="mbar-label">🏪 ShopSimTH</span>
-  <div class="mbar-divider"></div>
-  <button class="mbtn c" id="btnC" onclick="setMode('c')">👤 หน้าลูกค้า</button>
-  <button class="mbtn a off" id="btnA" onclick="setMode('a')">🔧 หน้าแอดมิน (คนขาย)</button>
+<div id="modebar-wrap">
+  <div id="modebar">
+    <span class="mbar-label">🏪 ShopSimTH</span>
+    <div class="mbar-divider"></div>
+    <button class="mbtn c" id="btnC" onclick="setMode('c')">👤 หน้าลูกค้า</button>
+    <button class="mbtn a off" id="btnA" onclick="setMode('a')">🔧 หน้าแอดมิน (คนขาย)</button>
+  </div>
+  <button id="modebar-toggle" onclick="toggleModebar()">
+    <span class="arrow">▲</span><span id="toggle-label" style="font-size:10px">ซ่อนแถบโหมด</span>
+  </button>
 </div>
 
 <!-- COUPON TICKER -->
@@ -473,7 +508,7 @@ tr:hover td{background:#fafafa}
 
 <script>
 // ══ CONSTANTS ══
-const TRACK_URL = 'https://regretevator638-lab.github.io/UG-HUB-GET-KEY/';
+const TRACK_URL = window.location.origin + window.location.pathname;
 const COURIERS = [
   {name:'Kerry Express',pre:'KY'},
   {name:'Flash Express',pre:'TH'},
@@ -486,7 +521,7 @@ const STATUS_STEPS = [
   {key:'shipped',  label:'อยู่ระหว่างจัดส่ง',     icon:'🚚', sub:'พัสดุถูกส่งออกแล้ว'},
   {key:'arrived',  label:'ถึงคลังปลายทาง',        icon:'🏭', sub:'พัสดุถึงคลังในพื้นที่ของคุณแล้ว'},
   {key:'outdeliv', label:'กำลังนำส่ง',             icon:'🛵', sub:'พนักงานขนส่งกำลังนำส่งถึงที่อยู่คุณ'},
-  {key:'done',     label:'ส่งถึงมือลูกค้าแล้ว',   icon:'🏠', sub:'ส่งสำเร็จ ขอบคุณที่ใช้บริการ!'},
+  {key:'done',     label:'ส่งถึงมือลูกค้าแล้ว ✓', icon:'🏠', sub:'ส่งสำเร็จ ขอบคุณที่ใช้บริการ!', done:true},
 ];
 
 const PRODUCTS = [
@@ -917,7 +952,7 @@ function renderOrders(){
     return;
   }
   el.innerHTML=orders.map(o=>`
-    <div class="ord-card">
+    <div class="ord-card" id="ord_${o.oid}">
       <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:12px">
         <div><div style="font-weight:700;color:var(--or);font-size:13px;font-family:monospace">${o.oid}</div>
           <div style="font-size:11px;color:var(--mu)">${o.date}</div></div>
@@ -949,11 +984,21 @@ function renderTrackTimeline(o){
       <div class="tl-line"></div>
       ${STATUS_STEPS.map((s,i)=>{
         const cls=i<curIdx?'done':i===curIdx?'cur':'wait';
+        const isDone = s.key==='done' && cls==='done';
         const loc=o.stepLocs[s.key]||'';
         const t=o.stepTimes[s.key];
         const timeStr=t&&i<=curIdx?new Date(t).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit',second:'2-digit'}):'';
+        if(isDone) return `<div class="tl-step">
+          <div class="tl-dot done" style="background:#2E7D32;border-color:#2E7D32;width:48px;height:48px;font-size:22px;box-shadow:0 0 0 4px rgba(46,125,50,.2)">✓</div>
+          <div class="tl-info">
+            <div class="tl-name" style="font-size:14px;color:#2E7D32;font-weight:800">${s.label}</div>
+            <div style="font-size:12px;color:#2E7D32;margin-top:2px">🎉 ส่งสำเร็จ!</div>
+            ${loc?`<div class="tl-loc">📍 ${loc}</div>`:''}
+            ${timeStr?`<div class="tl-sub">${timeStr}</div>`:''}
+          </div>
+        </div>`;
         return `<div class="tl-step">
-          <div class="tl-dot ${cls}">${cls==='done'?'✓':cls==='cur'?s.icon:s.icon}</div>
+          <div class="tl-dot ${cls}">${cls==='done'?'✓':s.icon}</div>
           <div class="tl-info">
             <div class="tl-name" style="font-size:13px">${s.label}</div>
             ${loc&&i<=curIdx?`<div class="tl-loc">📍 ${loc}</div>`:''}
@@ -1037,6 +1082,29 @@ function showAdminDetail(idx){
         <button class="print-btn" onclick="printOrder()">🖨️ พิมพ์ใบจัดส่ง</button>
       </div>
     </div>
+    <!-- PACK SIMULATION -->
+    ${o.status==='placed'||o.status==='packing'?`
+    <div class="pack-stage" id="packStage">
+      <div style="font-weight:800;font-size:15px;color:var(--ad);margin-bottom:14px">📦 จำลองแพ็คสินค้า</div>
+      <div class="pack-scene" id="packScene">
+        <div class="product-float" id="packProduct">${o.items.map(i=>i.emoji).join('')}</div>
+        <div class="box-body" id="boxBody"><span id="boxInner" style="opacity:0;font-size:28px"></span></div>
+        <div class="box-lid" id="boxLid"></div>
+        <div class="tape-strip" id="tapeStrip"></div>
+      </div>
+      <div class="pack-step-label" id="packLabel">กดปุ่มเพื่อเริ่มแพ็คสินค้า</div>
+      <div class="pack-progress">
+        <div class="pp-dot" id="pd1"></div>
+        <div class="pp-dot" id="pd2"></div>
+        <div class="pp-dot" id="pd3"></div>
+        <div class="pp-dot" id="pd4"></div>
+      </div>
+      <button class="pack-btn" id="packBtn" onclick="doPackStep(${idx})">▶ เริ่มแพ็คสินค้า</button>
+    </div>`:o.status==='shipped'||o.status==='arrived'||o.status==='outdeliv'||o.status==='done'?
+    `<div style="background:#E8F5E9;border-radius:10px;padding:14px;text-align:center;margin-bottom:14px;border:2px solid #A5D6A7">
+      <div style="font-size:32px">✅</div><div style="font-weight:800;color:#2E7D32;font-size:15px">แพ็คสินค้าเรียบร้อยแล้ว</div>
+      <div style="font-size:12px;color:#388E3C;margin-top:4px">พัสดุถูกส่งออกแล้ว</div>
+    </div>`:''}
     <!-- PRINT HEADER -->
     <div class="print-only" style="text-align:center;margin-bottom:16px;padding:12px;border:2px solid #000;border-radius:8px">
       <div style="font-size:20px;font-weight:800">🏪 ShopSimTH — ใบจัดส่งสินค้า</div>
@@ -1116,10 +1184,79 @@ function initOrderQRs(){
   });
 }
 
+// ══ PACK SIMULATION ══
+let packStep = {};
+function doPackStep(idx){
+  const o = orders[idx];
+  const step = (packStep[idx]||0) + 1;
+  packStep[idx] = step;
+  const prod=document.getElementById('packProduct');
+  const lid=document.getElementById('boxLid');
+  const tape=document.getElementById('tapeStrip');
+  const inner=document.getElementById('boxInner');
+  const label=document.getElementById('packLabel');
+  const btn=document.getElementById('packBtn');
+  const dots=['pd1','pd2','pd3','pd4'];
+  dots.forEach((d,i)=>{
+    const el=document.getElementById(d);
+    if(el){ el.className='pp-dot'+(i<step?' done':i===step?' on':''); }
+  });
+  if(step===1){
+    label.textContent='📦 กำลังใส่สินค้าลงกล่อง...';
+    btn.textContent='▶ ปิดฝากล่อง';
+    if(prod){ prod.style.transition='1s'; prod.style.top='70px'; prod.style.opacity='0'; prod.style.transform='scale(.5)'; }
+    if(inner){ setTimeout(()=>{ inner.textContent=o.items.map(i=>i.emoji).join(''); inner.style.opacity='1'; },800); }
+    o.status='packing'; adminSetStatus(idx,'packing');
+  } else if(step===2){
+    label.textContent='📦 กำลังปิดฝากล่อง...';
+    btn.textContent='▶ พันเทปกล่อง';
+    if(lid){ lid.classList.add('closed'); }
+  } else if(step===3){
+    label.textContent='📦 กำลังพันเทปกล่อง...';
+    btn.textContent='🚚 ส่งให้พนักงานขนส่ง';
+    btn.className='pack-btn green';
+    if(tape){ tape.classList.add('show'); }
+  } else if(step===4){
+    label.textContent='✅ แพ็คสินค้าสำเร็จ! กำลังส่งให้ขนส่ง...';
+    btn.disabled=true; btn.textContent='✅ ส่งให้ขนส่งแล้ว';
+    o.status='shipped';
+    adminSetStatus(idx,'shipped');
+    setTimeout(()=>{ showAdminDetail(idx); showToast('🚚 ส่งให้ขนส่งเรียบร้อย!'); },800);
+  }
+}
+
+// ══ MODEBAR TOGGLE ══
+let modebarVisible = true;
+function toggleModebar(){
+  modebarVisible = !modebarVisible;
+  const bar = document.getElementById('modebar');
+  const btn = document.getElementById('modebar-toggle');
+  const lbl = document.getElementById('toggle-label');
+  bar.classList.toggle('collapsed', !modebarVisible);
+  btn.classList.toggle('collapsed', !modebarVisible);
+  lbl.textContent = modebarVisible ? 'ซ่อนแถบโหมด' : 'แสดงแถบโหมด';
+}
+
 // ══ INIT ══
 initCats(); renderP();
 genCoupons(); startCouponTimer();
-setMode('c');
+// Handle QR scan deep-link
+const urlParams = new URLSearchParams(window.location.search);
+const scanOid = urlParams.get('oid');
+if(scanOid){
+  setMode('c');
+  setTimeout(()=>{
+    showPage('orders');
+    setTimeout(()=>{
+      // scroll to matching order
+      const el = document.getElementById('ord_'+scanOid);
+      if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+      showToast('📦 กำลังแสดงออเดอร์ '+scanOid);
+    },200);
+  },100);
+} else {
+  setMode('c');
+}
 
 // Auto-refresh orders page every 3s when visible
 setInterval(()=>{
