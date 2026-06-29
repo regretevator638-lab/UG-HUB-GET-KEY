@@ -526,28 +526,230 @@ const GPS_ROUTES={
     {loc:'ถึงปลายทาง',lat:13.65,lng:100.45},
   ]
 };
-const PRODUCTS=[
-  {id:1,name:'iPhone 16 Pro 256GB เครื่องศูนย์ไทย',emoji:'📱',price:38900,old:42900,cat:'electronics',sold:1243,rate:4.9,badge:'ขายดี',desc:'ชิป A18 Pro กล้อง 48MP 3 ตัว หน้าจอ Super Retina XDR 6.1" ProMotion 120Hz รองรับ 5G ประกันศูนย์ 1 ปี'},
-  {id:2,name:'หูฟัง AirPods Pro 3 ตัดเสียง Active',emoji:'🎧',price:7990,old:9990,cat:'electronics',sold:856,rate:4.8,badge:'ลด 20%',desc:'ANC รุ่นล่าสุด เสียง Hi-Fi IPX4 แบต 30 ชม. พร้อมเคส'},
-  {id:3,name:'Smart Watch วัดออกซิเจน สายสุขภาพ',emoji:'⌚',price:1290,old:2490,cat:'electronics',sold:2341,rate:4.5,badge:'HOT',desc:'วัดหัวใจ SpO2 GPS IP67 เชื่อม Bluetooth แจ้งเตือนสาย/ข้อความ'},
-  {id:4,name:'เสื้อยืด Oversize Cotton 100% 5 สี',emoji:'👕',price:299,old:590,cat:'fashion',sold:5621,rate:4.7,badge:'ลด 50%',desc:'Cotton 100% นุ่ม ระบายอากาศดี ทรง Oversize S-3XL ซักไม่หด'},
-  {id:5,name:'กระเป๋า Tote Canvas พิมพ์ลาย',emoji:'👜',price:459,old:750,cat:'fashion',sold:3201,rate:4.6,desc:'Canvas หนา ลายพิมพ์ 4 สี สายปรับได้ มีช่องแยกใน'},
-  {id:6,name:'รองเท้า Sneaker ใส่สบาย 36-45',emoji:'👟',price:890,old:1590,cat:'fashion',sold:4102,rate:4.8,badge:'ขายดี',desc:'พื้น EVA นุ่ม ระบายอากาศ น้ำหนักเบา เหมาะทุกวัน'},
-  {id:7,name:'หม้อหุงข้าว Digital 1.8L ประหยัดไฟ',emoji:'🍚',price:1190,old:1990,cat:'home',sold:987,rate:4.7,desc:'ดิจิตอล 1.8L ตั้งเวลาได้ Keep Warm อัตโนมัติ'},
-  {id:8,name:'โคมไฟตั้งโต๊ะ LED ปรับแสง USB',emoji:'💡',price:349,old:599,cat:'home',sold:2103,rate:4.5,badge:'ใหม่',desc:'LED 3 ระดับ 3 โทนสี ชาร์จ USB เหมาะอ่านหนังสือ/ทำงาน'},
-  {id:9,name:'เครื่องปั่นน้ำผลไม้ พกพา 400ml',emoji:'🥤',price:590,old:990,cat:'home',sold:1543,rate:4.6,desc:'6 ใบมีด 300W ชาร์จ USB-C ปั่นได้ 15 แก้ว/ชาร์จ'},
-  {id:10,name:'เซรั่มหน้าใส Vitamin C 30ml',emoji:'✨',price:399,old:699,cat:'beauty',sold:7823,rate:4.9,badge:'ขายดีที่สุด',desc:'Vitamin C 20% + Niacinamide + HA ลดจุดด่างดำ ผิวกระจ่างใส'},
-  {id:11,name:'ครีมกันแดด SPF50+ PA++++ 50g',emoji:'🌞',price:249,old:350,cat:'beauty',sold:9102,rate:4.8,desc:'น้ำเนื้อบาง SPF50+ PA++++ ทดสอบโดยแพทย์ กันน้ำ 80 นาที'},
-  {id:12,name:'ลิปสติก Matte ติดทน 24ชม. 10เฉด',emoji:'💄',price:199,old:380,cat:'beauty',sold:4502,rate:4.7,badge:'ลด 48%',desc:'Matte ติดทน 24ชม. กันน้ำ 10 สี เนื้อครีมไม่แห้งปาก'},
-  {id:13,name:'ดัมเบล ยาง 2 ข้าง 5kg ต่อคู่',emoji:'🏋️',price:790,old:1200,cat:'sport',sold:2341,rate:4.6,desc:'NBR กันลื่น ไม่เป็นสนิม 5kg/ข้าง มาเป็นคู่'},
-  {id:14,name:'เสื่อโยคะ 6mm กันลื่น NBR',emoji:'🧘',price:390,old:690,cat:'sport',sold:5621,rate:4.7,badge:'ขายดี',desc:'NBR 6mm กันลื่น 2 ด้าน 183x61cm น้ำหนักเบา มีสายรัด'},
-  {id:15,name:'ลูกฟุตบอล PVC ขนาด 5 มาตรฐาน',emoji:'⚽',price:290,old:499,cat:'sport',sold:3102,rate:4.5,desc:'PVC มาตรฐาน เบอร์ 5 เด้งดีสม่ำเสมอ'},
-  {id:16,name:'บะหมี่กึ่งสำเร็จรูปสไตล์เกาหลี 5 ซอง',emoji:'🍜',price:145,old:195,cat:'food',sold:12034,rate:4.8,badge:'ขายดีที่สุด',desc:'รสต้นตำรับเกาหลี เส้นหนา ซองซอสแท้ 5 ซอง 500g'},
-  {id:17,name:'กาแฟดริปซองพรีเมียม อาราบิก้า 10ซอง',emoji:'☕',price:189,old:250,cat:'food',sold:6732,rate:4.9,desc:'อาราบิก้า 100% ดอยสูง บดสด กลิ่นหอม 10 ซอง'},
-  {id:18,name:'โปรตีนบาร์ ออร์แกนิค 12 แท่ง',emoji:'🍫',price:360,old:450,cat:'food',sold:4102,rate:4.7,desc:'โปรตีน 20g/แท่ง น้ำตาลต่ำ ออร์แกนิค 3 รสชาติ'},
-  {id:19,name:'ตัวต่อเลโก้ ชุดปราสาท 500 ชิ้น',emoji:'🧸',price:890,old:1490,cat:'toys',sold:1834,rate:4.8,badge:'ใหม่',desc:'ABS คุณภาพสูง 500 ชิ้น มีคู่มือภาพ เหมาะ 6 ปีขึ้นไป'},
-  {id:20,name:'โดรนบังคับ WiFi กล้อง HD พับได้',emoji:'🚁',price:1290,old:2490,cat:'toys',sold:923,rate:4.5,desc:'กล้อง 1080p บิน 15 นาที WiFi รัศมี 100m'},
-];
+// ══ PRODUCT GENERATOR (1000 items) ══
+const PRODUCT_TEMPLATES = {
+  electronics:[
+    {n:'iPhone 16 Pro {v}GB',e:'📱',r:[15000,45000]},{n:'Samsung Galaxy S{v} Ultra',e:'📱',r:[12000,40000]},
+    {n:'หูฟัง Bluetooth รุ่น {v}',e:'🎧',r:[500,8000]},{n:'Smart Watch Gen {v}',e:'⌚',r:[800,6000]},
+    {n:'iPad Pro {v}นิ้ว WiFi',e:'💻',r:[20000,50000]},{n:'กล้อง DSLR {v}MP',e:'📷',r:[8000,35000]},
+    {n:'ลำโพง Bluetooth {v}W',e:'🔊',r:[500,3000]},{n:'เมาส์ Wireless รุ่น {v}',e:'🖱️',r:[200,2000]},
+    {n:'คีย์บอร์ด Mechanical {v}',e:'⌨️',r:[500,5000]},{n:'จอ Monitor {v}นิ้ว 4K',e:'🖥️',r:[5000,25000]},
+    {n:'แบตสำรอง {v}mAh',e:'🔋',r:[300,1500]},{n:'สาย USB-C รุ่น {v}',e:'🔌',r:[100,500]},
+    {n:'เคสโทรศัพท์ลาย {v}',e:'📱',r:[99,499]},{n:'ฟิล์มกระจก {v}ชั้น',e:'🛡️',r:[50,299]},
+    {n:'หูฟัง TWS รุ่น {v}Pro',e:'🎧',r:[300,3000]},{n:'Webcam {v}K HD',e:'📹',r:[800,4000]},
+    {n:'Router WiFi {v} ช่อง',e:'📡',r:[500,3000]},{n:'SSD {v}GB พกพา',e:'💾',r:[1000,5000]},
+    {n:'Drone กล้อง {v}K',e:'🚁',r:[1500,15000]},{n:'Smart TV {v}นิ้ว 4K',e:'📺',r:[8000,30000]},
+  ],
+  fashion:[
+    {n:'เสื้อยืด Cotton รุ่น {v}',e:'👕',r:[199,599]},{n:'กางเกงยีนส์ทรง {v}',e:'👖',r:[299,899]},
+    {n:'รองเท้า Sneaker รุ่น {v}',e:'👟',r:[499,1999]},{n:'กระเป๋า Tote สี {v}',e:'👜',r:[299,999]},
+    {n:'แจ็คเก็ตสไตล์ {v}',e:'🧥',r:[599,2999]},{n:'เดรสลาย {v}',e:'👗',r:[299,1299]},
+    {n:'รองเท้าส้นสูง {v}ซม.',e:'👠',r:[399,1999]},{n:'หมวก Cap รุ่น {v}',e:'🧢',r:[199,599]},
+    {n:'ถุงเท้า Pack {v}คู่',e:'🧦',r:[99,299]},{n:'เข็มขัดหนัง รุ่น {v}',e:'👔',r:[199,799]},
+    {n:'ผ้าพันคอ {v}สี',e:'🧣',r:[199,699]},{n:'นาฬิกาแฟชั่น {v}',e:'⌚',r:[499,2999]},
+    {n:'แว่นตากันแดด UV{v}',e:'🕶️',r:[199,1299]},{n:'กระเป๋าสตางค์หนัง {v}ช่อง',e:'👛',r:[299,999]},
+    {n:'ชุดกีฬา Set {v}ชิ้น',e:'🏃',r:[299,899]},{n:'ชุดนอน Cotton รุ่น {v}',e:'🩲',r:[199,599]},
+    {n:'เสื้อโปโล Premium {v}',e:'👔',r:[299,799]},{n:'กระเป๋าเป้ รุ่น {v}L',e:'🎒',r:[499,1999]},
+    {n:'รองเท้าแตะ EVA {v}',e:'🩴',r:[149,499]},{n:'ชุดว่ายน้ำ Style {v}',e:'🩱',r:[299,999]},
+  ],
+  home:[
+    {n:'หม้อหุงข้าว {v}L Digital',e:'🍚',r:[800,3000]},{n:'เครื่องปั่น {v}W',e:'🥤',r:[400,2000]},
+    {n:'พัดลม Tower {v}ใบพัด',e:'🌀',r:[800,4000]},{n:'โคมไฟ LED {v}W',e:'💡',r:[200,1500]},
+    {n:'กระทะ Non-stick {v}ซม.',e:'🍳',r:[300,1500]},{n:'ชุดจาน {v}ใบ เซรามิก',e:'🍽️',r:[399,1999]},
+    {n:'เครื่องดูดฝุ่น {v}W',e:'🧹',r:[1500,8000]},{n:'ตู้เก็บของ {v}ชั้น',e:'🗄️',r:[500,3000]},
+    {n:'ผ้าห่มนาโน {v}ปอนด์',e:'🛏️',r:[299,999]},{n:'หมอน Memory Foam {v}นิ้ว',e:'😴',r:[299,1299]},
+    {n:'ชุดผ้าปูที่นอน {v}ชิ้น',e:'🛏️',r:[399,1499]},{n:'กระจกแต่งหน้า LED {v}นิ้ว',e:'🪞',r:[500,3000]},
+    {n:'เก้าอี้ทำงาน Ergonomic {v}',e:'🪑',r:[2000,12000]},{n:'โต๊ะทำงาน {v}ซม.',e:'🪵',r:[1500,8000]},
+    {n:'ไม้กวาดไฟฟ้า {v}V',e:'🧹',r:[500,3000]},{n:'เครื่องกรองน้ำ {v}ขั้น',e:'💧',r:[2000,8000]},
+    {n:'กาต้มน้ำ {v}L ดิจิตอล',e:'☕',r:[500,2000]},{n:'ไมโครเวฟ {v}L',e:'📦',r:[2000,6000]},
+    {n:'ตะกร้าผ้า {v}ช่อง',e:'🧺',r:[199,799]},{n:'กล่องเก็บของ {v}ชิ้น',e:'📦',r:[199,999]},
+  ],
+  beauty:[
+    {n:'เซรั่ม Vitamin C {v}ml',e:'✨',r:[199,999]},{n:'ครีมกันแดด SPF{v}+',e:'🌞',r:[149,599]},
+    {n:'มาส์กหน้า {v}แผ่น',e:'😊',r:[99,499]},{n:'ลิปสติก เฉด {v}',e:'💄',r:[99,499]},
+    {n:'แป้งพัฟ SPF{v}',e:'💅',r:[199,799]},{n:'อายแชโดว์ Palette {v}สี',e:'👁️',r:[199,999]},
+    {n:'มาสคาร่า Volume {v}X',e:'👁️',r:[149,499]},{n:'น้ำหอม EDP {v}ml',e:'🌸',r:[599,3999]},
+    {n:'ครีมบำรุงผิว {v}ml',e:'🧴',r:[199,999]},{n:'โทนเนอร์ AHA {v}%',e:'💦',r:[199,799]},
+    {n:'เจลล้างหน้า {v}ml',e:'🫧',r:[99,399]},{n:'สครับหน้า {v}ml',e:'✨',r:[149,499]},
+    {n:'เซรั่มผม {v}ml',e:'💇',r:[199,799]},{n:'แชมพู Keratin {v}ml',e:'🧴',r:[199,599]},
+    {n:'ครีมนวด {v}ml Premium',e:'💆',r:[199,699]},{n:'บลัชออน {v}เฉด',e:'🌸',r:[149,599]},
+    {n:'ไฮไลท์เตอร์ {v}สี',e:'✨',r:[199,699]},{n:'คอนซีลเลอร์ {v}เฉด',e:'💄',r:[149,499]},
+    {n:'รองพื้น Coverage {v}%',e:'💅',r:[199,899]},{n:'สเปรย์ Fix Makeup {v}ml',e:'💦',r:[149,599]},
+  ],
+  sport:[
+    {n:'ดัมเบล {v}kg คู่',e:'🏋️',r:[300,3000]},{n:'เสื่อโยคะ {v}mm',e:'🧘',r:[299,999]},
+    {n:'ลูกฟุตบอล {v}เบอร์',e:'⚽',r:[199,999]},{n:'ไม้เทนนิส Carbon {v}',e:'🎾',r:[800,5000]},
+    {n:'รองเท้าวิ่ง {v}สี',e:'👟',r:[800,3000]},{n:'ถุงมือชกมวย {v}oz',e:'🥊',r:[299,1499]},
+    {n:'จักรยานออกกำลัง {v}kg',e:'🚴',r:[3000,15000]},{n:'ลู่วิ่ง {v}HP',e:'🏃',r:[8000,30000]},
+    {n:'ยางยืด Resistance {v}ชิ้น',e:'💪',r:[199,599]},{n:'ขาตั้งบาร์เบล {v}kg',e:'🏋️',r:[2000,8000]},
+    {n:'ถุงทราย {v}kg',e:'🥊',r:[500,3000]},{n:'ลูกบาสเกตบอล {v}เบอร์',e:'🏀',r:[299,1499]},
+    {n:'แบดมินตัน Set {v}ชิ้น',e:'🏸',r:[299,1999]},{n:'ไม้กอล์ฟ Set {v}ไม้',e:'⛳',r:[3000,20000]},
+    {n:'ชุดว่ายน้ำ แข่งขัน {v}',e:'🏊',r:[399,1499]},{n:'รองเท้าฟุตบอล {v}สตั๊ด',e:'⚽',r:[599,2999]},
+    {n:'แว่นว่ายน้ำ UV{v}',e:'🥽',r:[199,799]},{n:'นาฬิกาวิ่ง GPS {v}',e:'⌚',r:[2000,10000]},
+    {n:'เสื้อกีฬา DryFit {v}',e:'🏃',r:[199,799]},{n:'กางเกงกีฬา Compression {v}',e:'🩱',r:[299,999]},
+  ],
+  food:[
+    {n:'บะหมี่เกาหลี {v}ซอง',e:'🍜',r:[89,299]},{n:'กาแฟดริป {v}ซอง',e:'☕',r:[99,399]},
+    {n:'โปรตีนบาร์ {v}แท่ง',e:'🍫',r:[199,699]},{n:'น้ำผึ้งแท้ {v}ml',e:'🍯',r:[199,799]},
+    {n:'ชาสมุนไพร {v}ซอง',e:'🫖',r:[99,399]},{n:'อัลมอนด์อบ {v}g',e:'🥜',r:[149,599]},
+    {n:'โกโก้ผง {v}g Premium',e:'🍫',r:[149,499]},{n:'ข้าวกล้องออร์แกนิค {v}kg',e:'🍚',r:[199,699]},
+    {n:'ซอสพริก {v}ml รสพิเศษ',e:'🌶️',r:[79,299]},{n:'น้ำมันมะกอก {v}ml',e:'🫒',r:[199,799]},
+    {n:'โปรตีนเวย์ {v}ปอนด์',e:'💪',r:[799,2999]},{n:'วิตามิน C {v}mg {v}เม็ด',e:'💊',r:[199,699]},
+    {n:'ธัญพืชรวม {v}g',e:'🌾',r:[149,499]},{n:'น้ำมันมะพร้าว {v}ml',e:'🥥',r:[199,699]},
+    {n:'ผงโปรตีนพืช {v}g',e:'🌱',r:[399,1299]},{n:'สนัค Healthy {v}ชิ้น',e:'🥨',r:[59,199]},
+    {n:'น้ำผลไม้คั้น {v}ml',e:'🥤',r:[49,199]},{n:'ซีเรียล {v}g Multigrain',e:'🥣',r:[149,499]},
+    {n:'แยมผลไม้ {v}g',e:'🍓',r:[99,399]},{n:'คอลลาเจน {v}g Powder',e:'✨',r:[299,999]},
+  ],
+  toys:[
+    {n:'ตัวต่อ {v}ชิ้น',e:'🧸',r:[299,1999]},{n:'โดรนมินิ {v}K',e:'🚁',r:[500,5000]},
+    {n:'รถบังคับ {v}km/h',e:'🚗',r:[299,2999]},{n:'ตุ๊กตา {v}ซม.',e:'🪆',r:[199,999]},
+    {n:'เกมกระดาน {v}คน',e:'🎲',r:[299,1499]},{n:'ไพ่สะสม {v}แพ็ค',e:'🃏',r:[99,999]},
+    {n:'หุ่น Action Figure {v}ซม.',e:'🦸',r:[199,1499]},{n:'บล็อคไม้ {v}ชิ้น',e:'🪵',r:[199,999]},
+    {n:'ดินน้ำมัน {v}สี',e:'🎨',r:[99,399]},{n:'สีน้ำ {v}สี Premium',e:'🎨',r:[199,799]},
+    {n:'กีตาร์โมเดล {v}นิ้ว',e:'🎸',r:[299,1999]},{n:'กล้องโทรทรรศน์ {v}X',e:'🔭',r:[500,3000]},
+    {n:'กล้องจุลทรรศน์ {v}X',e:'🔬',r:[800,5000]},{n:'ชุด Science Kit {v}ชิ้น',e:'🧪',r:[299,1499]},
+    {n:'ปริศนา Jigsaw {v}ชิ้น',e:'🧩',r:[199,999]},{n:'รถไฟจำลอง Set {v}',e:'🚂',r:[599,3999]},
+    {n:'เครื่องดนตรีจำลอง {v}',e:'🎵',r:[199,1499]},{n:'ชุดทดลองวิทย์ {v}',e:'🧬',r:[299,1999]},
+    {n:'หุ่นยนต์โปรแกรมได้ {v}',e:'🤖',r:[999,8000]},{n:'เกมอาร์เคด {v}in1',e:'🎮',r:[299,2999]},
+  ],
+};
+
+const BADGES=['ขายดี','HOT','ใหม่','ลด 50%','ลด 30%','ลด 20%','ขายดีที่สุด','Flash Sale','แนะนำ','พิเศษ'];
+const DESCS={
+  electronics:'สินค้าอิเล็กทรอนิกส์คุณภาพสูง ประกันสินค้า 1 ปี มาพร้อมอุปกรณ์ครบชุด',
+  fashion:'แฟชั่นสไตล์ทันสมัย วัสดุคุณภาพ ใส่สบาย เหมาะทุกโอกาส',
+  home:'สินค้าตกแต่งบ้านและเครื่องใช้ไฟฟ้า ทนทาน ประหยัดพลังงาน',
+  beauty:'ผลิตภัณฑ์ความงาม ผ่านการทดสอบทางผิวหนัง ปลอดภัย ใช้ได้ทุกสภาพผิว',
+  sport:'อุปกรณ์กีฬาและออกกำลังกาย คุณภาพมาตรฐาน เหมาะทุกระดับ',
+  food:'อาหารและเครื่องดื่มคุณภาพ คัดสรรวัตถุดิบดี ปลอดภัย ได้มาตรฐาน',
+  toys:'ของเล่นเด็กและผู้ใหญ่ ปลอดภัย มีใบรับรอง ส่งเสริมพัฒนาการ',
+};
+
+function genProducts(){
+  const cats=Object.keys(PRODUCT_TEMPLATES);
+  const items=[];
+  let id=1;
+  // 1000 items: ~143 per category
+  cats.forEach(cat=>{
+    const tmps=PRODUCT_TEMPLATES[cat];
+    const perCat=Math.ceil(1000/cats.length);
+    for(let i=0;i<perCat;i++){
+      const t=tmps[i%tmps.length];
+      const vars=[256,128,64,32,16,8,4,2,'Pro','Max','Plus','Mini','Ultra','Lite','X','S','M','L','XL','2XL'];
+      const v=vars[Math.floor(Math.random()*vars.length)];
+      const name=t.n.replace(/\{v\}/g,v);
+      const price=Math.floor(Math.random()*(t.r[1]-t.r[0])+t.r[0]);
+      const oldPrice=Math.floor(price*(1+Math.random()*0.5+0.1));
+      const sold=Math.floor(Math.random()*20000+100);
+      const rate=Math.round((Math.random()*1.5+3.5)*10)/10;
+      const hasBadge=Math.random()<0.3;
+      items.push({
+        id:id++, name, emoji:t.e, price, old:oldPrice, cat,
+        sold, rate: Math.min(5,rate),
+        badge:hasBadge?BADGES[Math.floor(Math.random()*BADGES.length)]:null,
+        desc:DESCS[cat]+` รุ่น ${name} ราคาพิเศษ ส่งไวทั่วไทย`
+      });
+    }
+  });
+  // shuffle
+  for(let i=items.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[items[i],items[j]]=[items[j],items[i]];}
+  return items;
+}
+
+// ══════════════════════════════════════════
+// 🔑 ตั้งค่า API KEY และ PROMPT ตรงนี้เลย
+// ══════════════════════════════════════════
+const ANTHROPIC_API_KEY = 'AQ.Ab8RN6J1vHLozMzFmjQT615YHpJbww9KLlWnr6DnJO5q2S0hoQ; // ← วาง API Key ตรงนี้
+
+const PRODUCT_PROMPT = `
+สร้างสินค้าร้านออนไลน์ภาษาไทย 20 รายการ แบบสุ่มหลากหลาย
+ให้ตอบเป็น JSON array เท่านั้น ไม่ต้องมีข้อความอื่น รูปแบบดังนี้:
+[
+  {
+    "name": "ชื่อสินค้าภาษาไทยที่สมจริง",
+    "emoji": "อีโมจิที่เหมาะสม 1 ตัว",
+    "price": ราคาเป็นตัวเลข,
+    "old": ราคาเดิมสูงกว่าราคาปัจจุบัน,
+    "cat": "หมวดหมู่ (electronics/fashion/home/beauty/sport/food/toys)",
+    "sold": จำนวนที่ขายได้เป็นตัวเลข,
+    "rate": คะแนนรีวิว 3.5-5.0,
+    "badge": "ป้าย เช่น ขายดี/ใหม่/HOT หรือ null",
+    "desc": "รายละเอียดสินค้าสั้นๆ 1-2 ประโยค"
+  }
+]
+สร้างสินค้าที่หลากหลาย ราคาสมเหตุสมผล ชื่อน่าสนใจ เหมือนสินค้าจริงในตลาด
+`; // ← แก้ prompt ตรงนี้ได้เลย
+// ══════════════════════════════════════════
+
+let PRODUCTS = genProducts(); // ใช้ fallback ก่อน
+let aiGenRunning = false;
+
+async function genProductsFromAI(){
+  if(!ANTHROPIC_API_KEY || ANTHROPIC_API_KEY === 'YOUR_API_KEY_HERE'){
+    return null;
+  }
+  if(aiGenRunning) return null;
+  aiGenRunning = true;
+  try {
+    // Generate หลายรอบได้ 1000 รายการ (50 รอบ x 20 รายการ)
+    showToast('🤖 AI กำลัง Generate สินค้าใหม่...');
+    const batches = [];
+    const batchCount = 50; // 50 x 20 = 1000 รายการ
+    for(let b=0; b<batchCount; b++){
+      const resp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': ANTHROPIC_API_KEY,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 2000,
+          messages: [{ role: 'user', content: PRODUCT_PROMPT }]
+        })
+      });
+      if(!resp.ok) throw new Error('API Error: '+resp.status);
+      const data = await resp.json();
+      const text = data.content[0].text.trim();
+      const clean = text.replace(/```json|```/g,'').trim();
+      const items = JSON.parse(clean);
+      items.forEach((item, i) => {
+        item.id = b*20 + i + 1;
+        batches.push(item);
+      });
+      // แสดง progress
+      if(b % 10 === 0) showToast(`🤖 Generate แล้ว ${batches.length} รายการ...`);
+    }
+    aiGenRunning = false;
+    return batches;
+  } catch(e) {
+    console.error('AI Gen error:', e);
+    aiGenRunning = false;
+    showToast('⚠️ AI Gen ล้มเหลว ใช้ระบบสุ่มแทน');
+    return null;
+  }
+}
+
+async function refreshProducts(){
+  const aiProducts = await genProductsFromAI();
+  if(aiProducts && aiProducts.length > 0){
+    PRODUCTS = aiProducts;
+  } else {
+    PRODUCTS = genProducts(); // fallback
+  }
+  renderP();
+  showToast('🔄 อัปเดตสินค้าใหม่ ' + PRODUCTS.length + ' รายการแล้ว!');
+}
+
+// สุ่มสินค้าใหม่ทุก 5 นาที
+setInterval(()=>{ refreshProducts(); }, 5*60*1000);
+
+// โหลดครั้งแรกด้วย AI (ถ้ามี key)
+if(ANTHROPIC_API_KEY !== 'YOUR_API_KEY_HERE'){
+  refreshProducts();
+}
 const CATS=[
   {id:'all',l:'ทั้งหมด'},{id:'electronics',l:'📱 อิเล็กทรอนิกส์'},
   {id:'fashion',l:'👕 แฟชั่น'},{id:'home',l:'🏠 บ้านและสวน'},
@@ -674,10 +876,17 @@ function initCats(){
 }
 function filterCat(cat,el){curCat=cat;document.querySelectorAll('.cpill').forEach(p=>p.classList.remove('on'));el.classList.add('on');renderP();}
 function filterP(){curSrch=document.getElementById('srchIn').value.toLowerCase();renderP();}
+let visibleCount=40, filteredList=[];
 function renderP(){
   const g=document.getElementById('pgrid');
-  const list=PRODUCTS.filter(p=>(curCat==='all'||p.cat===curCat)&&p.name.toLowerCase().includes(curSrch));
-  g.innerHTML=list.length?list.map(p=>`
+  filteredList=PRODUCTS.filter(p=>(curCat==='all'||p.cat===curCat)&&p.name.toLowerCase().includes(curSrch));
+  visibleCount=40;
+  renderPSlice(g, true);
+}
+function renderPSlice(g, reset){
+  if(!g) g=document.getElementById('pgrid');
+  const slice=filteredList.slice(0, visibleCount);
+  const phtml=slice.map(p=>`
     <div class="pcard" onclick="showDetail(${p.id})">
       <div class="pimg">${p.badge?`<div class="bdg">${p.badge}</div>`:''}<span style="font-size:52px">${p.emoji}</span></div>
       <div class="pinfo">
@@ -688,8 +897,15 @@ function renderP(){
         <div class="psold">ขายแล้ว ${p.sold.toLocaleString()} ชิ้น</div>
       </div>
       <button class="acbtn" onclick="event.stopPropagation();addC(${p.id})">🛒 เพิ่มลงตะกร้า</button>
-    </div>`).join('')
-  :'<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--mu)">ไม่พบสินค้า</div>';
+    </div>`).join('');
+  const totalTxt=`<div style="grid-column:1/-1;font-size:12px;color:var(--mu);text-align:center;padding:4px 0">แสดง ${slice.length} จาก ${filteredList.length.toLocaleString()} รายการ</div>`;
+  const loadMore=visibleCount<filteredList.length?`<div style="grid-column:1/-1;text-align:center;padding:12px"><button onclick="loadMoreP()" style="background:var(--or);color:#fff;border:none;padding:10px 32px;border-radius:20px;font-weight:700;font-size:13px;cursor:pointer">โหลดเพิ่ม ${Math.min(40,filteredList.length-visibleCount)} รายการ ▼</button></div>`:'';
+  g.innerHTML=filteredList.length?(totalTxt+phtml+loadMore):'<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--mu)">ไม่พบสินค้า</div>';
+}
+function loadMoreP(){
+  visibleCount=Math.min(visibleCount+40, filteredList.length);
+  renderPSlice(null, false);
+  // scroll to load more button area
 }
 function showDetail(id){
   const p=PRODUCTS.find(x=>x.id===id); if(!p)return;
