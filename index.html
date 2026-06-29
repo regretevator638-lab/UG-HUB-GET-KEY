@@ -589,7 +589,7 @@ const PRODUCT_TEMPLATES = {
     {n:'เสื้อกีฬา DryFit {v}',e:'🏃',r:[199,799]},{n:'กางเกงกีฬา Compression {v}',e:'🩱',r:[299,999]},
   ],
   food:[
-    {n:'บะหมี่เกาหลี {v}ซอง',e:'🍜',r:[89,299]},{n:'กาแฟดริป {v}ซอง',e:'☕',r:[99,399]},
+    {n:'บะหมี่เกาหลี {v}ซอง',e:'🍜',r:[9,99]},{n:'กาแฟดริป {v}ซอง',e:'☕',r:[99,399]},
     {n:'โปรตีนบาร์ {v}แท่ง',e:'🍫',r:[199,699]},{n:'น้ำผึ้งแท้ {v}ml',e:'🍯',r:[199,799]},
     {n:'ชาสมุนไพร {v}ซอง',e:'🫖',r:[99,399]},{n:'อัลมอนด์อบ {v}g',e:'🥜',r:[149,599]},
     {n:'โกโก้ผง {v}g Premium',e:'🍫',r:[149,499]},{n:'ข้าวกล้องออร์แกนิค {v}kg',e:'🍚',r:[199,699]},
@@ -638,7 +638,10 @@ function genProducts(){
       const vars=[256,128,64,32,16,8,4,2,'Pro','Max','Plus','Mini','Ultra','Lite','X','S','M','L','XL','2XL'];
       const v=vars[Math.floor(Math.random()*vars.length)];
       const name=t.n.replace(/\{v\}/g,v);
-      const price=Math.floor(Math.random()*(t.r[1]-t.r[0])+t.r[0]);
+      // 30% chance of cheap item (฿9-฿199)
+      const isCheap = Math.random() < 0.3;
+      const cheapPrice = [9,19,29,39,49,59,79,99,119,149,179,199][Math.floor(Math.random()*12)];
+      const price = isCheap ? cheapPrice : Math.floor(Math.random()*(t.r[1]-t.r[0])+t.r[0]);
       const oldPrice=Math.floor(price*(1+Math.random()*0.5+0.1));
       const sold=Math.floor(Math.random()*20000+100);
       const rate=Math.round((Math.random()*1.5+3.5)*10)/10;
@@ -656,100 +659,7 @@ function genProducts(){
   return items;
 }
 
-// ══════════════════════════════════════════
-// 🔑 ตั้งค่า API KEY และ PROMPT ตรงนี้เลย
-// ══════════════════════════════════════════
-const ANTHROPIC_API_KEY = 'AQ.Ab8RN6J1vHLozMzFmjQT615YHpJbww9KLlWnr6DnJO5q2S0hoQ; // ← วาง API Key ตรงนี้
-
-const PRODUCT_PROMPT = `
-สร้างสินค้าร้านออนไลน์ภาษาไทย 20 รายการ แบบสุ่มหลากหลาย
-ให้ตอบเป็น JSON array เท่านั้น ไม่ต้องมีข้อความอื่น รูปแบบดังนี้:
-[
-  {
-    "name": "ชื่อสินค้าภาษาไทยที่สมจริง",
-    "emoji": "อีโมจิที่เหมาะสม 1 ตัว",
-    "price": ราคาเป็นตัวเลข,
-    "old": ราคาเดิมสูงกว่าราคาปัจจุบัน,
-    "cat": "หมวดหมู่ (electronics/fashion/home/beauty/sport/food/toys)",
-    "sold": จำนวนที่ขายได้เป็นตัวเลข,
-    "rate": คะแนนรีวิว 3.5-5.0,
-    "badge": "ป้าย เช่น ขายดี/ใหม่/HOT หรือ null",
-    "desc": "รายละเอียดสินค้าสั้นๆ 1-2 ประโยค"
-  }
-]
-สร้างสินค้าที่หลากหลาย ราคาสมเหตุสมผล ชื่อน่าสนใจ เหมือนสินค้าจริงในตลาด
-`; // ← แก้ prompt ตรงนี้ได้เลย
-// ══════════════════════════════════════════
-
-let PRODUCTS = genProducts(); // ใช้ fallback ก่อน
-let aiGenRunning = false;
-
-async function genProductsFromAI(){
-  if(!ANTHROPIC_API_KEY || ANTHROPIC_API_KEY === 'YOUR_API_KEY_HERE'){
-    return null;
-  }
-  if(aiGenRunning) return null;
-  aiGenRunning = true;
-  try {
-    // Generate หลายรอบได้ 1000 รายการ (50 รอบ x 20 รายการ)
-    showToast('🤖 AI กำลัง Generate สินค้าใหม่...');
-    const batches = [];
-    const batchCount = 50; // 50 x 20 = 1000 รายการ
-    for(let b=0; b<batchCount; b++){
-      const resp = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': ANTHROPIC_API_KEY,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true'
-        },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-6',
-          max_tokens: 2000,
-          messages: [{ role: 'user', content: PRODUCT_PROMPT }]
-        })
-      });
-      if(!resp.ok) throw new Error('API Error: '+resp.status);
-      const data = await resp.json();
-      const text = data.content[0].text.trim();
-      const clean = text.replace(/```json|```/g,'').trim();
-      const items = JSON.parse(clean);
-      items.forEach((item, i) => {
-        item.id = b*20 + i + 1;
-        batches.push(item);
-      });
-      // แสดง progress
-      if(b % 10 === 0) showToast(`🤖 Generate แล้ว ${batches.length} รายการ...`);
-    }
-    aiGenRunning = false;
-    return batches;
-  } catch(e) {
-    console.error('AI Gen error:', e);
-    aiGenRunning = false;
-    showToast('⚠️ AI Gen ล้มเหลว ใช้ระบบสุ่มแทน');
-    return null;
-  }
-}
-
-async function refreshProducts(){
-  const aiProducts = await genProductsFromAI();
-  if(aiProducts && aiProducts.length > 0){
-    PRODUCTS = aiProducts;
-  } else {
-    PRODUCTS = genProducts(); // fallback
-  }
-  renderP();
-  showToast('🔄 อัปเดตสินค้าใหม่ ' + PRODUCTS.length + ' รายการแล้ว!');
-}
-
-// สุ่มสินค้าใหม่ทุก 5 นาที
-setInterval(()=>{ refreshProducts(); }, 5*60*1000);
-
-// โหลดครั้งแรกด้วย AI (ถ้ามี key)
-if(ANTHROPIC_API_KEY !== 'YOUR_API_KEY_HERE'){
-  refreshProducts();
-}
+const PRODUCTS = genProducts();
 const CATS=[
   {id:'all',l:'ทั้งหมด'},{id:'electronics',l:'📱 อิเล็กทรอนิกส์'},
   {id:'fashion',l:'👕 แฟชั่น'},{id:'home',l:'🏠 บ้านและสวน'},
@@ -759,6 +669,8 @@ const CATS=[
 
 // ══ STATE ══
 let cart=[], orders=[], curCat='all', curSrch='', curMode='c';
+let userInterests = JSON.parse(localStorage.getItem('sst_interests')||'{}'); 
+// userInterests = { cat: count, ... } track what user views/buys
 let coupons=[], appliedCoupon=null, cpExpiry=0, cpTimer=null;
 let mbarVisible=true;
 
@@ -877,9 +789,18 @@ function initCats(){
 function filterCat(cat,el){curCat=cat;document.querySelectorAll('.cpill').forEach(p=>p.classList.remove('on'));el.classList.add('on');renderP();}
 function filterP(){curSrch=document.getElementById('srchIn').value.toLowerCase();renderP();}
 let visibleCount=40, filteredList=[];
+function interestScore(p){
+  // score = interest weight of category * rate + small random
+  const w = userInterests[p.cat] || 0;
+  return w * 10 + p.rate + Math.random() * 0.3;
+}
 function renderP(){
   const g=document.getElementById('pgrid');
   filteredList=PRODUCTS.filter(p=>(curCat==='all'||p.cat===curCat)&&p.name.toLowerCase().includes(curSrch));
+  // Sort: interested cats float up, within same weight sort by rating
+  if(Object.keys(userInterests).length > 0){
+    filteredList.sort((a,b)=>interestScore(b)-interestScore(a));
+  }
   visibleCount=40;
   renderPSlice(g, true);
 }
@@ -909,6 +830,9 @@ function loadMoreP(){
 }
 function showDetail(id){
   const p=PRODUCTS.find(x=>x.id===id); if(!p)return;
+  // Track interest
+  userInterests[p.cat] = (userInterests[p.cat]||0) + 1;
+  localStorage.setItem('sst_interests', JSON.stringify(userInterests));
   const disc=Math.round((1-p.price/p.old)*100);
   document.getElementById('pdHero').innerHTML=`
     <div class="pdimg">${p.emoji}</div>
@@ -923,6 +847,7 @@ function showDetail(id){
         <button class="pdbuy" onclick="buyNow(${p.id})">⚡ ซื้อเลย</button>
         <button class="pdcart" onclick="addC(${p.id})">🛒 เพิ่มตะกร้า</button>
       </div>
+
     </div>`;
   document.getElementById('pdDesc').innerHTML=`<div style="font-weight:700;font-size:13px;margin-bottom:8px">📋 รายละเอียด</div><div style="color:var(--mu);font-size:13px;line-height:1.7">${p.desc}</div>`;
   showPage('detail');
@@ -1037,6 +962,9 @@ function placeOrder(){
     },
     packed:false,
   };
+  // Track purchase interest (weight x3)
+  order.items.forEach(i=>{ userInterests[i.cat] = (userInterests[i.cat]||0) + 3; });
+  localStorage.setItem('sst_interests', JSON.stringify(userInterests));
   orders.unshift(order);
   saveData();
 
