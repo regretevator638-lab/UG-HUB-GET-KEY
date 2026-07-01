@@ -309,7 +309,7 @@ tr:hover td{background:#fafafa}
 
 
 <!-- COUPON POPUP -->
-<div class="cpop" id="cpop" onclick="if(event.target===this)closeCpop()">
+<div class="cpop" id="cpop" onclick="closeCpop(event)">
   <div class="cpbox">
     <h3 style="font-size:16px;font-weight:800;margin-bottom:13px;color:var(--ad)">🎫 โค้ดส่วนลด <span id="cpTimerPop" style="font-size:11px;color:var(--mu);font-weight:400"></span></h3>
     <div id="cpopList"></div>
@@ -481,7 +481,7 @@ tr:hover td{background:#fafafa}
 </div>
 
 <!-- MODAL -->
-<div class="mbg" id="mbg" onclick="if(event.target===this)closeMod()">
+<div class="mbg" id="mbg" onclick="closeMod(event)">
   <div class="mbox">
     <button class="mclose" onclick="closeMod()">✕</button>
     <div class="mtitle" id="mTitle"></div>
@@ -625,6 +625,30 @@ const DESCS={
   toys:'ของเล่นเด็กและผู้ใหญ่ ปลอดภัย มีใบรับรอง ส่งเสริมพัฒนาการ',
 };
 
+const REVIEW_NAMES=['สมชาย ใ.','น้องมิ้ม','คุณแนน','พี่บอย99','user_8842','Aof_shop','beam_th','Kanya P.','โอ๊ต ร้านดี','Ploy_xx','Tee Anan','คุณส้ม','ลูกค้าประจำ','Nan_buyer','พิม พิมพ์ใจ'];
+const REVIEW_GOOD=['สินค้าดีมากค่ะ คุ้มราคา ส่งไวสุดๆ','ใช้งานได้ดีตามที่บรรยาย แพ็คดีมาก','ของแท้ตรงปก ประทับใจมากครับ','ส่งเร็วมาก เก็บของดี บรรจุภัณฑ์แน่นหนา','คุณภาพเกินราคา จะกลับมาซื้อซ้ำแน่นอน','ของสวยมาก ตรงตามรูปทุกอย่าง','บริการดีเยี่ยม จัดส่งรวดเร็วทันใจ'];
+const REVIEW_OK=['ใช้ได้ปกติ ไม่มีอะไรน่าตำหนิ','โอเคค่ะ ตรงตามคาดหวัง','สินค้าตามคำบรรยาย ราคาก็เหมาะสม','ส่งช้าไปนิดแต่ของโอเค'];
+const REVIEW_BAD=['ของมาช้ากว่ากำหนดนิดหน่อย แต่คุณภาพโอเค','บรรจุภัณฑ์เสียหายเล็กน้อยตอนส่ง แต่สินค้ายังใช้ได้','ไซส์เล็กกว่าที่คิด ควรเช็คตารางไซส์ก่อน'];
+
+function genReviews(rate, sold){
+  const n = Math.min(8, Math.max(2, Math.floor(sold/1500)+2));
+  const reviews=[];
+  for(let i=0;i<n;i++){
+    const r = Math.random();
+    let stars, text;
+    if(r<0.65){ stars=5; text=REVIEW_GOOD[Math.floor(Math.random()*REVIEW_GOOD.length)]; }
+    else if(r<0.85){ stars=4; text=REVIEW_OK[Math.floor(Math.random()*REVIEW_OK.length)]; }
+    else { stars=Math.random()<0.5?3:2; text=REVIEW_BAD[Math.floor(Math.random()*REVIEW_BAD.length)]; }
+    reviews.push({
+      name: REVIEW_NAMES[Math.floor(Math.random()*REVIEW_NAMES.length)],
+      stars, text,
+      date: new Date(Date.now()-Math.floor(Math.random()*60)*86400000).toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'numeric'}),
+      hasPhoto: Math.random()<0.3
+    });
+  }
+  return reviews;
+}
+
 function genProducts(){
   const cats=Object.keys(PRODUCT_TEMPLATES);
   const items=[];
@@ -642,15 +666,23 @@ function genProducts(){
       const isCheap = Math.random() < 0.3;
       const cheapPrice = [9,19,29,39,49,59,79,99,119,149,179,199][Math.floor(Math.random()*12)];
       const price = isCheap ? cheapPrice : Math.floor(Math.random()*(t.r[1]-t.r[0])+t.r[0]);
-      const oldPrice=Math.floor(price*(1+Math.random()*0.5+0.1));
+      // 40% of items have NO discount (old === price)
+      const hasDiscount = Math.random() < 0.6;
+      const oldPrice = hasDiscount ? Math.floor(price*(1+Math.random()*0.5+0.1)) : price;
       const sold=Math.floor(Math.random()*20000+100);
       const rate=Math.round((Math.random()*1.5+3.5)*10)/10;
       const hasBadge=Math.random()<0.3;
+      const stockRoll = Math.random();
+      const stock = stockRoll<0.05 ? 0 : stockRoll<0.15 ? Math.floor(Math.random()*5+1) : Math.floor(Math.random()*200+10);
+      const weight = Math.floor(Math.random()*1800+100);
+      const finalRate = Math.min(5,rate);
       items.push({
         id:id++, name, emoji:t.e, price, old:oldPrice, cat,
-        sold, rate: Math.min(5,rate),
+        sold, rate: finalRate,
         badge:hasBadge?BADGES[Math.floor(Math.random()*BADGES.length)]:null,
-        desc:DESCS[cat]+` รุ่น ${name} ราคาพิเศษ ส่งไวทั่วไทย`
+        desc:DESCS[cat]+` รุ่น ${name} ส่งไวทั่วไทย`,
+        stock, weight,
+        reviews: genReviews(finalRate, sold)
       });
     }
   });
@@ -669,9 +701,8 @@ const CATS=[
 
 // ══ STATE ══
 let cart=[], orders=[], curCat='all', curSrch='', curMode='c';
-let userInterests = JSON.parse(localStorage.getItem('sst_interests')||'{}'); 
-// userInterests = { cat: count, ... } track what user views/buys
-let coupons=[], appliedCoupon=null, cpExpiry=0, cpTimer=null;
+let userInterests = JSON.parse(localStorage.getItem('sst_interests')||'{}');
+let couponWallet=[], appliedCoupon=null, cpExpiry=0, cpTimer=null;
 let mbarVisible=true;
 
 // ══ LOCALSTORAGE ══
@@ -679,51 +710,116 @@ function saveData(){
   try{
     localStorage.setItem('sst_orders',JSON.stringify(orders));
     localStorage.setItem('sst_cart',JSON.stringify(cart));
-    localStorage.setItem('sst_coupons',JSON.stringify({coupons,cpExpiry}));
+    localStorage.setItem('sst_wallet',JSON.stringify({couponWallet,cpExpiry}));
+    localStorage.setItem('sst_interests',JSON.stringify(userInterests));
   }catch(e){}
 }
 function loadData(){
   try{
     const o=localStorage.getItem('sst_orders'); if(o) orders=JSON.parse(o);
     const c=localStorage.getItem('sst_cart'); if(c) cart=JSON.parse(c);
-    const cp=localStorage.getItem('sst_coupons');
-    if(cp){const d=JSON.parse(cp);coupons=d.coupons||[];cpExpiry=d.cpExpiry||0;}
+    const w=localStorage.getItem('sst_wallet');
+    if(w){const d=JSON.parse(w);couponWallet=d.couponWallet||[];cpExpiry=d.cpExpiry||0;}
+    const ui=localStorage.getItem('sst_interests'); if(ui) userInterests=JSON.parse(ui);
   }catch(e){}
 }
 
-// ══ COUPONS ══
+// ══ SHIPPING CALC ══
+const SHIP_ZONES={'กรุงเทพมหานคร':1,'นนทบุรี':1,'ปทุมธานี':1,'สมุทรปราการ':1,'เชียงใหม่':2,'เชียงราย':2,'ขอนแก่น':2,'อุดรธานี':2,'นครราชสีมา':2,'ชลบุรี':1,'ระยอง':1,'ภูเก็ต':3,'สุราษฎร์ธานี':3,'นครศรีธรรมราช':3,'สงขลา':3};
+function calcShipping(province, weightG, freeShip){
+  if(freeShip) return 0;
+  const zone=SHIP_ZONES[province]||2;
+  const kg=weightG/1000;
+  if(zone===1) return Math.max(30,Math.ceil(kg)*20);
+  if(zone===2) return Math.max(40,Math.ceil(kg)*25);
+  return Math.max(50,Math.ceil(kg)*30);
+}
+
+// ══ COUPON WALLET (Shopee-style) ══
 const CP_TYPES=[
-  {type:'free',pre:'FREE',gen:()=>({disc:0,free:true,min:Math.floor(Math.random()*3+1)*100})},
-  {type:'disc',pre:'SAVE',gen:()=>({disc:(Math.floor(Math.random()*4)+1)*50,free:false,min:Math.floor(Math.random()*5+1)*100})},
+  {type:'free',   pre:'FREE', gen:()=>({disc:0,free:true, min:0,   label:'ส่งฟรี'})},
+  {type:'freemin',pre:'SHIP', gen:()=>({disc:0,free:true, min:[200,300,500][Math.floor(Math.random()*3)], label:'ส่งฟรี'})},
+  {type:'disc',   pre:'SAVE', gen:()=>({disc:[30,50,80,100,150,200][Math.floor(Math.random()*6)],free:false,min:0, label:'ส่วนลด'})},
+  {type:'discmin',pre:'OFF',  gen:()=>({disc:[50,100,200][Math.floor(Math.random()*3)],free:false,min:[300,500,800][Math.floor(Math.random()*3)], label:'ส่วนลด'})},
 ];
 function genCpCode(pre){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let s='';for(let i=0;i<6;i++)s+=c[Math.floor(Math.random()*c.length)];return pre+s;}
-function genCoupons(){
-  if(cpExpiry>Date.now()&&coupons.length) return;
-  const n=Math.floor(Math.random()*5)+1;
-  coupons=[];
-  for(let i=0;i<n;i++){const t=CP_TYPES[Math.floor(Math.random()*CP_TYPES.length)];coupons.push({code:genCpCode(t.pre),type:t.type,...t.gen()});}
+function cpDesc(c){
+  if(c.type==='free') return '🚚 ส่งฟรี ไม่มีขั้นต่ำ';
+  if(c.type==='freemin') return `🚚 ส่งฟรี เมื่อซื้อครบ ฿${c.min}`;
+  if(c.type==='disc') return `🏷️ ลด ฿${c.disc} ทันที ไม่มีขั้นต่ำ`;
+  return `🏷️ ลด ฿${c.disc} เมื่อซื้อครบ ฿${c.min}`;
+}
+let _availCoupons=[];
+function genAvailableCoupons(){
+  if(cpExpiry>Date.now()&&_availCoupons.length) return _availCoupons;
+  const n=Math.floor(Math.random()*6)+3;
+  _availCoupons=[];
+  for(let i=0;i<n;i++){
+    const t=CP_TYPES[Math.floor(Math.random()*CP_TYPES.length)];
+    const extra=t.gen();
+    _availCoupons.push({code:genCpCode(t.pre),type:t.type,...extra});
+  }
   cpExpiry=Date.now()+5*60*1000;
   saveData();
-  renderCpPop();
+  return _availCoupons;
 }
-function renderCpTicker(){} // ticker removed
-function renderCpPop(){
-  document.getElementById('cpopList').innerHTML=coupons.map(c=>`
-    <div class="ci-item">
-      <div><div class="ci-code">${c.code}</div><div class="ci-desc">${c.type==='free'?'ส่งฟรี (ขั้นต่ำ ฿'+c.min+')':'ลด ฿'+c.disc+' (ขั้นต่ำ ฿'+c.min+')'}</div></div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-        <span class="ci-badge ${c.type==='free'?'cb-free':'cb-disc'}">${c.type==='free'?'ส่งฟรี':'ส่วนลด'}</span>
-        <button class="copy-btn" onclick="cpCopy('${c.code}')">คัดลอก</button>
+function renderCpPop(avail){
+  if(!avail) avail=genAvailableCoupons();
+  const walletActive=couponWallet.filter(c=>!c.used);
+  document.getElementById('cpopList').innerHTML=
+    '<div style="font-size:12px;color:var(--mu);margin-bottom:10px">กดเก็บโค้ดเข้ากระเป๋าได้เลย</div>'
+    +avail.map(c=>{
+      const got=couponWallet.some(w=>w.code===c.code);
+      return `<div class="ci-item" style="${got?'opacity:.55':''}">
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            <span class="ci-badge ${c.free?'cb-free':'cb-disc'}">${c.label}</span>
+            <span class="ci-code">${c.code}</span>
+          </div>
+          <div class="ci-desc" style="margin-top:3px">${cpDesc(c)}</div>
+        </div>
+        <button class="copy-btn" style="${got?'background:#aaa;cursor:default':''}" onclick="${got?'':("collectCoupon('"+c.code+"')")}">
+          ${got?'✅ เก็บแล้ว':'🎫 เก็บโค้ด'}
+        </button>
+      </div>`;
+    }).join('')
+    +`<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--bd)">
+      <div style="font-weight:700;font-size:13px;margin-bottom:8px">🎒 กระเป๋าโค้ดของฉัน
+        <span style="font-size:11px;font-weight:400;color:var(--mu)">(${walletActive.length} ใบที่ใช้ได้)</span>
       </div>
-    </div>`).join('');
+      ${couponWallet.length===0?'<div style="font-size:12px;color:var(--mu)">ยังไม่มีโค้ดในกระเป๋า กดเก็บด้านบนได้เลย</div>'
+        :couponWallet.map(c=>`
+        <div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--bd);${c.used?'opacity:.4':''}">
+          <div style="flex:1">
+            <span style="font-family:monospace;font-weight:800;color:${c.used?'#aaa':'var(--or)'}">${c.code}</span>
+            <span style="font-size:11px;color:var(--mu);margin-left:5px">${cpDesc(c)}</span>
+            ${c.used?'<span style="font-size:10px;background:#eee;border-radius:10px;padding:1px 6px;margin-left:4px">ใช้แล้ว</span>':''}
+          </div>
+          ${!c.used?`<button class="copy-btn" onclick="useWalletCoupon('${c.code}')">ใช้โค้ด</button>`:''}
+        </div>`).join('')}
+    </div>`;
 }
-function cpCopy(code){
-  navigator.clipboard?.writeText(code).catch(()=>{});
-  const el=document.getElementById('couponIn'); if(el) el.value=code;
-  showToast('📋 คัดลอก '+code+' แล้ว!'); closeCpop();
+function collectCoupon(code){
+  const avail=genAvailableCoupons();
+  const c=avail.find(x=>x.code===code);
+  if(!c){showToast('❌ โค้ดหมดอายุแล้ว');return;}
+  if(couponWallet.some(w=>w.code===code)){showToast('เก็บโค้ดนี้แล้ว!');return;}
+  couponWallet.push({...c,used:false});
+  saveData();
+  showToast('🎫 เก็บโค้ด '+code+' เข้ากระเป๋าแล้ว!');
+  renderCpPop(genAvailableCoupons());
 }
-function openCpop(){document.getElementById('cpop').classList.add('open');}
-function closeCpop(){document.getElementById('cpop').classList.remove('open');}
+function useWalletCoupon(code){
+  const c=couponWallet.find(w=>w.code===code&&!w.used);
+  if(!c){showToast('❌ ไม่พบโค้ดนี้');return;}
+  appliedCoupon=c;
+  closeCpop();
+  showPage('cart');
+  showToast('✅ เลือกโค้ด '+code+' แล้ว กดยืนยันที่ตะกร้า');
+}
+function openCpop(){genAvailableCoupons();renderCpPop();document.getElementById('cpop').classList.add('open');}
+function closeCpop(e){if(e&&e.target!==document.getElementById('cpop'))return;document.getElementById('cpop').classList.remove('open');}
+function renderCpTicker(){}
 function startCpTimer(){
   if(cpTimer)clearInterval(cpTimer);
   cpTimer=setInterval(()=>{
@@ -733,7 +829,7 @@ function startCpTimer(){
     const txt=`รีเซ็ตใน ${m}:${s}`;
     const e1=document.getElementById('cpTimer'); if(e1)e1.textContent=txt;
     const e2=document.getElementById('cpTimerPop'); if(e2)e2.textContent='('+txt+')';
-    if(rem<=0){genCoupons();showNotif('🎫 โค้ดใหม่มาแล้ว!','มีโค้ดส่วนลดใหม่ ดูได้เลย');}
+    if(rem<=0){_availCoupons=[];cpExpiry=0;genAvailableCoupons();showNotif('🎫 โค้ดใหม่มาแล้ว!','มีโค้ดส่วนลดใหม่ ดูได้เลย');}
   },1000);
 }
 
@@ -817,7 +913,7 @@ function renderPSlice(g, reset){
         <div><span class="pprice">฿${p.price.toLocaleString()}</span><span class="pold">฿${p.old.toLocaleString()}</span></div>
         <div class="psold">ขายแล้ว ${p.sold.toLocaleString()} ชิ้น</div>
       </div>
-      <button class="acbtn" onclick="event.stopPropagation();addC(${p.id})">🛒 เพิ่มลงตะกร้า</button>
+
     </div>`).join('');
   const totalTxt=`<div style="grid-column:1/-1;font-size:12px;color:var(--mu);text-align:center;padding:4px 0">แสดง ${slice.length} จาก ${filteredList.length.toLocaleString()} รายการ</div>`;
   const loadMore=visibleCount<filteredList.length?`<div style="grid-column:1/-1;text-align:center;padding:12px"><button onclick="loadMoreP()" style="background:var(--or);color:#fff;border:none;padding:10px 32px;border-radius:20px;font-weight:700;font-size:13px;cursor:pointer">โหลดเพิ่ม ${Math.min(40,filteredList.length-visibleCount)} รายการ ▼</button></div>`:'';
@@ -849,7 +945,54 @@ function showDetail(id){
       </div>
 
     </div>`;
-  document.getElementById('pdDesc').innerHTML=`<div style="font-weight:700;font-size:13px;margin-bottom:8px">📋 รายละเอียด</div><div style="color:var(--mu);font-size:13px;line-height:1.7">${p.desc}</div>`;
+  const avgRate=(p.reviews.reduce((s,r)=>s+r.stars,0)/p.reviews.length).toFixed(1);
+  document.getElementById('pdDesc').innerHTML=`
+    <div style="font-weight:700;font-size:13px;margin-bottom:8px">📋 รายละเอียดสินค้า</div>
+    <div style="color:var(--mu);font-size:13px;line-height:1.7;margin-bottom:14px">${p.desc}</div>
+    <div style="font-weight:700;font-size:13px;margin-bottom:10px">⭐ รีวิวจากผู้ซื้อ (${p.reviews.length} รีวิว)</div>
+    <div style="background:var(--bg);border-radius:8px;padding:12px;margin-bottom:10px;display:flex;align-items:center;gap:16px">
+      <div style="text-align:center">
+        <div style="font-size:36px;font-weight:800;color:var(--or)">${avgRate}</div>
+        <div style="color:#FFBF00;font-size:16px">${'★'.repeat(Math.round(avgRate))}${'☆'.repeat(5-Math.round(avgRate))}</div>
+        <div style="font-size:11px;color:var(--mu)">${p.reviews.length} รีวิว</div>
+      </div>
+      <div style="flex:1">
+        ${[5,4,3,2,1].map(s=>{
+          const cnt=p.reviews.filter(r=>r.stars===s).length;
+          const pct=Math.round(cnt/p.reviews.length*100);
+          return `<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+            <span style="font-size:11px;width:8px">${s}</span>
+            <div style="flex:1;height:6px;background:#eee;border-radius:3px">
+              <div style="width:${pct}%;height:100%;background:#FFBF00;border-radius:3px"></div>
+            </div>
+            <span style="font-size:10px;color:var(--mu);width:24px">${pct}%</span>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+    ${p.reviews.map(r=>`
+      <div style="padding:12px;border-bottom:1px solid var(--bd)">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px">
+          <div>
+            <span style="font-weight:700;font-size:13px">${r.name}</span>
+            <span style="color:#FFBF00;font-size:12px;margin-left:6px">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</span>
+          </div>
+          <span style="font-size:10px;color:var(--mu)">${r.date}</span>
+        </div>
+        <div style="font-size:13px;color:var(--dk);line-height:1.5">${r.text}</div>
+        ${r.hasPhoto?`<div style="margin-top:8px;display:flex;gap:6px">
+          ${['🟠','🟡','🟢'].map(c=>`<div style="width:60px;height:60px;background:#f0f0f0;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:22px">${c}</div>`).join('')}
+          <div style="width:60px;height:60px;background:#f0f0f0;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--mu)">รูปสินค้า</div>
+        </div>`:''}
+      </div>`).join('')}
+    <div style="margin-top:12px">
+      <div style="font-weight:700;font-size:13px;margin-bottom:8px">✏️ เขียนรีวิว</div>
+      <div style="display:flex;gap:4px;margin-bottom:8px" id="rStars">
+        ${[1,2,3,4,5].map(s=>`<span onclick="setRevStar(${s},${p.id})" style="font-size:24px;cursor:pointer;color:#ddd" id="rstar${s}">★</span>`).join('')}
+      </div>
+      <textarea id="rText" rows="2" placeholder="แชร์ประสบการณ์การใช้งาน..." style="width:100%;border:1px solid var(--bd);border-radius:6px;padding:8px;font-size:13px;outline:none;resize:none;font-family:inherit"></textarea>
+      <button onclick="submitReview(${p.id})" style="margin-top:6px;background:var(--or);color:#fff;border:none;padding:8px 20px;border-radius:6px;font-weight:700;cursor:pointer;font-size:13px">ส่งรีวิว</button>
+    </div>`;
   showPage('detail');
 }
 function buyNow(id){addC(id);showPage('checkout');}
@@ -861,17 +1004,19 @@ function addC(id){
   updCC(); saveData(); showToast(`✅ เพิ่ม "${p.name.substring(0,18)}..." แล้ว`);
 }
 function updCC(){document.getElementById('ccount').textContent=cart.reduce((s,i)=>s+i.qty,0);}
-function calcCart(){
+function calcCart(province){
   const sub=cart.reduce((s,i)=>s+i.price*i.qty,0);
+  const totalW=cart.reduce((s,i)=>s+(i.weight||300)*i.qty,0);
   let disc=0,freeShip=false;
   if(appliedCoupon&&sub>=appliedCoupon.min){disc=appliedCoupon.disc||0;freeShip=appliedCoupon.free||false;}
-  const ship=freeShip||sub>=500?0:50;
-  return {sub,disc,freeShip,ship,total:Math.max(0,sub-disc)+ship};
+  const prov=province||document.getElementById('prov')?.value||'กรุงเทพมหานคร';
+  const ship=calcShipping(prov,totalW,freeShip);
+  return {sub,disc,freeShip,ship,total:Math.max(0,sub-disc)+ship,totalW};
 }
 function renderCart(){
   const el=document.getElementById('cartContent');
   if(!cart.length){el.innerHTML=`<div class="cart-empty"><div style="font-size:60px">🛒</div><p>ตะกร้าว่างเปล่า</p><br><button class="cobtn" onclick="showPage('home')" style="width:auto;padding:10px 24px">ช้อปเลย →</button></div>`;return;}
-  const {sub,disc,ship,total}=calcCart();
+  const {sub,disc,ship,total,totalW}=calcCart(pr);
   el.innerHTML=cart.map(i=>`
     <div class="ci">
       <div class="cie">${i.emoji}</div>
@@ -887,29 +1032,30 @@ function renderCart(){
       </div>
       <button class="rb" onclick="rmC(${i.id})">🗑️</button>
     </div>`).join('')
-  +`<div class="coupon-row"><input type="text" id="couponIn" placeholder="โค้ดส่วนลด..." style="text-transform:uppercase"${appliedCoupon?` value="${appliedCoupon.code}"`:''}><button onclick="applyCode()">ใช้โค้ด</button></div>
-  <div id="cpStatus" style="font-size:12px;font-weight:600;margin-bottom:8px">${appliedCoupon?`<span style="color:#2E7D32">✅ ใช้โค้ด ${appliedCoupon.code} แล้ว</span>`:''}</div>
+  +`<div style="margin-bottom:10px">
+    <button onclick="openCpop()" style="width:100%;background:var(--opal);border:1.5px dashed var(--or);color:var(--or);padding:9px;border-radius:6px;font-weight:700;cursor:pointer;font-size:13px">
+      🎫 เลือกโค้ดจากกระเป๋า (${couponWallet.filter(c=>!c.used).length} ใบ)
+    </button>
+    ${appliedCoupon?`<div style="margin-top:6px;font-size:12px;font-weight:700;color:#2E7D32;display:flex;justify-content:space-between;align-items:center">
+      <span>✅ ใช้โค้ด ${appliedCoupon.code} — ${cpDesc(appliedCoupon)}</span>
+      <button onclick="appliedCoupon=null;renderCart()" style="background:none;border:none;color:#888;cursor:pointer;font-size:12px">✕ ยกเลิก</button>
+    </div>`:''}
+  </div>
   <div class="csum">
     <div class="sr"><span>ยอดสินค้า</span><span>฿${sub.toLocaleString()}</span></div>
-    ${disc>0?`<div class="sr"><span>ส่วนลด</span><span style="color:#2E7D32">-฿${disc}</span></div>`:''}
-    <div class="sr"><span>ค่าจัดส่ง</span><span>${ship===0?'<span style="color:var(--gn)">ฟรี!</span>':'฿'+ship}</span></div>
+    ${disc>0?`<div class="sr"><span>ส่วนลดโค้ด</span><span style="color:#2E7D32">-฿${disc}</span></div>`:''}
+    <div class="sr"><span>ค่าจัดส่ง</span><span style="color:${ship===0?'var(--gn)':'var(--dk)'}">${ship===0?'ฟรี!':'฿'+ship}</span></div>
+    <div style="font-size:11px;color:var(--mu);padding:3px 0">⚖️ น้ำหนักรวม ${(totalW/1000).toFixed(2)} กก. | จัดส่ง: กรุงเทพฯ</div>
     <div class="sr"><span class="srt">ยอดรวม</span><span class="srt">฿${total.toLocaleString()}</span></div>
     <button class="cobtn" onclick="showPage('checkout')">สั่งซื้อเลย (฿${total.toLocaleString()}) →</button>
   </div>`;
 }
-function applyCode(){
-  const code=(document.getElementById('couponIn')?.value||'').trim().toUpperCase();
-  const found=coupons.find(c=>c.code===code);
-  if(!found){appliedCoupon=null;document.getElementById('cpStatus').innerHTML=`<span style="color:#C62828">❌ ไม่พบโค้ดนี้</span>`;return;}
-  const {sub}=calcCart();
-  if(sub<found.min){document.getElementById('cpStatus').innerHTML=`<span style="color:#C62828">❌ ต้องซื้อขั้นต่ำ ฿${found.min}</span>`;return;}
-  appliedCoupon=found; renderCart(); showToast(`🎉 ใช้โค้ด ${code} สำเร็จ!`);
-}
+
 function chgQ(id,d){const i=cart.find(x=>x.id===id);if(!i)return;i.qty+=d;if(i.qty<=0)cart=cart.filter(x=>x.id!==id);updCC();saveData();renderCart();}
 function rmC(id){cart=cart.filter(x=>x.id!==id);updCC();saveData();renderCart();}
 function selPay(el){document.querySelectorAll('.popt').forEach(o=>o.classList.remove('on'));el.classList.add('on');}
 function renderCheckout(){
-  const {sub,disc,ship,total}=calcCart();
+  const {sub,disc,ship,total,totalW}=calcCart(pr);
   document.getElementById('coSum').innerHTML=cart.map(i=>`
     <div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--bd)">
       <span style="font-size:20px">${i.emoji}</span>
@@ -917,7 +1063,7 @@ function renderCheckout(){
       <span style="font-weight:700;color:var(--or)">฿${(i.price*i.qty).toLocaleString()}</span>
     </div>`).join('')
   +(disc>0?`<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:12px;color:#2E7D32"><span>โค้ด ${appliedCoupon?.code}</span><span>-฿${disc}</span></div>`:'')
-  +`<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:12px"><span>ค่าจัดส่ง</span><span>${ship===0?'ฟรี':'฿'+ship}</span></div>
+  +`<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:12px"><span>ค่าจัดส่ง <span style="color:var(--mu);font-size:10px">(${(totalW/1000).toFixed(2)}กก.)</span></span><span style="color:${ship===0?'#2E7D32':'var(--dk)'}">${ship===0?'ฟรี!':'฿'+ship}</span></div>
   <div style="display:flex;justify-content:space-between;padding:8px 0;font-weight:700;font-size:15px;border-top:1px solid var(--bd);margin-top:4px"><span>ยอดรวม</span><span style="color:var(--or)">฿${total.toLocaleString()}</span></div>`;
 }
 
@@ -938,7 +1084,7 @@ function placeOrder(){
   const nt=document.getElementById('note').value;
   const fullAddr=`${ad} แขวง${sb} เขต${di} ${pr} ${zp}`;
   const tr=genTrack();
-  const {sub,disc,ship,total}=calcCart();
+  const {sub,disc,ship,total,totalW}=calcCart(pr);
   const pay=document.querySelector('.popt.on')?.textContent?.trim()||'บัตรเครดิต';
   const now=new Date();
   const dateStr=now.toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'});
@@ -964,7 +1110,12 @@ function placeOrder(){
   };
   // Track purchase interest (weight x3)
   order.items.forEach(i=>{ userInterests[i.cat] = (userInterests[i.cat]||0) + 3; });
-  localStorage.setItem('sst_interests', JSON.stringify(userInterests));
+  // Mark coupon as used
+  if(appliedCoupon){
+    const wc=couponWallet.find(w=>w.code===appliedCoupon.code);
+    if(wc) wc.used=true;
+    appliedCoupon=null;
+  }
   orders.unshift(order);
   saveData();
 
@@ -1325,7 +1476,7 @@ function showAdminQr(oid,tracking){
   new QRCode(d,{text:url,width:200,height:200,colorDark:'#1A237E',colorLight:'#FFFFFF',correctLevel:QRCode.CorrectLevel.H});
   document.getElementById('mbg').classList.add('open');
 }
-function closeMod(){document.getElementById('mbg').classList.remove('open');}
+function closeMod(e){if(e&&e.target!==document.getElementById('mbg'))return;document.getElementById('mbg').classList.remove('open');}
 
 // ══ NOTIFICATIONS ══
 let notifT=null;
@@ -1343,6 +1494,32 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'),2800);
 }
 
+// ══ REVIEWS ══
+let curRevStar=0;
+function setRevStar(s,pid){
+  curRevStar=s;
+  [1,2,3,4,5].forEach(i=>{
+    const el=document.getElementById('rstar'+i);
+    if(el) el.style.color=i<=s?'#FFBF00':'#ddd';
+  });
+}
+function submitReview(pid){
+  const txt=document.getElementById('rText')?.value?.trim();
+  if(!curRevStar){showToast('⚠️ กรุณาเลือกดาวก่อน');return;}
+  if(!txt){showToast('⚠️ กรุณาเขียนรีวิว');return;}
+  const p=PRODUCTS.find(x=>x.id===pid); if(!p) return;
+  p.reviews.unshift({
+    name:'คุณ (ฉัน)',stars:curRevStar,text:txt,
+    date:new Date().toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'numeric'}),
+    hasPhoto:false
+  });
+  // recalc rating
+  p.rate=Math.round(p.reviews.reduce((s,r)=>s+r.stars,0)/p.reviews.length*10)/10;
+  showToast('✅ ขอบคุณสำหรับรีวิว!');
+  curRevStar=0;
+  showDetail(pid);
+}
+
 // ══ AUTO REFRESH ══
 setInterval(()=>{
   if(document.getElementById('page-orders').classList.contains('active')){renderOrders();initOrdQRs();}
@@ -1352,7 +1529,7 @@ setInterval(()=>{
 // ══ INIT ══
 loadData();
 initCats(); renderP();
-genCoupons(); renderCpPop(); startCpTimer();
+genAvailableCoupons(); startCpTimer();
 updCC();
 
 // Re-attach autoAdvance for existing in-progress orders
